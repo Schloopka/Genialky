@@ -100,10 +100,10 @@ bool Bishop::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = bishopTexture.loadFromFile("white-bishop.png");
+		bool ok = bishopTexture.loadFromFile("pieces/white-bishop.png");
 	}
 	else {
-		bool ok = bishopTexture.loadFromFile("black-bishop.png");
+		bool ok = bishopTexture.loadFromFile("pieces/black-bishop.png");
 	}
 
 	if (!ok) {

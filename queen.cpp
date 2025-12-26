@@ -118,10 +118,10 @@ bool Queen::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = queenTexture.loadFromFile("white-queen.png");
+		bool ok = queenTexture.loadFromFile("pieces/white-queen.png");
 	}
 	else {
-		bool ok = queenTexture.loadFromFile("black-queen.png");
+		bool ok = queenTexture.loadFromFile("pieces/black-queen.png");
 	}
 
 	if (!ok) {

@@ -91,10 +91,10 @@ bool King::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = kingTexture.loadFromFile("white-king.png");
+		bool ok = kingTexture.loadFromFile("pieces/white-king.png");
 	}
 	else {
-		bool ok = kingTexture.loadFromFile("black-king.png");
+		bool ok = kingTexture.loadFromFile("pieces/black-king.png");
 	}
 
 	if (!ok) {

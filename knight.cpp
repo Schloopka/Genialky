@@ -113,10 +113,10 @@ bool Knight::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = knightTexture.loadFromFile("white-knight.png");
+		bool ok = knightTexture.loadFromFile("pieces/white-knight.png");
 	}
 	else {
-		bool ok = knightTexture.loadFromFile("black-knight.png");
+		bool ok = knightTexture.loadFromFile("pieces/black-knight.png");
 	}
 
 	if (!ok) {

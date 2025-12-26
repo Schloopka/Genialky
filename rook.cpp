@@ -91,10 +91,10 @@ bool Rook::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = rookTexture.loadFromFile("white-rook.png");
+		bool ok = rookTexture.loadFromFile("pieces/white-rook.png");
 	}
 	else {
-		bool ok = rookTexture.loadFromFile("black-rook.png");
+		bool ok = rookTexture.loadFromFile("pieces/black-rook.png");
 	}
 
 	if (!ok) {

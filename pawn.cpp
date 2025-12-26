@@ -107,10 +107,10 @@ bool Pawn::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = pawnTexture.loadFromFile("white-pawn.png");
+		bool ok = pawnTexture.loadFromFile("pieces/white-pawn.png");
 	}
 	else {
-		bool ok = pawnTexture.loadFromFile("black-pawn.png");
+		bool ok = pawnTexture.loadFromFile("pieces/black-pawn.png");
 	}
 	
 	if (!ok) {
