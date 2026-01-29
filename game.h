@@ -26,7 +26,7 @@ public:
 	void handle_queen_select_airstrike(bool white_on_move); //handles events if the player must choose where queen lands after airstrike
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
 
-	void eliminate_pieces_from(int dest_row, int dest_column);//eliminate piece from a square, also checks, if the piece can be eliminated
+	void eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);//eliminate piece from a square, also checks, if the piece can be eliminated
 	bool isThereAPiece(int row, int column); //returns true if there is a piece on that square
 	bool only_one_piece_left(bool is_color_white);//returns true if there is only one piece left
 

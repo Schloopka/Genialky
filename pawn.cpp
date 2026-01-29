@@ -11,6 +11,7 @@ Pawn::Pawn(bool is_white, int row, int column, int reload) {
 	this->column = column;
 	this->def_reload = reload;
 	this->curr_reload = reload;
+	this->attack_type = attackType::PHYSICAL;
 }
 
 void Pawn::display(sf::RenderWindow& window) {
@@ -79,7 +80,11 @@ bool Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_colu
 	}	
 }
 
-bool Pawn::can_be_eliminated() {
+bool Pawn::can_be_eliminated(attackType attack_type) {
+	if (attack_type == attackType::SHOOTING && moves_since_last_moved >= 2) {
+		std::cout << "I have shield" << std::endl;
+		return false;
+	}
 	return true;
 }
 

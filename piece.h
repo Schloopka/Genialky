@@ -30,10 +30,10 @@ public:
 
 	void move_piece_to(int dest_row, int des_column);
 	virtual bool can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game);
-	virtual bool can_be_eliminated();
+	virtual bool can_be_eliminated(attackType attack_type);
 	virtual bool can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game);
 	virtual std::vector<std::vector<int>> get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game); //supposes that the piece can attack the square
-	virtual void attack(int dest_row, int dest_column, Game& game);
+	virtual void attack(int dest_row, int dest_column, Game& game, attackType attack_type);
 	virtual void activate_ability(Gamestate gamestate, Game& game);
 	virtual bool can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game);//returns true if the piece can activate special activity, which is not a move or a take
 
@@ -60,6 +60,12 @@ public:
 	int get_poisoned_for() const;
 	void set_poisoned_for(int num); //sets poison to num
 
+	int get_moves_since_last_moved();
+	void set_moves_since_last_moved(int num);
+
+	attackType get_attack_type();
+
+
 	airStrikePhase get_air_strike_phase();
 	void set_air_strike_phase(airStrikePhase phase);
 	virtual void ability_air_strike_select_square(int target_row, int target_column);
@@ -70,6 +76,7 @@ protected:
 	int column;
 	bool is_white;
 	bool has_moved = false;
+	int moves_since_last_moved = 0;
 
 	bool moves_when_attack = false; //true if the piece moves to the square where it eliminated other pieces
 	bool poisons_when_attacks = false; //true if the piece poisons the piece it attacks
@@ -83,7 +90,8 @@ protected:
 
 	int poisoned_for = 10000; //after how many half-moves the piece dies, this allows so some pieces to be eliminated just after they are poisoned
 	//but also after some time, default set to "infinity"
-
+	
+	attackType attack_type;
 	AirStrikeData air_strike_data;
 
 	std::string image;

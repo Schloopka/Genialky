@@ -18,3 +18,9 @@ enum class airStrikePhase {
 	SELECTING_SQUARE,
 	RESOLVING_ATTACK
 };
+
+enum class attackType {
+	PHYSICAL,
+	SHOOTING,
+	MAGIC
+};

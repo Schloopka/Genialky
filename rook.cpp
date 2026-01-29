@@ -16,6 +16,7 @@ Rook::Rook(bool is_white, int row, int column, int reload) {
 	this->curr_reload = reload;
 	this->moves_when_attack = true;
 	this->poisons_when_attacks = false;
+	this->attack_type = attackType::PHYSICAL;
 	this->poison_attack = 1;
 }
 
@@ -82,7 +83,7 @@ void Rook::activate_ability(Gamestate gamestate, Game& game) {
 	this->curr_reload = 0;
 	game.set_pieces_can_move({ this }); //only the rook can move now
 }
-bool Rook::can_be_eliminated() {
+bool Rook::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 

@@ -16,6 +16,7 @@ King::King(bool is_white, int row, int column, int reload) {
 	this->curr_reload = reload;
 	this->moves_when_attack = true;
 	this->def_ability_reload = 1;
+	this->attack_type = attackType::PHYSICAL;
 }
 
 void King::display(sf::RenderWindow& window) {
@@ -82,7 +83,7 @@ void King::activate_ability(Gamestate gamestate, Game& game){
 	curr_ability_reload = def_ability_reload+1;
 
 }
-bool King::can_be_eliminated() {
+bool King::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 

@@ -44,6 +44,7 @@ void Piece::move_piece_to(int dest_row, int dest_column) {
 	this->row = dest_row;
 	this->column = dest_column;
 	this->has_moved = true;
+	this->moves_since_last_moved = -1; //set to -1, because at the end of the move, it is increased by 1
 }
 
 bool Piece::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
@@ -59,11 +60,11 @@ std::vector<std::vector<int>> Piece::get_attacked_squares(int curr_row, int curr
 	return result;
 }
 
-void Piece::attack(int dest_row, int dest_column, Game& game) {
+void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
 	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(row, column, dest_row, dest_column, game);
 	if (poisons_when_attacks == false) {
 		for (std::vector<int> square_coordinates : attacked_squares) {
-			game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back());
+			game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type);
 		}
 	}
 	else if (poisons_when_attacks == true) {
@@ -87,7 +88,7 @@ bool Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game&
 	return false;
 }
 
-bool Piece::can_be_eliminated() {
+bool Piece::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 
@@ -153,6 +154,16 @@ void Piece::set_poisoned_for(int num) {
 	this->poisoned_for = num;
 }
 
+attackType Piece::get_attack_type() {
+	return this->attack_type;
+}
+
+int Piece::get_moves_since_last_moved() {
+	return this->moves_since_last_moved;
+}
+void Piece::set_moves_since_last_moved(int num) {
+	this->moves_since_last_moved = num;
+}
 airStrikePhase Piece::get_air_strike_phase() {
 	return this->air_strike_data.phase;
 }

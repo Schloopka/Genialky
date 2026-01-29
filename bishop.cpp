@@ -14,6 +14,7 @@ Bishop::Bishop(bool is_white, int row, int column, int reload) {
 	this->column = column;
 	this->def_reload = reload;
 	this->curr_reload = reload;
+	this->attack_type = attackType::SHOOTING;
 }
 
 void Bishop::display(sf::RenderWindow& window) {
@@ -59,7 +60,7 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	return false;
 
 }
-bool Bishop::can_be_eliminated() {
+bool Bishop::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 

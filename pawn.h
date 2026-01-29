@@ -15,7 +15,7 @@ public:
 	bool can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	bool load_texture() override;
 	bool can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
-	bool can_be_eliminated();
+	bool can_be_eliminated(attackType attack_type) override;
 	std::vector<std::vector<int>> get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) override; 
 
 private:

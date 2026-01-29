@@ -15,6 +15,7 @@ Knight::Knight(bool is_white, int row, int column, int reload) {
 	this->def_reload = reload;
 	this->curr_reload = reload;
 	this->moves_when_attack = true;
+	this->attack_type = attackType::PHYSICAL;
 }
 
 void Knight::display(sf::RenderWindow& window) {
@@ -57,7 +58,7 @@ bool Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	return false;
 
 }
-void Knight::attack(int dest_row, int dest_column, Game& game) {
+void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
 
 	int id = 8 * this->get_row() + this->get_column(); /*remember id of the piece, so I can move it later, because when you remove a piece, the vector changes*/
 	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(this->get_row(), this->get_column(), dest_row, dest_column, game);
@@ -89,7 +90,7 @@ void Knight::attack(int dest_row, int dest_column, Game& game) {
 	}
 
 	for (std::vector<int> square_coordinates : attacked_squares) {
-		game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back());
+		game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type);
 	}
 	
 	for (auto& piece : game.get_pieces()) {
@@ -100,7 +101,7 @@ void Knight::attack(int dest_row, int dest_column, Game& game) {
 	
 }
 
-bool Knight::can_be_eliminated() {
+bool Knight::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 

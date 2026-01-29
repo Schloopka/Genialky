@@ -16,6 +16,7 @@ Queen::Queen(bool is_white, int row, int column, int reload) {
 	this->curr_reload = reload;
 	this->moves_when_attack = false;
 	this->def_ability_reload = 6;
+	this->attack_type = attackType::PHYSICAL;
 	this->air_strike_data.phase = airStrikePhase::NOT_ACTIVE;
 }
 
@@ -109,7 +110,7 @@ void Queen::ability_air_strike_select_square(int target_row, int target_column) 
 std::pair<int, int> Queen::get_air_strike_target_square() {
 	return { air_strike_data.target_row, air_strike_data.target_column };
 }
-bool Queen::can_be_eliminated() {
+bool Queen::can_be_eliminated(attackType attack_type) {
 	return true;
 }
 

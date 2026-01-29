@@ -233,7 +233,7 @@ void Game::handle_normal_moves() {
 			else if (piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
 				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)) { //if the piece can attack the second square
 				piece_attacking = piece;
-				piece->attack(dest_row, dest_column, *this);
+				piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				std::cout << "take" << std::endl;
 				moves_left--;
 			}
@@ -259,11 +259,11 @@ void Game::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
 
-void Game::eliminate_pieces_from(int dest_row, int dest_column) {
+void Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type) {
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
-			[dest_row, dest_column](const Piece* piece) {
-				return piece->get_row() == dest_row && piece->get_column() == dest_column;
+			[dest_row, dest_column, attack_type](Piece* piece) {
+				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type);
 			}),
 		pieces.end()
 	);
@@ -327,7 +327,7 @@ void Game::switchGamestateAfterQueenAbility(bool white_on_turn) {
 			piece->set_air_strike_phase(airStrikePhase::NOT_ACTIVE); //the ability is over for the queen, so reset the state to default
 			piece->set_ability_reload(6);
 			set_pieces_can_move({ piece }); //after airstrike, only the queen can move
-			piece->attack(taget_row, target_column, *this);
+			piece->attack(taget_row, target_column, *this, piece->get_attack_type());
 			piece->set_moves_when_attack(false); //
 		}
 	}
@@ -388,6 +388,7 @@ void Game::lower_stats() {
 					piece->set_reload(std::max(0, piece->get_reload() - 1)); //lowers the reload by one
 					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1)); //lowers the ability reload by one
 				}
+				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
 			}
 		}
 	}
@@ -401,6 +402,7 @@ void Game::lower_stats() {
 					piece->set_reload(std::max(0, piece->get_reload() - 1)); //lowers the reload by one
 					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1));
 				}
+				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
 			}
 		}
 	}
