@@ -83,7 +83,8 @@ void King::activate_ability(Gamestate gamestate, Game& game){
 	curr_ability_reload = def_ability_reload+1;
 
 }
-bool King::can_be_eliminated(attackType attack_type) {
+bool King::can_be_eliminated(attackType attack_type, Game& game) {
+	game.set_king_on_board(false, is_white);
 	return true;
 }
 

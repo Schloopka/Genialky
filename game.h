@@ -40,6 +40,7 @@ public:
 
 	void set_input_mode(Gamestate gamestate, InputMode input_mode);//depending on gamestate, sets the input mode for that player
 
+	void set_king_on_board(bool king_on_board, bool is_white); //changes if king of a colour is on board
 	void set_moves_left(int num); 
 	std::vector<Piece*> get_pieces();
 
@@ -55,7 +56,8 @@ private:
 	InputMode white_input_mode;
 	InputMode black_input_mode;
 
-
+	bool white_king_on_board = true;
+	bool black_king_on_board = true;
 	int moves_left = 1; //number of moves the player has until the gamestate changes and the opponent moves
 };
 

@@ -110,7 +110,7 @@ void Queen::ability_air_strike_select_square(int target_row, int target_column) 
 std::pair<int, int> Queen::get_air_strike_target_square() {
 	return { air_strike_data.target_row, air_strike_data.target_column };
 }
-bool Queen::can_be_eliminated(attackType attack_type) {
+bool Queen::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;
 }
 

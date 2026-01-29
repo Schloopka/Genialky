@@ -30,7 +30,7 @@ public:
 
 	void move_piece_to(int dest_row, int des_column);
 	virtual bool can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game);
-	virtual bool can_be_eliminated(attackType attack_type);
+	virtual bool can_be_eliminated(attackType attack_type, Game& game);
 	virtual bool can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game);
 	virtual std::vector<std::vector<int>> get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game); //supposes that the piece can attack the square
 	virtual void attack(int dest_row, int dest_column, Game& game, attackType attack_type);

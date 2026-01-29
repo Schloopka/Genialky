@@ -101,7 +101,7 @@ void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack
 	
 }
 
-bool Knight::can_be_eliminated(attackType attack_type) {
+bool Knight::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;
 }
 

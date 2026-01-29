@@ -60,7 +60,7 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	return false;
 
 }
-bool Bishop::can_be_eliminated(attackType attack_type) {
+bool Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;
 }
 

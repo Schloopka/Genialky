@@ -83,7 +83,7 @@ void Rook::activate_ability(Gamestate gamestate, Game& game) {
 	this->curr_reload = 0;
 	game.set_pieces_can_move({ this }); //only the rook can move now
 }
-bool Rook::can_be_eliminated(attackType attack_type) {
+bool Rook::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;
 }
 

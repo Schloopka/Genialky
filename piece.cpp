@@ -88,7 +88,7 @@ bool Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game&
 	return false;
 }
 
-bool Piece::can_be_eliminated(attackType attack_type) {
+bool Piece::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;
 }
 

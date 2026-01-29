@@ -262,8 +262,8 @@ void Game::clear_buttons_clicked() {
 void Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type) {
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
-			[dest_row, dest_column, attack_type](Piece* piece) {
-				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type);
+			[dest_row, dest_column, attack_type, this](Piece* piece) {
+				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type, *this);
 			}),
 		pieces.end()
 	);
@@ -417,6 +417,14 @@ std::vector<Piece*> Game::get_pieces() {
 	return pieces;
 }
 
+void Game::set_king_on_board(bool is_on_board, bool is_white) {
+	if (is_white) {
+		this->white_king_on_board = is_on_board;
+	}
+	else {
+		this->black_king_on_board = is_on_board;
+	}
+}
 void Game::set_moves_left(int num) {
 	moves_left = num;
 }
