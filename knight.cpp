@@ -52,7 +52,15 @@ bool Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	
 	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 2)
 		|| (std::abs(curr_row - dest_row) == 2 && curr_column == dest_column)) {//can move one on column or row, not diagonally
+		stun_lenght = 1; //when knight moves two squares forward, then it stuns for one move
 		return true;
+	}
+	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 3)
+		|| (std::abs(curr_row - dest_row) == 3 && curr_column == dest_column)
+		&& game.get_king_on_board(is_white)) {
+		stun_lenght = 2; //when knight moves two squares forward, then it stuns for one move
+		return true;
+
 	}
 	
 	return false;
@@ -81,10 +89,11 @@ void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack
 			squares_to_stun.push_back({ stun_row, stun_column });
 		}
 	}
+	//
 	for (std::pair<int, int> square_coordinates : squares_to_stun) {
 		for (auto& piece : game.get_pieces()) {
 			if (piece->get_row() == square_coordinates.first && piece->get_column() == square_coordinates.second) {
-				piece->set_curr_stun(1);
+				piece->set_curr_stun(stun_lenght);
 			}
 		}
 	}

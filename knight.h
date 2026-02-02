@@ -22,6 +22,7 @@ public:
 	void attack(int dest_row, int dest_column, Game& game, attackType attack_type) override;
 private:
 	sf::Texture knightTexture;
+	int stun_lenght = 1;
 protected:
 	std::string image;
 

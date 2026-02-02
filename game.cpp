@@ -425,6 +425,10 @@ void Game::set_king_on_board(bool is_on_board, bool is_white) {
 		this->black_king_on_board = is_on_board;
 	}
 }
+
+bool Game::get_king_on_board(bool is_white) {
+	return (is_white ? white_king_on_board : black_king_on_board);
+}
 void Game::set_moves_left(int num) {
 	moves_left = num;
 }

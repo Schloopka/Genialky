@@ -94,9 +94,11 @@ bool Piece::can_be_eliminated(attackType attack_type, Game& game) {
 
 bool Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
+		std::cout << "not your turn" << std::endl;
 		return false;
 	}
 	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
+		std::cout << "not your turn" << std::endl;
 		return false;
 	}
 	//check if the piece is in the pieces that can move this turn
