@@ -55,8 +55,8 @@ bool Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 		stun_lenght = 1; //when knight moves two squares forward, then it stuns for one move
 		return true;
 	}
-	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 3)
-		|| (std::abs(curr_row - dest_row) == 3 && curr_column == dest_column)
+	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 3)
+		|| (std::abs(curr_row - dest_row) == 3 && curr_column == dest_column))
 		&& game.get_king_on_board(is_white)) {
 		stun_lenght = 2; //when knight moves two squares forward, then it stuns for one move
 		return true;
