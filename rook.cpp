@@ -84,6 +84,10 @@ void Rook::activate_ability(Gamestate gamestate, Game& game) {
 	game.set_pieces_can_move({ this }); //only the rook can move now
 }
 bool Rook::can_be_eliminated(attackType attack_type, Game& game) {
+	if (game.get_king_on_board(is_white)) {
+		set_poisoned_for(2);
+		return false;
+	}
 	return true;
 }
 
