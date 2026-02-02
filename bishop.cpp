@@ -45,18 +45,44 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	if (can_do_anything(gamestate, inputmode, game) == false) {
 		return false;
 	}
-	//if the piece is reloading, it cant attack
-	if (curr_reload > 0) {
-		return false;
+	//if the piece is reloading, it cant attack with shooting attack, but can do physical attack
+	if (curr_reload == 0) {
+		//kušník
+		//if the diagonal distance is less than 3 (or 5 depending on king) and it does not attack itsself
+		if ((std::abs(curr_row - dest_row) <= 3 && std::abs(curr_row - dest_row) != 0 &&
+			std::abs(curr_column - dest_column) <= 3 && std::abs(curr_column - dest_column) != 0
+			&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column))//without king on board
+
+			|| (std::abs(curr_row - dest_row) <= 5 && std::abs(curr_row - dest_row) != 0 &&
+				std::abs(curr_column - dest_column) <= 5 && std::abs(curr_column - dest_column) != 0
+				&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)
+				&& game.get_king_on_board(is_white))/*with king on board*/) {
+			int distance = std::abs(curr_row - dest_row); //how far the bishop shoots, we need to check it doesnt shoot over any other piece
+			bool shoot_up = (dest_row > curr_row ? true : false); //if shot is to higher row
+			bool shoot_right = (dest_column > curr_column ? true : false);//if shot is to higher column (to the right)
+			std::pair<int, int> directions = { (shoot_up ? 1 : -1), (shoot_right ? 1 : -1) };
+			//check if there are no pieces in the way
+			for (int i = 1; i < distance; i++) {
+
+				if (game.isThereAPiece(curr_row + i * directions.first, curr_column + i * directions.second)) {
+					return false;
+				}
+			}
+			//next attack is shooting with reload 1
+			attack_type = attackType::SHOOTING;
+			def_reload = 1;
+			return true;
+		}
 	}
-	//kušník
-	if (std::abs(curr_row - dest_row) <= 3 && std::abs(curr_row - dest_row) != 0 &&
-		std::abs(curr_column - dest_column) <= 3 && std::abs(curr_column - dest_column) != 0
-		&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)) {//if the diagonal distance is less than 3 and it does not attack itsself
+	if (((std::abs(curr_row - dest_row) == 1 && curr_column == dest_column)
+		|| (std::abs(curr_column - dest_column) == 1 && curr_row == dest_row))
+		&& game.get_king_on_board(is_white)) {
+		//next attack is physical with no reload
+		attack_type = attackType::PHYSICAL;
+		def_reload = 0;
 		return true;
-	
-	
-	} 
+	}
+
 	return false;
 
 }
@@ -66,35 +92,7 @@ bool Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 
 std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
 	//kušník
-	if (dest_column > curr_column && dest_row > curr_row) {
-		for (int i = 1; i < 4; i++) {
-			if (game.isThereAPiece(curr_row + i, curr_column + i) == true) {
-				return { {curr_row + i, curr_column + i} };
-			}
-		}
-	}
-	if (dest_column < curr_column && dest_row > curr_row) {
-		for (int i = 1; i < 4; i++) {
-			if (game.isThereAPiece(curr_row + i, curr_column - i) == true) {
-				return { {curr_row + i, curr_column - i} };
-			}
-		}
-	}
-	if (dest_column > curr_column && dest_row < curr_row) {
-		for (int i = 1; i < 4; i++) {
-			if (game.isThereAPiece(curr_row - i, curr_column + i) == true) {
-				return { {curr_row - i, curr_column + i} };
-			}
-		}
-	}
-	if (dest_column < curr_column && dest_row < curr_row) {
-		for (int i = 1; i < 4; i++) {
-			if (game.isThereAPiece(curr_row - i, curr_column - i) == true) {
-				return { {curr_row - i, curr_column - i} };
-			}
-		}
-	}
-	return { {-1, -1} };
+	return { {dest_row, dest_column} };
 }
 
 bool Bishop::load_texture() {

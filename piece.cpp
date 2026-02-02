@@ -56,7 +56,7 @@ bool Piece::can_attack(int curr_row, int curr_column, int dest_row, int dest_col
 }
 
 std::vector<std::vector<int>> Piece::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
-	std::vector<std::vector<int>> result = { {-1, -1}, { -1, -1} };
+	std::vector<std::vector<int>> result = { {-1, -1} };
 	return result;
 }
 
@@ -129,7 +129,7 @@ void Piece::set_reload(int num) {
 }
 
 void Piece::reset_reload() {
-	this->curr_reload = def_reload;//because the stats get lowered immediately after, so we need to add one more move for reloading
+	this->curr_reload = def_reload+1;//because the stats get lowered immediately after, so we need to add one more move for reloading
 }
 
 int Piece::get_ability_reload() {
