@@ -248,9 +248,10 @@ void Game::handle_normal_moves() {
 	clear_buttons_clicked();
 	if (piece_attacking != nullptr) {
 		piece_attacking->reset_reload();
+		piece_attacking->set_moves_since_last_took(0);
 	}
 	if (moves_left == 0) {
-		lower_stats();
+		update_stats();
 		switchGamestate();
 	}
 }
@@ -375,7 +376,7 @@ void Game::set_input_mode(Gamestate gamestate, InputMode input_mode) {
 	}
 }
 
-void Game::lower_stats() {
+void Game::update_stats() {
 	//after player's move, temporary stats of their pieces are lowered
 	if (gamestate == Gamestate::WHITE_TURN) {
 		for (auto& piece : pieces) {
@@ -389,6 +390,7 @@ void Game::lower_stats() {
 					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1)); //lowers the ability reload by one
 				}
 				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
+				piece->set_moves_since_last_took(piece->get_moves_since_last_took() + 1);
 			}
 		}
 	}
@@ -403,6 +405,7 @@ void Game::lower_stats() {
 					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1));
 				}
 				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
+				piece->set_moves_since_last_took(piece->get_moves_since_last_took() + 1);
 			}
 		}
 	}

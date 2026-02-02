@@ -166,6 +166,13 @@ int Piece::get_moves_since_last_moved() {
 void Piece::set_moves_since_last_moved(int num) {
 	this->moves_since_last_moved = num;
 }
+
+int Piece::get_moves_since_last_took() {
+	return this->moves_since_last_took_a_piece;
+}
+void Piece::set_moves_since_last_took(int num) {
+	this->moves_since_last_took_a_piece = num;
+}
 airStrikePhase Piece::get_air_strike_phase() {
 	return this->air_strike_data.phase;
 }

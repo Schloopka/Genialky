@@ -111,6 +111,11 @@ std::pair<int, int> Queen::get_air_strike_target_square() {
 	return { air_strike_data.target_row, air_strike_data.target_column };
 }
 bool Queen::can_be_eliminated(attackType attack_type, Game& game) {
+	if (game.get_king_on_board(is_white)
+		&& (attack_type == attackType::SHOOTING || attack_type == attackType::MAGIC)
+		&& moves_since_last_took_a_piece <= 1) {
+		return false;
+	}
 	return true;
 }
 

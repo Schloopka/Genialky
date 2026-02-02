@@ -30,7 +30,7 @@ public:
 	bool isThereAPiece(int row, int column); //returns true if there is a piece on that square
 	bool only_one_piece_left(bool is_color_white);//returns true if there is only one piece left
 
-	void lower_stats(); //after each turn, every piece of the person whose move ended has their stun, root or reload lowered by one (in this order)
+	void update_stats(); //after each turn, every piece of the person whose move ended has their stun, root or reload lowered by one (in this order)
 	void switchGamestate(); //makes the opposite player move
 	void switchGamestateAfterQueenAbility(bool white_on_move);
 

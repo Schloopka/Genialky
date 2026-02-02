@@ -63,6 +63,9 @@ public:
 	int get_moves_since_last_moved();
 	void set_moves_since_last_moved(int num);
 
+	int get_moves_since_last_took();
+	void set_moves_since_last_took(int num);
+
 	attackType get_attack_type();
 
 
@@ -77,6 +80,7 @@ protected:
 	bool is_white;
 	bool has_moved = false;
 	int moves_since_last_moved = 0;
+	int moves_since_last_took_a_piece = 10; //initialized to "infinity", because no piece took another before the game
 
 	bool moves_when_attack = false; //true if the piece moves to the square where it eliminated other pieces
 	bool poisons_when_attacks = false; //true if the piece poisons the piece it attacks
