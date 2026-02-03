@@ -80,7 +80,8 @@ void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_
 	}
 
 	if (moves_when_attack) { 
-		move_piece_to(dest_row, dest_column);	
+		move_piece_to(dest_row, dest_column);
+		game.set_piece_was_moved_this_turn();
 	}
 }
 
@@ -114,6 +115,11 @@ bool Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game
 		std::cout << "select airstrike target" << std::endl;
 		return false;
 	}
+	if (game.get_moves_left() <= 0) {
+		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
+		return false;
+	}
+	return true;
 }
 
 void Piece::activate_ability(Gamestate gamestate, Game& game){

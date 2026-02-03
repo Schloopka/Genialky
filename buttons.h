@@ -10,15 +10,17 @@ class Game;
 
 class Button {
 public:
+	Button(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, const std::string& text);
 	Button(sf::Vector2f position, sf::Vector2f size, int id);
-	
+
 	Button() = default;
 	virtual void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game);
-	void draw(sf::RenderWindow& window);
+	virtual void draw_button(sf::RenderWindow& window);
 	int get_id();
 	sf::RectangleShape get_button_shape();
 protected: 
 	sf::RectangleShape button_shape;
+	sf::Text button_text;
 	int id = 0;
 
 };
@@ -29,7 +31,7 @@ private:
 	int row;
 	
 public:
-	SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id) ;
+	SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id, sf::Font& font);
 	/*void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game) override;*/
 
 };

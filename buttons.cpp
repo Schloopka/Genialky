@@ -9,17 +9,29 @@
 
 class Game;
 
-Button::Button(sf::Vector2f position, sf::Vector2f size, int id) {
+Button::Button(sf::Vector2f position, sf::Vector2f size, int id,  sf::Font& font, const std::string& text="") : button_text(font) {
 
-	button_shape.setPosition(position);
-	button_shape.setSize(size);
-	button_shape.setFillColor(sf::Color::Blue);
+	this->button_shape.setPosition(position);
+	this->button_shape.setSize(size);
+	this->button_shape.setFillColor(sf::Color::Blue);
+	this->button_text.setFont(font);
+	this->button_text.setString(text);
+	this->button_text.setPosition({ position.x + size.x / 5.f, position.y + size.y / 5.f });
+	this->button_text.setFillColor(sf::Color::Red);
+	this->button_text.setCharacterSize(25);
+
 	this->id = id;
 
 }
-
-void Button::draw(sf::RenderWindow& window) {
-
+/*Button::Button(sf::Vector2f position, sf::Vector2f size, int id) :button_text(font)
+{
+	button_shape.setPosition(position);
+	button_shape.setSize(size);
+	this->id = id;
+}*/
+void Button::draw_button(sf::RenderWindow& window) {
+	window.draw(button_shape);
+	window.draw(button_text);
 }
 void Button::isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game) {
 	if (event.is<sf::Event::MouseButtonPressed>()) {
@@ -35,21 +47,28 @@ void Button::isClicked(const sf::RenderWindow& window, const sf::Event& event, G
 int Button::get_id() {
 	return this->id;
 }
+sf::RectangleShape Button::get_button_shape() {
+	return button_shape;
+}
 
-
-SquareButton::SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id)
-	: row(row), column(column) 
+SquareButton::SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id, sf::Font& font)
+	: Button(position, size, id, font), row(row), column(column)
 {
 	button_shape.setPosition(position);
 	button_shape.setSize(size);
-	button_shape.setFillColor(sf::Color::White);
-	button_shape.setOutlineColor(sf::Color::Black);
-	button_shape.setOutlineThickness(1.f);
+	//colours of squares
+	sf::Color black(181, 136, 99);
+	sf::Color white(248, 219, 161);
+	if ((row % 2 + column % 2) % 2 == 1){
+		button_shape.setFillColor(black);
+	}
+	else {
+		button_shape.setFillColor(white);
+	}
 	this->id = id;
 }
 
 
 
-sf::RectangleShape Button::get_button_shape() {
-	return button_shape;
-}
+
+

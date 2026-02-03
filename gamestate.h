@@ -24,3 +24,4 @@ enum class attackType {
 	SHOOTING,
 	MAGIC
 };
+

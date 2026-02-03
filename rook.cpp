@@ -29,11 +29,32 @@ void Rook::display(sf::RenderWindow& window) {
 }
 //returns true if it can move to the second square
 bool Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
+	//We cant use the can_do_anything function, because it contains moves_left == 0 condition and rook can sometimes move when there are no moves left
+	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
+		std::cout << "not your turn" << std::endl;
+		return false;
+	}
+	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
+		std::cout << "not your turn" << std::endl;
+		return false;
+	}
+	//check if the piece is in the pieces that can move this turn
+	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
+		std::cout << "cant move this turn" << std::endl;
+		return false;
+	}
+	if (curr_stun > 0) {
+		std::cout << "stunned" << std::endl;
+		return false;
+	}
+	if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
+		std::cout << "select airstrike target" << std::endl;
 		return false;
 	}
 	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) ||
-		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1)) {
+		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1) //valid position change
+		&& (game.get_moves_left() > 0 || //either there are moves left
+			(game.get_king_on_board(is_white)&& game.get_piece_was_moved_this_turn()==false))/*or king is on board and rook can use its passive*/) {
 		return true;
 	}
 

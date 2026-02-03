@@ -25,7 +25,6 @@ Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky")
 }
 
 void Game::setup() {
-	sf::Font font;
 	if (!font.openFromFile("arial1.ttf")) {
 		std::cout << "Error";
 	}
@@ -97,34 +96,7 @@ void Game::setup_pieces(sf::RenderWindow & window) {
 
 void Game::render_background(sf::RenderWindow& window) {
 	sf::Color background(180, 180, 180);
-	sf::Color white_square(248, 219, 161);
-	sf::Color black_square(181, 136, 99);
 	window.clear(background);
-	sf::RectangleShape square({ 100.f, 100.f });
-
-	//board
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			square.setPosition({ (750.f - 100.f * i), 750.f - 100.f * j });
-			if ((i + j) % 2 == 0) {
-				square.setFillColor(white_square);
-			}
-			else {
-				square.setFillColor(black_square);
-			}
-			window.draw(square);
-		}
-	}
-
-	//queen ability squares
-	square.setPosition({ 900.f, 500.f });
-	square.setFillColor(black_square);
-	window.draw(square);
-
-	square.setPosition({ 900.f, 300.f });
-	square.setFillColor(white_square);
-	window.draw(square);
-
 }
 
 void Game::render_pieces(sf::RenderWindow& window) {
@@ -132,18 +104,27 @@ void Game::render_pieces(sf::RenderWindow& window) {
 		piece->display(window);
 	}
 }
-
+void Game::render_buttons(sf::RenderWindow& window) {
+	for (auto& button : buttons) {
+		button->draw_button(window);
+	}
+}
 void Game::make_buttons(sf::RenderWindow& window) {
 	//board squares
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
-			this->buttons.push_back(new SquareButton({ 50.f + 100.f * c, 750.f - 100.f * r }, {100.f, 100.f}, r, c, 8 * r + c));
+			this->buttons.push_back(new SquareButton({ 50.f + 100.f * c, 750.f - 100.f * r }, {100.f, 100.f}, r, c, 8 * r + c, font));
 		}
 	}
 	
 	//queen ability squares
-	this->buttons.push_back(new Button({900.f, 500.f}, { 100.f, 100.f }, 65));
-	this->buttons.push_back(new Button({ 900.f, 300.f }, { 100.f, 100.f }, 66));
+	this->buttons.push_back(new SquareButton({900.f, 500.f}, { 100.f, 100.f }, 8, 0, 65, font));
+	this->buttons.push_back(new SquareButton({ 900.f, 300.f }, { 100.f, 100.f }, 8, 1, 66, font));
+
+	//end turn button
+	std::string text = "End turn";
+	this->buttons.push_back(new Button({ 900.f, 425.f }, { 150.f, 50.f }, 67, font, text));
+	
 	
 }
 
@@ -165,6 +146,9 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 void Game::handle_events(Button* button) {
 	this->last_clicked.push_back(button);
 	std::cout << last_clicked.back()->get_id() << std::endl;
+	if (this->last_clicked.size() == 1) {
+		handle_other_buttons();
+	}
 	//after the airstrike, queen gets one free move
 	if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
 		white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
@@ -226,6 +210,7 @@ void Game::handle_normal_moves() {
 				&& isThereAPiece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
 				piece->move_piece_to(dest_row, dest_column);
 				std::cout << "move" << std::endl;
+				piece_was_moved_this_turn = true;
 				moves_left--;
 				break;
 			}
@@ -250,12 +235,20 @@ void Game::handle_normal_moves() {
 		piece_attacking->reset_reload();
 		piece_attacking->set_moves_since_last_took(0);
 	}
-	if (moves_left == 0) {
-		update_stats();
-		switchGamestate();
+}
+void Game::handle_other_buttons() {
+	if (last_clicked.front()->get_id() == 67) {
+		if (moves_left <= 0) {
+			update_stats();
+			switchGamestate();
+			clear_buttons_clicked();
+		}
+		else {
+			std::cout << "You have to make a move until ending turn" << std::endl;
+		}
+
 	}
 }
-
 void Game::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
@@ -281,6 +274,8 @@ bool Game::isThereAPiece(int row, int column) {
 
 void Game::switchGamestate() {
 	moves_left = 1; //resets the moves left
+	piece_was_moved_this_turn = false;
+
 	//eliminates poisoned pieces which poison ticked down to 0
 	pieces.erase(std::remove_if(pieces.begin(), pieces.end(),
 			[](const Piece* piece) {
@@ -432,8 +427,18 @@ void Game::set_king_on_board(bool is_on_board, bool is_white) {
 bool Game::get_king_on_board(bool is_white) {
 	return (is_white ? white_king_on_board : black_king_on_board);
 }
+
+void Game::set_piece_was_moved_this_turn() {
+	this->piece_was_moved_this_turn = true;
+}
+bool Game::get_piece_was_moved_this_turn() {
+	return this->piece_was_moved_this_turn;
+}
 void Game::set_moves_left(int num) {
 	moves_left = num;
+}
+int Game::get_moves_left() {
+	return this->moves_left;
 }
 
 void Game::run() {
@@ -441,8 +446,8 @@ void Game::run() {
 		check_for_events(window, buttons);
 		window.clear();
 		this->render_background(window);
+		this->render_buttons(window);
 		this->render_pieces(window);
-		
 		window.display();
 	}
 }
