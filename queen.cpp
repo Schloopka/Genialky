@@ -66,7 +66,13 @@ bool Queen::can_attack(int curr_row, int curr_column, int dest_row, int dest_col
 		return false;
 	}
 	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1
+		&& (curr_row != dest_row || curr_column != dest_column) && game.get_king_on_board(is_white)) {
+		instant_attack = false;
+		return true;
+	}
+	else if (std::abs(curr_row - dest_row) <= 2 && std::abs(curr_column - dest_column) <= 2
 		&& (curr_row != dest_row || curr_column != dest_column)) {
+		instant_attack = true;
 		return true;
 	}
 	return false;
@@ -118,7 +124,9 @@ bool Queen::can_be_eliminated(attackType attack_type, Game& game) {
 	}
 	return true;
 }
-
+std::vector<MenuOption> Queen::get_menu_options() {
+	return { MenuOption::DONT_MOVE, MenuOption::MOVE_TO_ATTACKED_SQUARE };
+}
 
 bool Queen::load_texture() {
 

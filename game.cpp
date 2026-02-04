@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <memory>
 #include "game.h"
 
 #include "piece.h"
@@ -10,12 +11,14 @@
 #include "king.h"
 #include "rook.h"
 #include "queen.h"
+#include "menu.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 
 class Buttons;
+class PieceMenu;
 
 Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky")
 {
@@ -23,6 +26,8 @@ Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky")
 	white_input_mode = InputMode::NORMAL;
 	black_input_mode = InputMode::NORMAL;
 }
+
+Game::~Game() = default;
 
 void Game::setup() {
 	if (!font.openFromFile("arial1.ttf")) {
@@ -32,8 +37,6 @@ void Game::setup() {
 	make_buttons(window);
 	setup_pieces(window);
 	set_pieces_can_move(pieces);
-	
-
 }
 
 void Game::setup_pieces(sf::RenderWindow & window) {
@@ -108,6 +111,10 @@ void Game::render_buttons(sf::RenderWindow& window) {
 	for (auto& button : buttons) {
 		button->draw_button(window);
 	}
+	if (activeMenu != nullptr) {
+		activeMenu->render(window);
+	}
+
 }
 void Game::make_buttons(sf::RenderWindow& window) {
 	//board squares
@@ -136,8 +143,19 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 			window.close();
 		}
 		if (event->is<sf::Event::MouseButtonPressed>()) {
-			for (auto& squarebutton : buttons) {
-				squarebutton->isClicked(window, *event, *this);
+			//if there is an active menu, we dont want to allow any other clicks
+			if (activeMenu != nullptr) {
+				activeMenu->process_clicks(window, *event, *this);
+				//if menu is meant to be destroyed after something is clicked, 
+				if (to_delete_menu) {
+					activeMenu = nullptr;
+					to_delete_menu = false;
+				}
+			}
+			else {
+				for (auto& squarebutton : buttons) {
+					squarebutton->isClicked(window, *event, *this);
+			}
 			}
 		}
 	}
@@ -146,11 +164,12 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 void Game::handle_events(Button* button) {
 	this->last_clicked.push_back(button);
 	std::cout << last_clicked.back()->get_id() << std::endl;
+	
 	if (this->last_clicked.size() == 1) {
 		handle_other_buttons();
 	}
 	//after the airstrike, queen gets one free move
-	if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
+	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
 		white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 		handle_normal_moves(); //illegal move (which includes doubleclicking the same square) means the player doesnt want to move the queen after airstrike
 		set_pieces_can_move(pieces); //every piece can move after the queen free move
@@ -217,8 +236,14 @@ void Game::handle_normal_moves() {
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
 				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)) { //if the piece can attack the second square
+				if (piece->does_instant_attack()) {
+					piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
+				}
+				else {
+					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
+					attack_coordinates = { dest_row, dest_column };
+				}
 				piece_attacking = piece;
-				piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				std::cout << "take" << std::endl;
 				moves_left--;
 			}
@@ -440,7 +465,13 @@ void Game::set_moves_left(int num) {
 int Game::get_moves_left() {
 	return this->moves_left;
 }
+void Game::set_to_delete_menu(bool val) {
+	this->to_delete_menu = val;
+}
 
+std::pair<int, int> Game::get_attack_coordinates() {
+	return this->attack_coordinates;
+}
 void Game::run() {
 	while (window.isOpen()) {
 		check_for_events(window, buttons);

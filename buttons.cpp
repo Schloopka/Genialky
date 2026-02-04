@@ -17,7 +17,7 @@ Button::Button(sf::Vector2f position, sf::Vector2f size, int id,  sf::Font& font
 	this->button_text.setFont(font);
 	this->button_text.setString(text);
 	this->button_text.setPosition({ position.x + size.x / 5.f, position.y + size.y / 5.f });
-	this->button_text.setFillColor(sf::Color::Red);
+	this->button_text.setFillColor(sf::Color::Black);
 	this->button_text.setCharacterSize(25);
 
 	this->id = id;
@@ -68,6 +68,23 @@ SquareButton::SquareButton(sf::Vector2f position, sf::Vector2f size, int row, in
 	this->id = id;
 }
 
+MenuButton::MenuButton(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, MenuOption menu_option)
+	:Button(position, size, id, font), menu_option(menu_option) {
+	button_shape.setPosition(position);
+	button_shape.setSize(size);
+	this->button_shape.setFillColor(sf::Color::Blue);
+	this->button_text.setFont(font);
+	std::string button_text = to_string(menu_option);
+	this->button_text.setString(button_text);
+	this->button_text.setPosition({ position.x + size.x / 10.f, position.y + size.y / 6.f });
+	this->button_text.setFillColor(sf::Color::Black);
+	this->button_text.setCharacterSize(25);
+
+}
+
+MenuOption MenuButton::get_menu_option() {
+	return this->menu_option;
+}
 
 
 

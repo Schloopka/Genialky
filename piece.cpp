@@ -162,6 +162,14 @@ void Piece::set_poisoned_for(int num) {
 	this->poisoned_for = num;
 }
 
+bool Piece::does_instant_attack() {
+	return this->instant_attack;
+}
+
+void Piece::set_instant_attack(bool attack_instant) {
+	this->instant_attack = attack_instant;
+}
+
 attackType Piece::get_attack_type() {
 	return this->attack_type;
 }
@@ -193,6 +201,10 @@ void Piece::ability_air_strike_select_square(int target_row, int target_column) 
 
 std::pair<int, int> Piece::get_air_strike_target_square() {
 	return { 0, 0 };
+}
+
+std::vector<MenuOption> Piece::get_menu_options() {
+	return {};
 }
 
 bool Piece::is_piece_in_can_move(std::vector<Piece*> pieces_can_move) {

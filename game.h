@@ -5,20 +5,30 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
-
-#include "buttons.h"
-#include "piece.h"
 #include "gamestate.h"
+#include <memory>
+/*#include "buttons.h"
+#include "piece.h"
+
+#include "menu.h"*/
+
+class Menu;
+class Button;
+class Piece;
+
 
 class Game {
 public:
 	Game();
+	~Game();
+
 	void run();
 	void setup();
 	void render_background(sf::RenderWindow& window);
 	void render_pieces(sf::RenderWindow& window); //renders pieces, called after every move
 	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window
 	void make_buttons(sf::RenderWindow& window); //make buttons at the start of the game, put them into vector
+	/*void make_menu(sf::RenderWindow& window, Piece* piece); //create menu when player needs to choose from more options*/
 	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector
 	 
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons);//check for events and calls isClicked if button is clicked
@@ -36,7 +46,7 @@ public:
 	void switchGamestate(); //makes the opposite player move
 	void switchGamestateAfterQueenAbility(bool white_on_move); //special switching gamestate after queen ability was used
 
-
+	
 	void set_pieces_can_move(std::vector<Piece*> pieces);
 	std::vector<Piece*> get_pieces_can_move();
 
@@ -50,20 +60,27 @@ public:
 
 	int get_moves_left();
 	void set_moves_left(int num); 
+	void set_to_delete_menu(bool val);
+	std::pair<int, int> get_attack_coordinates();
 	std::vector<Piece*> get_pieces();
 
-
+	sf::Font font;
 private:
 	sf::RenderWindow window;
-	sf::Font font;
-	std::vector<Button*> buttons;
-	std::vector<Piece*> pieces;
+	
+	std::vector<Button*> buttons; //vector of all buttons except menu buttons
+	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options
+	std::vector<Piece*> pieces; //vector of all pieces on board
 	std::vector<Piece*> pieces_can_move; //pieces that can move this turn, used when there is restriction which pieces can move
-	std::vector<Button*> last_clicked; 
+	std::vector<Button*> last_clicked; //vector of last clicked buttons
 	Gamestate gamestate = Gamestate::WHITE_TURN;
-	InputMode white_input_mode;
-	InputMode black_input_mode;
+	InputMode white_input_mode = InputMode::NORMAL;
+	InputMode black_input_mode = InputMode::NORMAL;
+	MenuType menu_type = MenuType::NONE;
 
+	std::pair<int, int> attack_coordinates = { 0, 0 }; //pair to remember which square is attacked by a piece when menu is needed after attack
+	
+	bool to_delete_menu = false; //bool to remember if I want to delete a menu after the process of the menu is done
 	bool white_king_on_board = true;
 	bool black_king_on_board = true;
 	bool piece_was_moved_this_turn = false; //literally if any piece moved from one square to another, used so rook can use its passive ability

@@ -1,13 +1,13 @@
 #pragma once
 
-
+#include "menu.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 
 class Game;
-
+enum class MenuOption;
 class Button {
 public:
 	Button(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, const std::string& text);
@@ -36,3 +36,13 @@ public:
 
 };
 
+class MenuButton : public Button {
+private:
+	MenuOption menu_option;
+public:
+	MenuButton(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, MenuOption menu_option);
+	MenuButton(const MenuButton&) = delete;
+	MenuButton& operator=(const MenuButton&) = delete;
+	MenuOption get_menu_option();
+
+};
