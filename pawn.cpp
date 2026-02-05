@@ -12,6 +12,7 @@ Pawn::Pawn(bool is_white, int row, int column, int reload) {
 	this->def_reload = reload;
 	this->curr_reload = reload;
 	this->attack_type = attackType::PHYSICAL;
+	this->promotes = true;
 }
 
 void Pawn::display(sf::RenderWindow& window) {
@@ -106,6 +107,15 @@ std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_
 		return { { curr_row - 1, curr_column + 1 },  {curr_row - 2, curr_column + 2 } };
 	}
 	return { {-1, -1} };
+}
+
+std::vector<MenuOption> Pawn::get_menu_options(Game& game) {
+	if (!game.get_king_on_board(is_white)) {
+		return { MenuOption::BISHOP };
+	}
+	else {
+		return { MenuOption::BISHOP, MenuOption::QUEEN, MenuOption::KNIGHT, MenuOption::ROOK };
+	}
 }
 
 bool Pawn::load_texture() {

@@ -26,7 +26,7 @@ public:
 	void ability_air_strike_select_square(int target_row, int target_column) override;
 	std::pair<int, int> get_air_strike_target_square() override;
 
-	std::vector<MenuOption> get_menu_options() override;
+	std::vector<MenuOption> get_menu_options(Game& game) override;
 
 private:
 	sf::Texture queenTexture;

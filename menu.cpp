@@ -15,7 +15,7 @@ void Menu::render(sf::RenderWindow& window) {
 
 PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
 	this->piece = piece;
-	this->options = this->piece.get_menu_options();
+	this->options = this->piece.get_menu_options(game);
 	int i = 0;
 	for (auto& option : options) {
 		buttons.push_back(new MenuButton({ 1000.f, 100.f + (i)*100.f}, {150.f, 50.f}, i, game.font, option));
@@ -41,15 +41,29 @@ void PieceMenu::handle_events(MenuButton& button, Game& game) {
 	switch (option) {
 	case MenuOption::DONT_MOVE:
 		this->piece.set_moves_when_attack(false);
-		this->piece.attack(game.get_attack_coordinates().first, game.get_attack_coordinates().second,
+		this->piece.attack(game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second,
 			game, this->piece.get_attack_type());
 		break;
 
 	case MenuOption::MOVE_TO_ATTACKED_SQUARE:
 		this->piece.set_moves_when_attack(true);
-		this->piece.attack(game.get_attack_coordinates().first, game.get_attack_coordinates().second,
+		this->piece.attack(game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second,
 			game, this->piece.get_attack_type());
 		break;
+
+	case MenuOption::BISHOP:
+		game.promote_piece(piece, { game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second }, PieceType::BISHOP);
+		break;
+	case MenuOption::KNIGHT:
+		game.promote_piece(piece, { game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second }, PieceType::KNIGHT);
+		break;
+	case MenuOption::ROOK:
+		game.promote_piece(piece, { game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second }, PieceType::ROOK);
+		break;
+	case MenuOption::QUEEN:
+		game.promote_piece(piece, { game.get_after_menu_coordinates().first, game.get_after_menu_coordinates().second }, PieceType::QUEEN);
+		break;
+			
 	}
 	game.set_to_delete_menu(true);
 }

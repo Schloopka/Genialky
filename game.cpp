@@ -227,7 +227,15 @@ void Game::handle_normal_moves() {
 			if (piece->can_move_to(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
 				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)  //if the piece can move to the second square
 				&& isThereAPiece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
-				piece->move_piece_to(dest_row, dest_column);
+				//if pawn promotes or not
+				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
+					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
+					after_menu_dest_coordinates = { dest_row, dest_column };
+				}
+				else {
+					piece->move_piece_to(dest_row, dest_column);
+				}
+				
 				std::cout << "move" << std::endl;
 				piece_was_moved_this_turn = true;
 				moves_left--;
@@ -241,7 +249,7 @@ void Game::handle_normal_moves() {
 				}
 				else {
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
-					attack_coordinates = { dest_row, dest_column };
+					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				piece_attacking = piece;
 				std::cout << "take" << std::endl;
@@ -396,6 +404,29 @@ void Game::set_input_mode(Gamestate gamestate, InputMode input_mode) {
 	}
 }
 
+void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type) {
+	//add new piece
+	switch (piece_type) {
+	case PieceType::BISHOP:
+		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 1));
+		pieces.back()->load_texture();
+		break;
+	case PieceType::KNIGHT:
+		pieces.push_back(new Knight(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.back()->load_texture();
+		break;
+	case PieceType::ROOK:
+		pieces.push_back(new Rook(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.back()->load_texture();
+		break;
+	case PieceType::QUEEN:
+		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.back()->load_texture();
+		break;
+	};
+	//delete the pawn
+	eliminate_pieces_from(promoting_piece.get_row(), promoting_piece.get_column(), attackType::ELIMINATION);
+}
 void Game::update_stats() {
 	//after player's move, temporary stats of their pieces are lowered
 	if (gamestate == Gamestate::WHITE_TURN) {
@@ -469,8 +500,8 @@ void Game::set_to_delete_menu(bool val) {
 	this->to_delete_menu = val;
 }
 
-std::pair<int, int> Game::get_attack_coordinates() {
-	return this->attack_coordinates;
+std::pair<int, int> Game::get_after_menu_coordinates() {
+	return this->after_menu_dest_coordinates;
 }
 void Game::run() {
 	while (window.isOpen()) {

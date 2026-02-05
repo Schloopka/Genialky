@@ -22,7 +22,8 @@ enum class airStrikePhase {
 enum class attackType {
 	PHYSICAL,
 	SHOOTING,
-	MAGIC
+	MAGIC,
+	ELIMINATION
 };
 
 enum class MenuType {
@@ -31,14 +32,33 @@ enum class MenuType {
 };
 
 enum class MenuOption {
+	//move when attack or not
 	MOVE_TO_ATTACKED_SQUARE,
-	DONT_MOVE
+	DONT_MOVE,
+	//promotion
+	ROOK,
+	BISHOP,
+	QUEEN,
+	KNIGHT
+};
+
+enum class PieceType {
+	PAWN,
+	BISHOP,
+	KNIGHT,
+	ROOK,
+	QUEEN,
+	KING
 };
 
 inline std::string to_string(MenuOption option) {
 	switch (option) {
 	case MenuOption::MOVE_TO_ATTACKED_SQUARE:     return "Move piece";
 	case MenuOption::DONT_MOVE:   return "Stay";
+	case MenuOption::ROOK: return "Rook";
+	case MenuOption::QUEEN: return "Queen";
+	case MenuOption::KNIGHT: return "Knight";
+	case MenuOption::BISHOP: return "Bishop";
 	default:                   return "Unknown";
 	}
 }

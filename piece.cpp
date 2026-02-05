@@ -170,6 +170,10 @@ void Piece::set_instant_attack(bool attack_instant) {
 	this->instant_attack = attack_instant;
 }
 
+bool Piece::get_promotes() {
+	return this->promotes;
+}
+
 attackType Piece::get_attack_type() {
 	return this->attack_type;
 }
@@ -203,7 +207,7 @@ std::pair<int, int> Piece::get_air_strike_target_square() {
 	return { 0, 0 };
 }
 
-std::vector<MenuOption> Piece::get_menu_options() {
+std::vector<MenuOption> Piece::get_menu_options(Game& game) {
 	return {};
 }
 

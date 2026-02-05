@@ -45,7 +45,8 @@ public:
 	void update_stats(); //after each turn, every piece of the person whose move ended has their stun, root or reload lowered by one (in this order)
 	void switchGamestate(); //makes the opposite player move
 	void switchGamestateAfterQueenAbility(bool white_on_move); //special switching gamestate after queen ability was used
-
+	
+	void promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type);
 	
 	void set_pieces_can_move(std::vector<Piece*> pieces);
 	std::vector<Piece*> get_pieces_can_move();
@@ -61,7 +62,7 @@ public:
 	int get_moves_left();
 	void set_moves_left(int num); 
 	void set_to_delete_menu(bool val);
-	std::pair<int, int> get_attack_coordinates();
+	std::pair<int, int> get_after_menu_coordinates();
 	std::vector<Piece*> get_pieces();
 
 	sf::Font font;
@@ -78,7 +79,7 @@ private:
 	InputMode black_input_mode = InputMode::NORMAL;
 	MenuType menu_type = MenuType::NONE;
 
-	std::pair<int, int> attack_coordinates = { 0, 0 }; //pair to remember which square is attacked by a piece when menu is needed after attack
+	std::pair<int, int> after_menu_dest_coordinates = { 0, 0 }; //pair to remember which square is attacked by a piece when menu is needed after attack
 	
 	bool to_delete_menu = false; //bool to remember if I want to delete a menu after the process of the menu is done
 	bool white_king_on_board = true;

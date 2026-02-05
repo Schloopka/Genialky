@@ -124,7 +124,7 @@ bool Queen::can_be_eliminated(attackType attack_type, Game& game) {
 	}
 	return true;
 }
-std::vector<MenuOption> Queen::get_menu_options() {
+std::vector<MenuOption> Queen::get_menu_options(Game& game) {
 	return { MenuOption::DONT_MOVE, MenuOption::MOVE_TO_ATTACKED_SQUARE };
 }
 

@@ -61,6 +61,7 @@ public:
 	void set_poisoned_for(int num); //sets poison to num
 	bool does_instant_attack();
 	void set_instant_attack(bool atttack_instant);
+	bool get_promotes();
 
 	int get_moves_since_last_moved();
 	void set_moves_since_last_moved(int num);
@@ -76,7 +77,7 @@ public:
 	virtual void ability_air_strike_select_square(int target_row, int target_column);
 	virtual std::pair<int, int> get_air_strike_target_square();
 
-	virtual std::vector<MenuOption> get_menu_options();
+	virtual std::vector<MenuOption> get_menu_options(Game& game);
 
 protected:
 	int row;
@@ -89,7 +90,8 @@ protected:
 	bool moves_when_attack = false; //true if the piece moves to the square where it eliminated other pieces
 	bool poisons_when_attacks = false; //true if the piece poisons the piece it attacks
 	bool instant_attack = true; //true if the piece doesnt need menu when it attacks
-
+	bool promotes = false; //if piece promotes when moved to last row
+	
 	int poison_attack = 0; //how many half-moves the piece poisons the piece it attacks for
 	int def_reload = 0; //how many moves it takes the piece to reload
 	int curr_reload = 0; //current state how many move left until the piece can attack again
