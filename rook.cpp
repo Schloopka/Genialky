@@ -51,10 +51,14 @@ bool Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_col
 		std::cout << "select airstrike target" << std::endl;
 		return false;
 	}
-	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) ||
-		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1) //valid position change
+	if (game.get_moves_left() <= 0) {
+		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
+		return false;
+	}
+	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) ||
+		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1)) //valid position change
 		&& (game.get_moves_left() > 0 || //either there are moves left
-			(game.get_king_on_board(is_white)&& game.get_piece_was_moved_this_turn()==false))/*or king is on board and rook can use its passive*/) {
+			(game.get_king_on_board(is_white) && game.get_piece_was_moved_this_turn()==false))/*or king is on board and rook can use its passive*/) {
 		return true;
 	}
 
@@ -64,11 +68,29 @@ bool Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_col
 
 //returns true if it can interact with the second square as attack
 bool Rook::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
+	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
+		std::cout << "not your turn" << std::endl;
 		return false;
 	}
-	//if the piece is reloading, it cant attack
-	if (curr_reload > 0) {
+	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
+		std::cout << "not your turn" << std::endl;
+		return false;
+	}
+	//check if the piece is in the pieces that can move this turn
+	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
+		std::cout << "cant move this turn" << std::endl;
+		return false;
+	}
+	if (curr_stun > 0) {
+		std::cout << "stunned" << std::endl;
+		return false;
+	}
+	if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
+		std::cout << "select airstrike target" << std::endl;
+		return false;
+	}
+	if (game.get_moves_left() <= 0) {
+		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
 		return false;
 	}
 	

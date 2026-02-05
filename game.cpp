@@ -164,8 +164,10 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 void Game::handle_events(Button* button) {
 	this->last_clicked.push_back(button);
 	std::cout << last_clicked.back()->get_id() << std::endl;
-	
-	if (this->last_clicked.size() == 1) {
+	if (this->last_clicked.size() > 2) {
+		this->last_clicked.clear();
+	}
+	else if (this->last_clicked.size() == 1) {
 		handle_other_buttons();
 	}
 	//after the airstrike, queen gets one free move
@@ -239,7 +241,6 @@ void Game::handle_normal_moves() {
 				std::cout << "move" << std::endl;
 				piece_was_moved_this_turn = true;
 				moves_left--;
-				break;
 			}
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
@@ -278,6 +279,8 @@ void Game::handle_other_buttons() {
 		}
 		else {
 			std::cout << "You have to make a move until ending turn" << std::endl;
+			this->last_clicked.clear(); //if player clicks to end move and cant end it, 
+			//we clear the buttons so it doesnt mess when they click on normal button again
 		}
 
 	}
