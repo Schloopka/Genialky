@@ -10,7 +10,7 @@ class Game;
 
 class Pawn : public Piece {
 public:
-	Pawn(bool is_white, int row, int column, int reload);
+	Pawn(bool is_white, int row, int column);
 	void display(sf::RenderWindow& window) override;
 	bool can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	bool load_texture() override;

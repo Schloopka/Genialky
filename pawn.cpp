@@ -5,12 +5,10 @@
 #include "gamestate.h"
 #include "game.h"
 
-Pawn::Pawn(bool is_white, int row, int column, int reload) {
+Pawn::Pawn(bool is_white, int row, int column) {
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
-	this->def_reload = reload;
-	this->curr_reload = reload;
 	this->attack_type = attackType::PHYSICAL;
 	this->promotes = true;
 }
@@ -78,7 +76,8 @@ bool Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_colu
 		if ((dest_row - curr_row == -1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == -2 && std::abs(dest_column - curr_column) == 2)) {
 			return true;
 		}
-	}	
+	}
+	return false;
 }
 
 bool Pawn::can_be_eliminated(attackType attack_type, Game& game) {

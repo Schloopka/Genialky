@@ -12,11 +12,11 @@ class Game;
 
 struct AirStrikeData
 {
-	int original_row;
-	int original_column;
+	int original_row = 0;
+	int original_column = 0;
 
-	int target_row;
-	int target_column;
+	int target_row = 0;
+	int target_column = 0;
 
 	airStrikePhase phase = airStrikePhase::NOT_ACTIVE;
 
@@ -80,8 +80,8 @@ public:
 	virtual std::vector<MenuOption> get_menu_options(Game& game);
 
 protected:
-	int row;
-	int column;
+	int row = 0;
+	int column = 0;
 	bool is_white;
 	bool has_moved = false;
 	int moves_since_last_moved = 0;
@@ -103,7 +103,7 @@ protected:
 	//but also after some time, default set to "infinity"
 	
 	attackType attack_type;
-	AirStrikeData air_strike_data;
+	AirStrikeData air_strike_data{};
 
 	std::string image;
 };

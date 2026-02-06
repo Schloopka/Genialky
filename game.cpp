@@ -43,58 +43,38 @@ void Game::setup_pieces(sf::RenderWindow & window) {
 	//pawns
 	for (int i = 0; i < 8; i++) {
 		//white
-		pieces.push_back(new Pawn(true, 1, i, 3));
-		pieces.back()->load_texture();
+		pieces.push_back(new Pawn(true, 1, i));
 	}
 
 	for (int i = 0; i < 8; i++) {
 		//black
-		pieces.push_back(new Pawn(false, 6, i, 3));
-		pieces.back()->load_texture();
+		pieces.push_back(new Pawn(false, 6, i));
 	}
-
 	//bishops
-	pieces.push_back(new Bishop(true, 0, 2, 1));
-	pieces.back()->load_texture();
-	pieces.push_back(new Bishop(true, 0, 5, 1));
-	pieces.back()->load_texture();
-	pieces.push_back(new Bishop(false, 7, 2, 1));
-	pieces.back()->load_texture();
-	pieces.push_back(new Bishop(false, 7, 5, 1));
-	pieces.back()->load_texture();
-
+	pieces.push_back(new Bishop(true, 0, 2));
+	pieces.push_back(new Bishop(true, 0, 5));
+	pieces.push_back(new Bishop(false, 7, 2));
+	pieces.push_back(new Bishop(false, 7, 5));
 	//knights
-	pieces.push_back(new Knight(true, 0, 1, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Knight(true, 0, 6, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Knight(false, 7, 1, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Knight(false, 7, 6, 0));
-	pieces.back()->load_texture();
-
+	pieces.push_back(new Knight(true, 0, 1));
+	pieces.push_back(new Knight(true, 0, 6));
+	pieces.push_back(new Knight(false, 7, 1));
+	pieces.push_back(new Knight(false, 7, 6));
 	//kings
-	pieces.push_back(new King(true, 0, 4, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new King(false, 7, 4, 0));
-	pieces.back()->load_texture();
-
+	pieces.push_back(new King(true, 0, 4));
+	pieces.push_back(new King(false, 7, 4));
 	//rooks
-	pieces.push_back(new Rook(true, 0, 0, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Rook(true, 0, 7, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Rook(false, 7, 0, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Rook(false, 7, 7, 0));
-	pieces.back()->load_texture();
-
+	pieces.push_back(new Rook(true, 0, 0));
+	pieces.push_back(new Rook(true, 0, 7));
+	pieces.push_back(new Rook(false, 7, 0));
+	pieces.push_back(new Rook(false, 7, 7));
 	//queens
-	pieces.push_back(new Queen(true, 0, 3, 0));
-	pieces.back()->load_texture();
-	pieces.push_back(new Queen(false, 7, 3, 0));
-	pieces.back()->load_texture();
-
+	pieces.push_back(new Queen(true, 0, 3));
+	pieces.push_back(new Queen(false, 7, 3));
+	//load textures
+	for (auto& piece : pieces) {
+		piece->load_texture();
+	}
 }
 
 void Game::render_background(sf::RenderWindow& window) {
@@ -411,19 +391,19 @@ void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordi
 	//add new piece
 	switch (piece_type) {
 	case PieceType::BISHOP:
-		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 1));
+		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		pieces.back()->load_texture();
 		break;
 	case PieceType::KNIGHT:
-		pieces.push_back(new Knight(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.push_back(new Knight(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		pieces.back()->load_texture();
 		break;
 	case PieceType::ROOK:
-		pieces.push_back(new Rook(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.push_back(new Rook(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		pieces.back()->load_texture();
 		break;
 	case PieceType::QUEEN:
-		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second, 0));
+		pieces.push_back(new Queen(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		pieces.back()->load_texture();
 		break;
 	};

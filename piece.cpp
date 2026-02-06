@@ -5,7 +5,7 @@
 #include <iostream>
 class Game;
 
-Piece::Piece(){}
+Piece::Piece():row(0), column(0), is_white(true), attack_type(attackType::ELIMINATION){}
 
 void Piece::display(sf::RenderWindow& window) {
 

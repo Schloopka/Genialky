@@ -11,7 +11,7 @@ class Game;
 
 class King : public Piece {
 public:
-	King(bool is_white, int row, int column, int reload);
+	King(bool is_white, int row, int column);
 	void display(sf::RenderWindow& window) override;
 	bool can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	bool load_texture() override;

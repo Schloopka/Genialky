@@ -8,12 +8,10 @@
 
 
 
-Queen::Queen(bool is_white, int row, int column, int reload) {
+Queen::Queen(bool is_white, int row, int column) {
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
-	this->def_reload = reload;
-	this->curr_reload = reload;
 	this->moves_when_attack = false;
 	this->def_ability_reload = 6;
 	this->attack_type = attackType::PHYSICAL;

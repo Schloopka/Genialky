@@ -8,12 +8,10 @@
 
 
 
-Rook::Rook(bool is_white, int row, int column, int reload) {
+Rook::Rook(bool is_white, int row, int column) {
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
-	this->def_reload = reload;
-	this->curr_reload = reload;
 	this->moves_when_attack = true;
 	this->poisons_when_attacks = false;
 	this->attack_type = attackType::PHYSICAL;
