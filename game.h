@@ -28,7 +28,6 @@ public:
 	void render_pieces(sf::RenderWindow& window); //renders pieces, called after every move
 	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window
 	void make_buttons(sf::RenderWindow& window); //make buttons at the start of the game, put them into vector
-	/*void make_menu(sf::RenderWindow& window, Piece* piece); //create menu when player needs to choose from more options*/
 	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector
 	 
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons);//check for events and calls isClicked if button is clicked
@@ -52,7 +51,7 @@ public:
 	std::vector<Piece*> get_pieces_can_move();
 
 	void set_input_mode(Gamestate gamestate, InputMode input_mode);//depending on gamestate, sets the input mode for that player
-
+	InputMode get_input_mode(bool is_white); //returns input mode of player in the argument
 	void set_king_on_board(bool king_on_board, bool is_white); //changes if king of a colour is on board
 	bool get_king_on_board(bool is_white);
 

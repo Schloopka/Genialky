@@ -167,12 +167,16 @@ void Game::handle_events(Button* button) {
 	}
 	//queen ability - airstrike from the special square
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
-		white_input_mode == InputMode::AIRSTRIKE_SELECT_TARGET && this->last_clicked.front()->get_id() == 65) {//white airstrike, first click is ability square
+		white_input_mode == InputMode::AIRSTRIKE_SELECT_TARGET && this->last_clicked.front()->get_id() == 65
+		&& moves_left != 0) {//white airstrike, first click is ability square
 		handle_queen_select_airstrike(true);
+		moves_left = 1; //the player can make one more move after selecting target square
 	}
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::BLACK_TURN &&
-		black_input_mode == InputMode::AIRSTRIKE_SELECT_TARGET && this->last_clicked.front()->get_id() == 66) {//black airstrike, first click is ability square
+		black_input_mode == InputMode::AIRSTRIKE_SELECT_TARGET && this->last_clicked.front()->get_id() == 66
+		&& moves_left != 0) {//black airstrike, first click is ability square
 		handle_queen_select_airstrike(false);
+		moves_left = 1; //the player can make one more move after selecting target square
 	}
 	else if (this->last_clicked.size() == 2 && this->last_clicked.back()->get_id() < 64) {//normal move or ability activation
 		handle_normal_moves();
@@ -180,15 +184,21 @@ void Game::handle_events(Button* button) {
 }
 
 void Game::handle_queen_select_airstrike(bool white_on_move) {
+
 	for (auto& piece : pieces) {
+		//distance of compound movement how far the queen traveled during airstrike
+		int distance = std::abs(piece->get_air_strike_original_square().first - piece->get_air_strike_target_square().first)
+			+ std::abs(piece->get_air_strike_original_square().second - piece->get_air_strike_target_square().second);
 		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE
-			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate) {
+			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate
+			&& distance <= 4) {
 			piece->ability_air_strike_select_square(
 				this->last_clicked.back()->get_id() / 8,
 				this->last_clicked.back()->get_id() % 8);
 			(white_on_move ? white_input_mode : black_input_mode) = InputMode::AFTER_AIRSTRIKE_SELECT_TARGET;
 			piece->set_air_strike_phase(airStrikePhase::RESOLVING_ATTACK);
 			std::cout << "airstrike target selected" << std::endl;
+			moves_left--;
 		}
 	}
 	clear_buttons_clicked();
@@ -251,6 +261,7 @@ void Game::handle_normal_moves() {
 		piece_attacking->set_moves_since_last_took(0);
 	}
 }
+
 void Game::handle_other_buttons() {
 	if (last_clicked.front()->get_id() == 67) {
 		if (moves_left <= 0) {
@@ -266,6 +277,7 @@ void Game::handle_other_buttons() {
 
 	}
 }
+
 void Game::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
@@ -388,6 +400,9 @@ void Game::set_input_mode(Gamestate gamestate, InputMode input_mode) {
 	}
 }
 
+InputMode Game::get_input_mode(bool is_white) {
+	return (is_white ? white_input_mode : black_input_mode);
+}
 void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type) {
 	//add new piece
 	switch (piece_type) {
@@ -411,6 +426,7 @@ void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordi
 	//delete the pawn
 	eliminate_pieces_from(promoting_piece.get_row(), promoting_piece.get_column(), attackType::ELIMINATION);
 }
+
 void Game::update_stats() {
 	//after player's move, temporary stats of their pieces are lowered
 	if (gamestate == Gamestate::WHITE_TURN) {

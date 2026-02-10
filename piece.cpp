@@ -211,6 +211,9 @@ void Piece::ability_air_strike_select_square(int target_row, int target_column) 
 std::pair<int, int> Piece::get_air_strike_target_square() {
 	return { 0, 0 };
 }
+std::pair<int, int> Piece::get_air_strike_original_square() {
+	return { 0, 0 };
+}
 
 std::vector<MenuOption> Piece::get_menu_options(Game& game) {
 	return {};

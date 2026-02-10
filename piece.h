@@ -76,6 +76,7 @@ public:
 	void set_air_strike_phase(airStrikePhase phase);
 	virtual void ability_air_strike_select_square(int target_row, int target_column);
 	virtual std::pair<int, int> get_air_strike_target_square();
+	virtual std::pair<int, int> get_air_strike_original_square();
 
 	virtual std::vector<MenuOption> get_menu_options(Game& game);
 
