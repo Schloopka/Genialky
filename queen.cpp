@@ -99,7 +99,6 @@ void Queen::activate_ability(Gamestate gamestate, Game& game) {
 
 	air_strike_data.phase = airStrikePhase::SELECTING_SQUARE;
 	game.set_input_mode(gamestate, InputMode::AIRSTRIKE_SELECT_TARGET);
-	game.switchGamestate();
 
 	this->moves_when_attack = true;
 

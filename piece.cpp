@@ -145,7 +145,12 @@ int Piece::get_ability_reload() {
 void Piece::set_ability_reload(int num) {
 	this->curr_ability_reload = num;
 }
-
+void Piece::set_ability_length(int num) {
+	this->curr_ability_length = num;
+}
+int Piece::get_ability_length(){
+	return curr_ability_length;
+}
 int Piece::get_curr_stun() {
 	return this->curr_stun;
 }

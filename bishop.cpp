@@ -13,7 +13,7 @@ Bishop::Bishop(bool is_white, int row, int column) {
 	this->row = row;
 	this->column = column;
 	this->def_reload = 1;
-	this->curr_reload = 1;
+	this->curr_reload = 1;;
 	this->attack_type = attackType::SHOOTING;
 }
 
@@ -48,15 +48,11 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 	//if the piece is reloading, it cant attack with shooting attack, but can do physical attack
 	if (curr_reload == 0) {
 		//kušník
-		//if the diagonal distance is less than 3 (or 5 depending on king) and it does not attack itsself
-		if ((std::abs(curr_row - dest_row) <= 3 && std::abs(curr_row - dest_row) != 0 &&
-			std::abs(curr_column - dest_column) <= 3 && std::abs(curr_column - dest_column) != 0
-			&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column))//without king on board
-
-			|| (std::abs(curr_row - dest_row) <= 5 && std::abs(curr_row - dest_row) != 0 &&
-				std::abs(curr_column - dest_column) <= 5 && std::abs(curr_column - dest_column) != 0
-				&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)
-				&& game.get_king_on_board(is_white))/*with king on board*/) {
+		//if the diagonal distance is less than 3 and it does not attack itsself
+		int max_shot_distance = (curr_ability_length > 0 ? 5 : 3);
+		if ((std::abs(curr_row - dest_row) <= max_shot_distance && std::abs(curr_row - dest_row) != 0 &&
+			std::abs(curr_column - dest_column) <= max_shot_distance && std::abs(curr_column - dest_column) != 0
+			&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)))/*with king on board*/ {
 			int distance = std::abs(curr_row - dest_row); //how far the bishop shoots, we need to check it doesnt shoot over any other piece
 			bool shoot_up = (dest_row > curr_row ? true : false); //if shot is to higher row
 			bool shoot_right = (dest_column > curr_column ? true : false);//if shot is to higher column (to the right)
@@ -85,6 +81,21 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 
 	return false;
 
+}
+
+void Bishop::activate_ability(Gamestate gamestate, Game& game) {
+	this->curr_ability_reload = 2;//plus one because it is lowered by one after every move including this one
+	this->curr_ability_length = 2; //the ability holds only for the next move, but this stat is lowered after every move
+}
+
+bool Bishop::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (not can_do_anything(gamestate, inputmode, game)) {
+		return false;
+	}
+	if (curr_ability_reload > 0) {
+		return false;
+	}
+	return true;
 }
 bool Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 	return true;

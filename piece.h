@@ -50,10 +50,10 @@ public:
 	int get_reload();
 	void set_reload(int num); //used ie when you need to lower current reload
 	void reset_reload(); //used when the piece attacks and sets the current reload to default reload
-
 	int get_ability_reload();
 	void set_ability_reload(int num);
-
+	void set_ability_length(int num);
+	int get_ability_length();
 	int get_curr_stun(); //returns the current moves left  until the piece is not stunned
 	void set_curr_stun(int num); //sets stun to num
 
@@ -95,8 +95,9 @@ protected:
 	int poison_attack = 0; //how many half-moves the piece poisons the piece it attacks for
 	int def_reload = 0; //how many moves it takes the piece to reload
 	int curr_reload = 0; //current state how many move left until the piece can attack again
-	int def_ability_reload = 0;
-	int curr_ability_reload = 0;
+	int def_ability_reload = 0; //how many moves the ability reloads
+	int curr_ability_reload = 0; //how many moves are left until player can use the ability again
+	int curr_ability_length = 0; //how many moves are left until the ability disappears
 	int curr_stun = 0; //how many moves the piece is stunned
 
 	int poisoned_for = 10000; //after how many half-moves the piece dies, this allows so some pieces to be eliminated just after they are poisoned

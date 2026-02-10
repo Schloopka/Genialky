@@ -241,6 +241,7 @@ void Game::handle_normal_moves() {
 					gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)) {
 				piece->activate_ability(gamestate, *this);
 				std::cout << "ability" << std::endl;
+				moves_left--;
 			}
 		}
 	}
@@ -422,6 +423,7 @@ void Game::update_stats() {
 				else if (piece->get_reload() > 0 || piece->get_ability_reload() > 0){
 					piece->set_reload(std::max(0, piece->get_reload() - 1)); //lowers the reload by one
 					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1)); //lowers the ability reload by one
+					piece->set_ability_length(std::max(0, piece->get_ability_length() - 1)); //ability length is lowered by one
 				}
 				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
 				piece->set_moves_since_last_took(piece->get_moves_since_last_took() + 1);
@@ -436,7 +438,8 @@ void Game::update_stats() {
 				}
 				else if (piece->get_reload() > 0 || piece->get_ability_reload() > 0) {
 					piece->set_reload(std::max(0, piece->get_reload() - 1)); //lowers the reload by one
-					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1));
+					piece->set_ability_reload(std::max(0, piece->get_ability_reload() - 1));//lowers the ability reload by one
+					piece->set_ability_length(std::max(0, piece->get_ability_length() - 1));//ability length is lowered by one
 				}
 				piece->set_moves_since_last_moved(piece->get_moves_since_last_moved() + 1);
 				piece->set_moves_since_last_took(piece->get_moves_since_last_took() + 1);
@@ -453,7 +456,6 @@ void Game::update_stats() {
 std::vector<Piece*> Game::get_pieces() {
 	return pieces;
 }
-
 void Game::set_king_on_board(bool is_on_board, bool is_white) {
 	if (is_white) {
 		this->white_king_on_board = is_on_board;
@@ -462,11 +464,9 @@ void Game::set_king_on_board(bool is_on_board, bool is_white) {
 		this->black_king_on_board = is_on_board;
 	}
 }
-
 bool Game::get_king_on_board(bool is_white) {
 	return (is_white ? white_king_on_board : black_king_on_board);
 }
-
 void Game::set_piece_was_moved_this_turn() {
 	this->piece_was_moved_this_turn = true;
 }

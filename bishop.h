@@ -17,6 +17,8 @@ public:
 	bool load_texture() override;
 	bool can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	bool can_be_eliminated(attackType attack_type, Game& game) override;
+	void activate_ability(Gamestate gamestate, Game& game) override;
+	bool can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) override;
 	std::vector<std::vector<int>> get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) override;
 
 private:
