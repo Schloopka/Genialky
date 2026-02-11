@@ -186,12 +186,10 @@ void Game::handle_events(Button* button) {
 void Game::handle_queen_select_airstrike(bool white_on_move) {
 
 	for (auto& piece : pieces) {
-		//distance of compound movement how far the queen traveled during airstrike
-		int distance = std::abs(piece->get_air_strike_original_square().first - piece->get_air_strike_target_square().first)
-			+ std::abs(piece->get_air_strike_original_square().second - piece->get_air_strike_target_square().second);
 		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE
 			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate
-			&& distance <= 4) {
+			&& std::abs(piece->get_air_strike_original_square().first - this->last_clicked.back()->get_id() / 8) <= 4
+			&& std::abs(piece->get_air_strike_original_square().second - this->last_clicked.back()->get_id() % 8) <= 4) {
 			piece->ability_air_strike_select_square(
 				this->last_clicked.back()->get_id() / 8,
 				this->last_clicked.back()->get_id() % 8);

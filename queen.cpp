@@ -65,7 +65,6 @@ bool Queen::can_attack(int curr_row, int curr_column, int dest_row, int dest_col
 	}
 	//if queen is after airstrik attack, it has to move
 	bool is_after_air_strike_attack = (game.get_input_mode(is_white) == InputMode::AIRSTRIKE_RESOLVE_ATTACK ? true : false);
-	if (game.get_input_mode(is_white) == InputMode::AIRSTRIKE_RESOLVE_ATTACK)
 	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1
 		&& (curr_row != dest_row || curr_column != dest_column) && game.get_king_on_board(is_white)
 		&& not is_after_air_strike_attack) {

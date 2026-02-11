@@ -77,7 +77,7 @@ bool King::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& 
 }
 
 void King::activate_ability(Gamestate gamestate, Game& game){
-	game.set_moves_left(3); 
+	game.set_moves_left(4); //king gets three moves but one is used to activate this ability
 	curr_ability_reload = def_ability_reload+1;
 
 }

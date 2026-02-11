@@ -117,7 +117,7 @@ bool Rook::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& 
 }
 
 void Rook::activate_ability(Gamestate gamestate, Game& game) {
-	game.set_moves_left(3); 
+	game.set_moves_left(4); //rook gets three moves but activating ability takes one
 	this->poisons_when_attacks = true; //switches to poison mode
 	curr_ability_reload = 1; //so the rook cannot call ability when its effect is active 
 	set_poisoned_for(1); //rook dies after the ability is done
