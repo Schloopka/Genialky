@@ -27,6 +27,7 @@ public:
 	std::pair<int, int> get_air_strike_target_square() override;
 	std::pair<int, int> get_air_strike_original_square() override; 
 	std::vector<MenuOption> get_menu_options(Game& game) override;
+	PieceType get_type() override;
 
 private:
 	sf::Texture queenTexture;

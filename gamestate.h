@@ -62,3 +62,4 @@ inline std::string to_string(MenuOption option) {
 	default:                   return "Unknown";
 	}
 }
+

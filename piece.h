@@ -22,6 +22,7 @@ struct AirStrikeData
 
 };
 
+
 class Piece {
 public:
 	Piece();
@@ -70,7 +71,8 @@ public:
 	void set_moves_since_last_took(int num);
 
 	attackType get_attack_type();
-
+	virtual PieceType get_type(); //this function is applied only to difference between queen and not queen
+	//if you want to use it to other pieces, you have to update it in classes of concrete pieces
 
 	airStrikePhase get_air_strike_phase();
 	void set_air_strike_phase(airStrikePhase phase);
@@ -81,6 +83,7 @@ public:
 	virtual std::vector<MenuOption> get_menu_options(Game& game);
 
 protected:
+	PieceType type;
 	int row = 0;
 	int column = 0;
 	bool is_white;

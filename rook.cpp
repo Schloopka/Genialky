@@ -49,10 +49,6 @@ bool Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_col
 		std::cout << "select airstrike target" << std::endl;
 		return false;
 	}
-	if (game.get_moves_left() <= 0) {
-		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
-		return false;
-	}
 	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) ||
 		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1)) //valid position change
 		&& (game.get_moves_left() > 0 || //either there are moves left

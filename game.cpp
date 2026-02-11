@@ -154,14 +154,30 @@ void Game::handle_events(Button* button) {
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
 		white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 		handle_normal_moves(); //illegal move (which includes doubleclicking the same square) means the player doesnt want to move the queen after airstrike
-		set_pieces_can_move(pieces); //every piece can move after the queen free move
+		std::vector<Piece*> pieces_without_queens;
+		for (const auto& piece : pieces)
+		{
+			if (piece->get_type() != PieceType::QUEEN)
+			{
+				pieces_without_queens.push_back(piece);
+			}
+		}
+		set_pieces_can_move(pieces_without_queens); //every piece can move after the queen free move
 		moves_left = 1; //the player gets one move even if they made no move with the queen
 		white_input_mode = InputMode::NORMAL; //after the queen free move, then the white player can continue their turn normally
 	}
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::BLACK_TURN &&
 		black_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 		handle_normal_moves(); //illegal move means the player doesnt want to move the queen after airstrike
-		set_pieces_can_move(pieces);
+		std::vector<Piece*> pieces_without_queens;
+		for (const auto& piece : pieces)
+		{
+			if (piece->get_type() != PieceType::QUEEN)
+			{
+				pieces_without_queens.push_back(piece);
+			}
+		}
+		set_pieces_can_move(pieces_without_queens); //every piece can move after the queen free move
 		moves_left = 1; //the player gets one move even if they made no move with the queen
 		black_input_mode = InputMode::NORMAL; //after the queen free move, then the white player can continue their turn normally
 	}
@@ -186,10 +202,11 @@ void Game::handle_events(Button* button) {
 void Game::handle_queen_select_airstrike(bool white_on_move) {
 
 	for (auto& piece : pieces) {
-		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE
-			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate
+		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE //piece is queen selecting square
+			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate //correct player is on move
+			&& (piece->is_piece_white() == white_on_move) //the piece is of player who is on move
 			&& std::abs(piece->get_air_strike_original_square().first - this->last_clicked.back()->get_id() / 8) <= 4
-			&& std::abs(piece->get_air_strike_original_square().second - this->last_clicked.back()->get_id() % 8) <= 4) {
+			&& std::abs(piece->get_air_strike_original_square().second - this->last_clicked.back()->get_id() % 8) <= 4)/*distance limitations*/ {
 			piece->ability_air_strike_select_square(
 				this->last_clicked.back()->get_id() / 8,
 				this->last_clicked.back()->get_id() % 8);
@@ -348,10 +365,9 @@ void Game::switchGamestateAfterQueenAbility(bool white_on_turn) {
 			int taget_row = piece->get_air_strike_target_square().first;
 			int target_column = piece->get_air_strike_target_square().second;
 			piece->set_air_strike_phase(airStrikePhase::NOT_ACTIVE); //the ability is over for the queen, so reset the state to default
-			piece->set_ability_reload(6);
+			piece->set_ability_reload(7);
 			set_pieces_can_move({ piece }); //after airstrike, only the queen can move
 			piece->attack(taget_row, target_column, *this, piece->get_attack_type());
-			piece->set_moves_when_attack(false); //
 		}
 	}
 	moves_left = 2; //black queen can move again after airstrike

@@ -214,7 +214,9 @@ std::pair<int, int> Piece::get_air_strike_target_square() {
 std::pair<int, int> Piece::get_air_strike_original_square() {
 	return { 0, 0 };
 }
-
+PieceType Piece::get_type() {
+	return PieceType::PAWN;
+}
 std::vector<MenuOption> Piece::get_menu_options(Game& game) {
 	return {};
 }
