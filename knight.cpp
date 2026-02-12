@@ -24,44 +24,44 @@ void Knight::display(sf::RenderWindow& window) {
 
 }
 //returns true if it can move to the second square
-bool Knight::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Knight::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//mustang
 	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) 
 		|| (std::abs(curr_row - dest_row) == 1 && curr_column == dest_column)) {//can move one on column or row, not diagonally
-		return true;
+		return MoveResult::VALID;
 	}
 
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 
 //returns true if it can interact with the second square as attack
-bool Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+MoveResult Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	if (curr_reload > 0) {
-		return false;
+		return MoveResult::REALOADING;
 	}
 	
 	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 2)
 		|| (std::abs(curr_row - dest_row) == 2 && curr_column == dest_column)) {//can move one on column or row, not diagonally
 		stun_lenght = 1; //when knight moves two squares forward, then it stuns for one move
-		return true;
+		return MoveResult::VALID;
 	}
 	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 3)
 		|| (std::abs(curr_row - dest_row) == 3 && curr_column == dest_column))
 		&& game.get_king_on_board(is_white)) {
 		stun_lenght = 2; //when knight moves two squares forward, then it stuns for one move
-		return true;
+		return MoveResult::VALID;
 
 	}
 	
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
@@ -104,12 +104,7 @@ void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack
 		if (piece->get_row() == get_row() && piece->get_column() == get_column()) {
 			piece->move_piece_to(dest_row, dest_column);
 		}
-	}
-	
-}
-
-bool Knight::can_be_eliminated(attackType attack_type, Game& game) {
-	return true;
+	}	
 }
 
 std::vector<std::vector<int>> Knight::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {

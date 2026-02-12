@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include "gamestate.h"
 #include <memory>
 /*#include "buttons.h"
@@ -24,12 +25,14 @@ public:
 
 	void run();
 	void setup();
+	void setup_texts();
 	void render_background(sf::RenderWindow& window);
 	void render_pieces(sf::RenderWindow& window); //renders pieces, called after every move
 	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window
+	void render_texts(sf::RenderWindow& window); //renders the text that describes what happened to user
 	void make_buttons(sf::RenderWindow& window); //make buttons at the start of the game, put them into vector
 	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector
-	 
+	void set_message_for_user(std::string message);
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons);//check for events and calls isClicked if button is clicked
 	void handle_events(Button* button); //handles events when a button is clicked
 	void handle_normal_moves(); //handles normal moves when two squares are clicked
@@ -67,6 +70,7 @@ public:
 	sf::Font font;
 private:
 	sf::RenderWindow window;
+	sf::Text message_for_user;
 	
 	std::vector<Button*> buttons; //vector of all buttons except menu buttons
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options

@@ -51,7 +51,37 @@ enum class PieceType {
 	KING
 };
 
-inline std::string to_string(MenuOption option) {
+enum class MoveResult {
+	VALID, 
+	STUNNED,
+	NOT_YOUR_TURN,
+	CANT_MOVE_THIS_TURN,
+	SELECT_AIRSTRIKE_TARGET,
+	NO_MOVES_LEFT,
+	REALOADING,
+	CANT_ACTIVATE_ABILITY,
+	SHIELDED,
+	SHOT_OVER_PIECE,
+	NOT_VALID
+};
+
+inline std::string move_result_to_string(MoveResult result) {
+	switch (result) {
+	case MoveResult::STUNNED: return "This piece is stunned";
+	case MoveResult::NOT_YOUR_TURN: return "This piece is not on turn";
+	case MoveResult::CANT_MOVE_THIS_TURN: return "This piece cannot move now";
+	case MoveResult::SELECT_AIRSTRIKE_TARGET: return "Select airstrike target";
+	case MoveResult::NO_MOVES_LEFT: return "No moves left this turn";
+	case MoveResult::REALOADING: return "This piece is realoading";
+	case MoveResult::CANT_ACTIVATE_ABILITY: return "You can't activate ability now";
+	case MoveResult::SHIELDED: return "Target has shield";
+	case MoveResult::SHOT_OVER_PIECE: return "Can't shoot over a piece";
+	case MoveResult::NOT_VALID: return "You can't move this piece to that square";
+	}
+	return "Unknown state";
+}
+
+inline std::string menu_option_to_string(MenuOption option) {
 	switch (option) {
 	case MenuOption::MOVE_TO_ATTACKED_SQUARE:     return "Move piece";
 	case MenuOption::DONT_MOVE:   return "Stay";

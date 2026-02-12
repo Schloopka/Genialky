@@ -74,7 +74,7 @@ MenuButton::MenuButton(sf::Vector2f position, sf::Vector2f size, int id, sf::Fon
 	button_shape.setSize(size);
 	this->button_shape.setFillColor(sf::Color::Blue);
 	this->button_text.setFont(font);
-	std::string button_text = to_string(menu_option);
+	std::string button_text = menu_option_to_string(menu_option);
 	this->button_text.setString(button_text);
 	this->button_text.setPosition({ position.x + size.x / 10.f, position.y + size.y / 6.f });
 	this->button_text.setFillColor(sf::Color::Black);

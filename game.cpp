@@ -16,15 +16,18 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 class Buttons;
 class PieceMenu;
 
-Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky")
+Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font)
 {
 	gamestate = Gamestate::WHITE_TURN;
 	white_input_mode = InputMode::NORMAL;
 	black_input_mode = InputMode::NORMAL;
+	/*message_for_user.setFont(font);*/
+	message_for_user.setString("Welcome to the game, white on move");
 }
 
 Game::~Game() = default;
@@ -37,6 +40,7 @@ void Game::setup() {
 	make_buttons(window);
 	setup_pieces(window);
 	set_pieces_can_move(pieces);
+	setup_texts();
 }
 
 void Game::setup_pieces(sf::RenderWindow & window) {
@@ -76,6 +80,12 @@ void Game::setup_pieces(sf::RenderWindow & window) {
 		piece->load_texture();
 	}
 }
+void Game::setup_texts() {
+	message_for_user.setCharacterSize(30);
+	message_for_user.setPosition({ 200.f,900.f });
+	message_for_user.setFillColor(sf::Color::Black);
+	
+}
 
 void Game::render_background(sf::RenderWindow& window) {
 	sf::Color background(180, 180, 180);
@@ -95,6 +105,14 @@ void Game::render_buttons(sf::RenderWindow& window) {
 		activeMenu->render(window);
 	}
 
+}
+
+void Game::render_texts(sf::RenderWindow& window) {
+	window.draw(message_for_user);
+}
+
+void Game::set_message_for_user(std::string message) {
+	this->message_for_user.setString(message);
 }
 void Game::make_buttons(sf::RenderWindow& window) {
 	//board squares
@@ -143,7 +161,9 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 
 void Game::handle_events(Button* button) {
 	this->last_clicked.push_back(button);
-	std::cout << last_clicked.back()->get_id() << std::endl;
+	std::string butt_row = std::to_string(last_clicked.back()->get_id() / 8);
+	std::string butt_column = std::to_string(last_clicked.back()->get_id() % 8);
+	set_message_for_user("Clicked square - row " + butt_row + " column " + butt_column);
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.clear();
 	}
@@ -212,7 +232,7 @@ void Game::handle_queen_select_airstrike(bool white_on_move) {
 				this->last_clicked.back()->get_id() % 8);
 			(white_on_move ? white_input_mode : black_input_mode) = InputMode::AFTER_AIRSTRIKE_SELECT_TARGET;
 			piece->set_air_strike_phase(airStrikePhase::RESOLVING_ATTACK);
-			std::cout << "airstrike target selected" << std::endl;
+			set_message_for_user("Airstrike target selected");
 			moves_left--;
 		}
 	}
@@ -230,9 +250,14 @@ void Game::handle_normal_moves() {
 		}
 		else if (8 * piece->get_row() + piece->get_column() == (this->last_clicked.front()->get_id())) //if the piece is on the first clicked square
 		{
+			MoveResult move_result = piece->can_move_to(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
+				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+			MoveResult attack_result = piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
+				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+			MoveResult ability_result = piece->can_activate_ability(gamestate,
+				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
 			//if piece can move to second clicked square, then it is moved there, also checks if there is no piece on that square
-			if (piece->can_move_to(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
-				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)  //if the piece can move to the second square
+			if (move_result == MoveResult::VALID //if the piece can move to the second square
 				&& isThereAPiece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
 				//if pawn promotes or not
 				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
@@ -242,14 +267,12 @@ void Game::handle_normal_moves() {
 				else {
 					piece->move_piece_to(dest_row, dest_column);
 				}
-				
-				std::cout << "move" << std::endl;
+				set_message_for_user("A piece was moved");
 				piece_was_moved_this_turn = true;
 				moves_left--;
 			}
 			//if it cant move there, perhaps it can take a piece from that square
-			else if (piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate, 
-				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)) { //if the piece can attack the second square
+			else if (attack_result == MoveResult::VALID) { //if the piece can attack the second square
 				if (piece->does_instant_attack()) {
 					piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				}
@@ -258,15 +281,27 @@ void Game::handle_normal_moves() {
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				piece_attacking = piece;
-				std::cout << "take" << std::endl;
+				set_message_for_user("A piece was taken");
 				moves_left--;
 			}
 			else if (piece->get_row() == dest_row && piece->get_column() == dest_column
-				&& piece->can_activate_ability(gamestate, 
-					gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this)) {
+				&& ability_result==MoveResult::VALID) {
 				piece->activate_ability(gamestate, *this);
-				std::cout << "ability" << std::endl;
+				set_message_for_user("Ability activated");
 				moves_left--;
+			}
+			else {
+				MoveResult result_for_message = MoveResult::NOT_VALID;
+				if (move_result != MoveResult::NOT_VALID) {
+					result_for_message = move_result;
+				}
+				if (attack_result != MoveResult::NOT_VALID) {
+					result_for_message = attack_result;
+				}
+				if (ability_result != MoveResult::NOT_VALID) {
+					result_for_message = ability_result;
+				}
+				set_message_for_user(move_result_to_string(move_result));
 			}
 		}
 	}
@@ -285,7 +320,7 @@ void Game::handle_other_buttons() {
 			clear_buttons_clicked();
 		}
 		else {
-			std::cout << "You have to make a move until ending turn" << std::endl;
+			set_message_for_user("You have to make a move until ending turn");
 			this->last_clicked.clear(); //if player clicks to end move and cant end it, 
 			//we clear the buttons so it doesnt mess when they click on normal button again
 		}
@@ -301,7 +336,7 @@ void Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attac
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
 			[dest_row, dest_column, attack_type, this](Piece* piece) {
-				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type, *this);
+				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type, *this)==MoveResult::VALID;
 			}),
 		pieces.end()
 	);
@@ -343,7 +378,7 @@ void Game::switchGamestate() {
 		if (black_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 			switchGamestateAfterQueenAbility(false);
 		}
-		std::cout << "black on turn" << std::endl;
+		set_message_for_user("Black on turn");
 	}
 	else if (gamestate == Gamestate::BLACK_TURN) {
 		if (black_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
@@ -353,7 +388,7 @@ void Game::switchGamestate() {
 		if (white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 			switchGamestateAfterQueenAbility(true);
 		}
-		std::cout << "white on turn" << std::endl;
+		set_message_for_user("White on turn");
 	}
 	
 }
@@ -523,6 +558,7 @@ void Game::run() {
 		this->render_background(window);
 		this->render_buttons(window);
 		this->render_pieces(window);
+		this->render_texts(window);
 		window.display();
 	}
 }

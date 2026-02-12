@@ -21,71 +21,71 @@ void Pawn::display(sf::RenderWindow& window) {
 	
 }
 //returns true if it can move to the second square
-bool Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//white moving forward - kopík
 	if (is_white) {
 		if (not has_moved) {
-			if (curr_column != dest_column || curr_row != dest_row - 2 && curr_row != dest_row - 1 
-				|| game.isThereAPiece(curr_row + 1, curr_column) /*check we dont go over any piece*/) {
-				return false;
+			if (curr_column == dest_column && (curr_row == dest_row - 2 || curr_row == dest_row - 1) 
+				&& game.isThereAPiece(curr_row + 1, curr_column) == false /*check we dont go over any piece*/) {
+				return MoveResult::VALID;
 			}
 		}
 		if (has_moved) {
-			if (curr_column != dest_column || curr_row != dest_row - 1) {
-				return false;
+			if (curr_column == dest_column && curr_row == dest_row - 1) {
+				return MoveResult::VALID;
 			}
 		}
 	}
 	if (not is_white) {
 		if (not has_moved) {
-			if (curr_column != dest_column || curr_row != dest_row + 2 && curr_row != dest_row + 1
-				|| game.isThereAPiece(curr_row - 1, curr_column)/*check we dont go over any piece*/) {
-				return false;
+			if (curr_column == dest_column && ( curr_row == dest_row + 2 || curr_row == dest_row + 1)
+				&& game.isThereAPiece(curr_row - 1, curr_column) == false/*check we dont go over any piece*/) {
+				return MoveResult::VALID;
 			}
 		}
 		if (has_moved) {
-			if (curr_column != dest_column || curr_row != dest_row + 1) {
-				return false;
+			if (curr_column == dest_column && curr_row == dest_row + 1) {
+				return MoveResult::VALID;
 			}
 		}
 	}
-	return true;
+	return MoveResult::NOT_VALID;
 
 }
 
 //returns true if it can interact with the second square as attack
-bool Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//if the piece is still reloading, it cant attack
 	if (curr_reload > 0) {
-		return false;
+		return MoveResult::REALOADING;
 	}
 	//check if white pawn can attack this square - kopík
 	if (is_white) {
 		if ((dest_row - curr_row == 1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == 2 && std::abs(dest_column - curr_column) == 2)) {
-			return true;
+			return MoveResult::VALID;
 		}
 	}
 	if (not is_white) {
 		if ((dest_row - curr_row == -1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == -2 && std::abs(dest_column - curr_column) == 2)) {
-			return true;
+			return MoveResult::VALID;
 		}
 	}
-	return false;
+	return MoveResult::NOT_VALID;
 }
 
-bool Pawn::can_be_eliminated(attackType attack_type, Game& game) {
+MoveResult Pawn::can_be_eliminated(attackType attack_type, Game& game) {
 	if (attack_type == attackType::SHOOTING && moves_since_last_moved >= 2) {
 		std::cout << "I have shield" << std::endl;
-		return false;
+		return MoveResult::SHIELDED;
 	}
-	return true;
+	return MoveResult::VALID;
 }
 
 std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {

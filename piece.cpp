@@ -47,12 +47,12 @@ void Piece::move_piece_to(int dest_row, int dest_column) {
 	this->moves_since_last_moved = -1; //set to -1, because at the end of the move, it is increased by 1
 }
 
-bool Piece::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	return false;
+MoveResult Piece::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	return MoveResult::NOT_VALID;
 }
 
-bool Piece::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	return false;
+MoveResult Piece::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	return MoveResult::NOT_VALID;
 }
 
 std::vector<std::vector<int>> Piece::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
@@ -85,41 +85,40 @@ void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_
 	}
 }
 
-bool Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
-	return false;
+MoveResult Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+	return MoveResult::NOT_VALID;
 }
 
-bool Piece::can_be_eliminated(attackType attack_type, Game& game) {
-	return true;
+MoveResult Piece::can_be_eliminated(attackType attack_type, Game& game) {
+	return MoveResult::VALID;
 }
 
-bool Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
-		std::cout << "not your turn" << std::endl;
-		return false;
+		return MoveResult::NOT_YOUR_TURN;
 	}
 	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
 		std::cout << "not your turn" << std::endl;
-		return false;
+		return MoveResult::NOT_YOUR_TURN;
 	}
 	//check if the piece is in the pieces that can move this turn
 	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
 		std::cout << "cant move this turn" << std::endl;
-		return false;
+		return MoveResult::CANT_MOVE_THIS_TURN;
 	}
 	if (curr_stun > 0) {
 		std::cout << "stunned" << std::endl;
-		return false;
+		return MoveResult::STUNNED;
 	}
 	if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
 		std::cout << "select airstrike target" << std::endl;
-		return false;
+		return MoveResult::SELECT_AIRSTRIKE_TARGET;
 	}
 	if (game.get_moves_left() <= 0) {
 		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
-		return false;
+		return MoveResult::NO_MOVES_LEFT;
 	}
-	return true;
+	return MoveResult::VALID;
 }
 
 void Piece::activate_ability(Gamestate gamestate, Game& game){

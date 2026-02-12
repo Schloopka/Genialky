@@ -25,25 +25,25 @@ void Bishop::display(sf::RenderWindow& window) {
 
 }
 //returns true if it can move to the second square
-bool Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//kušník
 	if (std::abs(curr_row - dest_row) == 1 && std::abs(curr_column - dest_column) == 1) {//can move one diagonally
-		return true;
+		return MoveResult::VALID;
 	}
 
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 
 //returns true if it can interact with the second square as attack
-bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//if the piece is reloading, it cant attack with shooting attack, but can do physical attack
 	if (curr_reload == 0) {
@@ -61,13 +61,13 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 			for (int i = 1; i < distance; i++) {
 
 				if (game.isThereAPiece(curr_row + i * directions.first, curr_column + i * directions.second)) {
-					return false;
+					return MoveResult::SHOT_OVER_PIECE;
 				}
 			}
 			//next attack is shooting with reload 1
 			attack_type = attackType::SHOOTING;
 			def_reload = 1;
-			return true;
+			return MoveResult::VALID;
 		}
 	}
 	if (((std::abs(curr_row - dest_row) == 1 && curr_column == dest_column)
@@ -76,10 +76,10 @@ bool Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_co
 		//next attack is physical with no reload
 		attack_type = attackType::PHYSICAL;
 		def_reload = 0;
-		return true;
+		return MoveResult::VALID;
 	}
 
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 
@@ -88,17 +88,17 @@ void Bishop::activate_ability(Gamestate gamestate, Game& game) {
 	this->curr_ability_length = 2; //the ability holds only for the next move, but this stat is lowered after every move
 }
 
-bool Bishop::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (not can_do_anything(gamestate, inputmode, game)) {
-		return false;
+MoveResult Bishop::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	if (curr_ability_reload > 0) {
-		return false;
+		return MoveResult::REALOADING;
 	}
-	return true;
+	return MoveResult::VALID;
 }
-bool Bishop::can_be_eliminated(attackType attack_type, Game& game) {
-	return true;
+MoveResult Bishop::can_be_eliminated(attackType attack_type, Game& game) {
+	return MoveResult::VALID;
 }
 
 std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {

@@ -25,33 +25,33 @@ void King::display(sf::RenderWindow& window) {
 
 }
 //returns true if it can move to the second square
-bool King::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+MoveResult King::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	
 	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1 &&
 		(std::abs(curr_row - dest_row) != 0 || std::abs(curr_column - dest_column) != 0)) {
-		return true;
+		return MoveResult::VALID;
 	}
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 
 //returns true if it can interact with the second square as attack
-bool King::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+MoveResult King::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	//if the piece is reloading, it cant attack
 	if (curr_reload > 0) {
-		return false;
+		return MoveResult::REALOADING;
 	}
 	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1 &&
 		(std::abs(curr_row - dest_row) != 0 || std::abs(curr_column - dest_column) != 0)) {
-		return true;
+		return MoveResult::VALID;
 	}
-	return false;
+	return MoveResult::NOT_VALID;
 
 }
 
@@ -60,20 +60,20 @@ std::vector<std::vector<int>> King::get_attacked_squares(int curr_row, int curr_
 	return { {dest_row, dest_column} };
 }
 
-bool King::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
-	if (can_do_anything(gamestate, inputmode, game) == false) {
-		return false;
+MoveResult King::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
+		return can_do_anything(gamestate, inputmode, game);
 	}
 	if (curr_ability_reload > 0) {
-		return false;
+		return MoveResult::REALOADING;
 	}
-	if (is_white && game.only_one_piece_left(true)) {
-		return true;
+	if (is_white && not game.only_one_piece_left(true)) {
+		return MoveResult::CANT_ACTIVATE_ABILITY;
 	}
-	if (not is_white && game.only_one_piece_left(false)) {
-		return true;
+	if (not is_white && not game.only_one_piece_left(false)) {
+		return MoveResult::CANT_ACTIVATE_ABILITY;
 	}
-	return false;
+	return MoveResult::VALID;
 }
 
 void King::activate_ability(Gamestate gamestate, Game& game){
@@ -81,9 +81,9 @@ void King::activate_ability(Gamestate gamestate, Game& game){
 	curr_ability_reload = def_ability_reload+1;
 
 }
-bool King::can_be_eliminated(attackType attack_type, Game& game) {
+MoveResult King::can_be_eliminated(attackType attack_type, Game& game) {
 	game.set_king_on_board(false, is_white);
-	return true;
+	return MoveResult::VALID;
 }
 
 
