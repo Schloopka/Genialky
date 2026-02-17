@@ -21,13 +21,13 @@
 class Buttons;
 class PieceMenu;
 
-Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font)
+Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font), who_is_on_move(this->font)
 {
 	gamestate = Gamestate::WHITE_TURN;
 	white_input_mode = InputMode::NORMAL;
 	black_input_mode = InputMode::NORMAL;
-	/*message_for_user.setFont(font);*/
-	message_for_user.setString("Welcome to the game, white on move");
+	message_for_user.setString("Welcome to the game, white on turn");
+	who_is_on_move.setString("White on move");
 }
 
 Game::~Game() = default;
@@ -84,6 +84,9 @@ void Game::setup_texts() {
 	message_for_user.setCharacterSize(30);
 	message_for_user.setPosition({ 200.f,900.f });
 	message_for_user.setFillColor(sf::Color::Black);
+	who_is_on_move.setCharacterSize(30);
+	who_is_on_move.setPosition({ 800.f,900.f });
+	who_is_on_move.setFillColor(sf::Color::Black);
 	
 }
 
@@ -109,6 +112,7 @@ void Game::render_buttons(sf::RenderWindow& window) {
 
 void Game::render_texts(sf::RenderWindow& window) {
 	window.draw(message_for_user);
+	window.draw(who_is_on_move);
 }
 
 void Game::set_message_for_user(std::string message) {
@@ -379,6 +383,7 @@ void Game::switchGamestate() {
 			switchGamestateAfterQueenAbility(false);
 		}
 		set_message_for_user("Black on turn");
+		who_is_on_move.setString("Black on turn");
 	}
 	else if (gamestate == Gamestate::BLACK_TURN) {
 		if (black_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
@@ -389,6 +394,7 @@ void Game::switchGamestate() {
 			switchGamestateAfterQueenAbility(true);
 		}
 		set_message_for_user("White on turn");
+		who_is_on_move.setString("White on turn");
 	}
 	
 }

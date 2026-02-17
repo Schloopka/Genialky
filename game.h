@@ -71,7 +71,8 @@ public:
 private:
 	sf::RenderWindow window;
 	sf::Text message_for_user;
-	
+	sf::Text who_is_on_move;
+
 	std::vector<Button*> buttons; //vector of all buttons except menu buttons
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options
 	std::vector<Piece*> pieces; //vector of all pieces on board
