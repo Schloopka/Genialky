@@ -38,7 +38,8 @@ void Button::isClicked(const sf::RenderWindow& window, const sf::Event& event, G
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 		if (button_shape.getGlobalBounds().contains(mousePosF)) {
-			game.handle_events(this);
+			game.append_buttons_clicked(this);
+			/*game.handle_events();*/
 
 		}
 	}

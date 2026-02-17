@@ -34,11 +34,14 @@ public:
 	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector
 	void set_message_for_user(std::string message);
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons);//check for events and calls isClicked if button is clicked
-	void handle_events(Button* button); //handles events when a button is clicked
+
+
+	void handle_events(); //handles events when a button is clicked
 	void handle_normal_moves(); //handles normal moves when two squares are clicked
 	void handle_queen_select_airstrike(bool white_on_move); //handles events if the player must choose where queen lands after airstrike
 	void handle_other_buttons(); //handles other buttons such as ending turn
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
+	void append_buttons_clicked(Button* button);
 
 	void eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);//eliminate piece from a square, also checks, if the piece can be eliminated
 	bool isThereAPiece(int row, int column); //returns true if there is a piece on that square

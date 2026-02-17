@@ -157,16 +157,21 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 			else {
 				for (auto& squarebutton : buttons) {
 					squarebutton->isClicked(window, *event, *this);
-			}
+				}
+				if (!last_clicked.empty()) {
+					handle_events();
+				}
 			}
 		}
 	}
 }
 
-void Game::handle_events(Button* button) {
+void Game::append_buttons_clicked(Button* button) {
 	this->last_clicked.push_back(button);
-	std::string butt_row = std::to_string(last_clicked.back()->get_id() / 8);
-	std::string butt_column = std::to_string(last_clicked.back()->get_id() % 8);
+}
+void Game::handle_events() {
+	std::string butt_row = std::to_string(last_clicked.back()->get_id() / 8 + 1);
+	std::string butt_column = std::to_string(last_clicked.back()->get_id() % 8 + 1);
 	set_message_for_user("Clicked square - row " + butt_row + " column " + butt_column);
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.clear();
@@ -221,6 +226,10 @@ void Game::handle_events(Button* button) {
 	else if (this->last_clicked.size() == 2 && this->last_clicked.back()->get_id() < 64) {//normal move or ability activation
 		handle_normal_moves();
 	}
+	else if (this->last_clicked.size() > 1 ) {
+		this->last_clicked.erase(last_clicked.begin());
+		handle_events();
+	}
 }
 
 void Game::handle_queen_select_airstrike(bool white_on_move) {
@@ -246,6 +255,7 @@ void Game::handle_queen_select_airstrike(bool white_on_move) {
 void Game::handle_normal_moves() {
 	int dest_row = this->last_clicked.back()->get_id() / 8;
 	int dest_column = this->last_clicked.back()->get_id() % 8;
+	bool clear_last_clicked = false;
 	Piece* piece_attacking = nullptr;
 	for (auto& piece : pieces) {
 		if (piece->is_piece_white() != (gamestate == Gamestate::WHITE_TURN)
@@ -274,6 +284,7 @@ void Game::handle_normal_moves() {
 				set_message_for_user("A piece was moved");
 				piece_was_moved_this_turn = true;
 				moves_left--;
+				clear_last_clicked = true;
 			}
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (attack_result == MoveResult::VALID) { //if the piece can attack the second square
@@ -287,12 +298,14 @@ void Game::handle_normal_moves() {
 				}
 				set_message_for_user("A piece was taken");
 				moves_left--;
+				clear_last_clicked = true;
 			}
 			else if (piece->get_row() == dest_row && piece->get_column() == dest_column
 				&& ability_result==MoveResult::VALID) {
 				piece->activate_ability(gamestate, *this);
 				set_message_for_user("Ability activated");
 				moves_left--;
+				clear_last_clicked = true;
 			}
 			else {
 				MoveResult result_for_message = MoveResult::NOT_VALID;
@@ -309,7 +322,13 @@ void Game::handle_normal_moves() {
 			}
 		}
 	}
-	clear_buttons_clicked();
+	if (last_clicked.size() > 1) {
+		this->last_clicked.erase(last_clicked.begin());
+		handle_events();
+	}
+	if (clear_last_clicked) {
+		this->clear_buttons_clicked();
+	}
 	if (piece_attacking != nullptr) {
 		piece_attacking->reset_reload();
 		piece_attacking->set_moves_since_last_took(0);
