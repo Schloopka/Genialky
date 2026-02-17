@@ -273,6 +273,7 @@ void Game::handle_normal_moves() {
 			}
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (attack_result == MoveResult::VALID) { //if the piece can attack the second square
+				piece_attacking = piece;
 				if (piece->does_instant_attack()) {
 					piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				}
@@ -280,7 +281,6 @@ void Game::handle_normal_moves() {
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
-				piece_attacking = piece;
 				set_message_for_user("A piece was taken");
 				moves_left--;
 			}
@@ -292,16 +292,16 @@ void Game::handle_normal_moves() {
 			}
 			else {
 				MoveResult result_for_message = MoveResult::NOT_VALID;
-				if (move_result != MoveResult::NOT_VALID) {
+				if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
 					result_for_message = move_result;
 				}
-				if (attack_result != MoveResult::NOT_VALID) {
+				if (attack_result != MoveResult::NOT_VALID && attack_result != MoveResult::VALID) {
 					result_for_message = attack_result;
 				}
-				if (ability_result != MoveResult::NOT_VALID) {
+				if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
 					result_for_message = ability_result;
 				}
-				set_message_for_user(move_result_to_string(move_result));
+				set_message_for_user(move_result_to_string(result_for_message));
 			}
 		}
 	}

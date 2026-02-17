@@ -78,7 +78,9 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 		def_reload = 0;
 		return MoveResult::VALID;
 	}
-
+	if (curr_reload > 0) {
+		return MoveResult::REALOADING;
+	}
 	return MoveResult::NOT_VALID;
 
 }

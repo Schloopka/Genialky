@@ -74,6 +74,7 @@ MoveResult Queen::can_attack(int curr_row, int curr_column, int dest_row, int de
 	else if (std::abs(curr_row - dest_row) <= 2 && std::abs(curr_column - dest_column) <= 2
 		&& (curr_row != dest_row || curr_column != dest_column)) {
 		instant_attack = true;
+		moves_when_attack = true;
 		return MoveResult::VALID;
 	}
 	return MoveResult::NOT_VALID;

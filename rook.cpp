@@ -29,30 +29,33 @@ void Rook::display(sf::RenderWindow& window) {
 MoveResult Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	//We cant use the can_do_anything function, because it contains moves_left == 0 condition and rook can sometimes move when there are no moves left
 	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
-		std::cout << "not your turn" << std::endl;
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
-		std::cout << "not your turn" << std::endl;
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	//check if the piece is in the pieces that can move this turn
 	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
-		std::cout << "cant move this turn" << std::endl;
 		return MoveResult::CANT_MOVE_THIS_TURN;
 	}
 	if (curr_stun > 0) {
-		std::cout << "stunned" << std::endl;
 		return MoveResult::STUNNED;
 	}
-	if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
-		std::cout << "select airstrike target" << std::endl;
+	/*if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
 		return MoveResult::SELECT_AIRSTRIKE_TARGET;
+	}*/
+	bool valid_coordinates = true;
+	if ((curr_row != dest_row || std::abs(curr_column - dest_column) != 1) &&
+		(curr_column != dest_column || std::abs(curr_row - dest_row) != 1)) {
+		valid_coordinates = false;
 	}
-	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) ||
-		(curr_column == dest_column && std::abs(curr_row - dest_row) == 1)) //valid position change
-		&& (game.get_moves_left() > 0 || //either there are moves left
-			(game.get_king_on_board(is_white) && game.get_piece_was_moved_this_turn() == false))/*or king is on board and rook can use its passive*/) {
+	//if king is on board and queen has just activated ability, rook can move, but cant move next move before airstrike is selected
+	if (game.get_king_on_board(is_white) && game.get_moves_left() == 0 && game.get_input_mode(is_white) == InputMode::AIRSTRIKE_SELECT_TARGET
+		&& valid_coordinates) {
+		return MoveResult::VALID;
+	}
+	if (game.get_king_on_board(is_white) && game.get_piece_was_moved_this_turn() == false
+		&& valid_coordinates) {
 		return MoveResult::VALID;
 	}
 

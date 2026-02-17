@@ -98,26 +98,22 @@ MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
-		std::cout << "not your turn" << std::endl;
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	//check if the piece is in the pieces that can move this turn
+	if (game.get_moves_left() <= 0) {
+		return MoveResult::NO_MOVES_LEFT;
+	}
 	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
-		std::cout << "cant move this turn" << std::endl;
 		return MoveResult::CANT_MOVE_THIS_TURN;
 	}
 	if (curr_stun > 0) {
-		std::cout << "stunned" << std::endl;
 		return MoveResult::STUNNED;
 	}
 	if (inputmode == InputMode::AIRSTRIKE_SELECT_TARGET) {
-		std::cout << "select airstrike target" << std::endl;
 		return MoveResult::SELECT_AIRSTRIKE_TARGET;
 	}
-	if (game.get_moves_left() <= 0) {
-		std::cout << "no moves left, you can move only piece which doesn't require a move" << std::endl;
-		return MoveResult::NO_MOVES_LEFT;
-	}
+	
 	return MoveResult::VALID;
 }
 
