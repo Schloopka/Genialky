@@ -30,7 +30,7 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 	if (is_white) {
 		if (not has_moved) {
 			if (curr_column == dest_column && (curr_row == dest_row - 2 || curr_row == dest_row - 1) 
-				&& game.isThereAPiece(curr_row + 1, curr_column) == false /*check we dont go over any piece*/) {
+				&& game.is_there_a_piece(curr_row + 1, curr_column) == false /*check we dont go over any piece*/) {
 				return MoveResult::VALID;
 			}
 		}
@@ -43,7 +43,7 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 	if (not is_white) {
 		if (not has_moved) {
 			if (curr_column == dest_column && ( curr_row == dest_row + 2 || curr_row == dest_row + 1)
-				&& game.isThereAPiece(curr_row - 1, curr_column) == false/*check we dont go over any piece*/) {
+				&& game.is_there_a_piece(curr_row - 1, curr_column) == false/*check we dont go over any piece*/) {
 				return MoveResult::VALID;
 			}
 		}
@@ -87,7 +87,17 @@ MoveResult Pawn::can_be_eliminated(attackType attack_type, Game& game) {
 	}
 	return MoveResult::VALID;
 }
+void Pawn::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
+	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(row, column, dest_row, dest_column, game);
+	
+	for (std::vector<int> square_coordinates : attacked_squares) {
+		if (game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type) == false
+			&& game.is_there_a_piece(square_coordinates.front(), square_coordinates.back())) {
+			break;
+		}
+	}
 
+}
 std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
 	//white to the right
 	if ((dest_row - curr_row == 1 && dest_column - curr_column == 1) || (dest_row - curr_row == 2 && dest_column - curr_column == 2)) {

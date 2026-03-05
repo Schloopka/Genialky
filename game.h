@@ -44,8 +44,8 @@ public:
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
 	void append_buttons_clicked(Button* button);
 
-	void eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);//eliminate piece from a square, also checks, if the piece can be eliminated
-	bool isThereAPiece(int row, int column); //returns true if there is a piece on that square
+	bool eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);//eliminate piece from a square, also checks, if the piece can be eliminated
+	bool is_there_a_piece(int row, int column); //returns true if there is a piece on that square
 	bool only_one_piece_left(bool is_color_white);//returns true if there is only one piece left
 
 	void update_stats(); //after each turn, every piece of the person whose move ended has their stun, root or reload lowered by one (in this order)

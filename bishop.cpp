@@ -64,7 +64,7 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 			//check if there are no pieces in the way
 			for (int i = 1; i < distance; i++) {
 
-				if (game.isThereAPiece(curr_row + i * directions.first, curr_column + i * directions.second)) {
+				if (game.is_there_a_piece(curr_row + i * directions.first, curr_column + i * directions.second)) {
 					return MoveResult::SHOT_OVER_PIECE;
 				}
 			}

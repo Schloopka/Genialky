@@ -303,7 +303,7 @@ void Game::handle_normal_moves() {
 				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
 			//if piece can move to second clicked square, then it is moved there, also checks if there is no piece on that square
 			if (move_result == MoveResult::VALID //if the piece can move to the second square
-				&& isThereAPiece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
+				&& is_there_a_piece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
 				//if pawn promotes or not
 				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
@@ -387,7 +387,9 @@ void Game::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
 
-void Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type) {
+//returns true if any piece was eliminated
+bool Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type) {
+	int old_num_of_pieces = pieces.size();
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
 			[dest_row, dest_column, attack_type, this](Piece* piece) {
@@ -395,9 +397,16 @@ void Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attac
 			}),
 		pieces.end()
 	);
+	int new_num_of_pieces = pieces.size();
+	if (new_num_of_pieces == old_num_of_pieces) {
+		return false;
+	}
+	else { 
+		return true;
+	}
 }
 
-bool Game::isThereAPiece(int row, int column) {
+bool Game::is_there_a_piece(int row, int column) {
 	for (auto& piece : pieces) {
 		if (piece->get_row() == row && piece->get_column() == column) {
 			return true;
