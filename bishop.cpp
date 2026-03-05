@@ -49,7 +49,11 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 	if (curr_reload == 0) {
 		//kušník
 		//if the diagonal distance is less than 3 and it does not attack itsself
-		int max_shot_distance = (curr_ability_length > 0 ? 5 : 3);
+		bool ability_activated = false;
+		if ((is_white ? game.get_input_mode(true) : game.get_input_mode(false)) == InputMode::BISHOP_ABILITY) {
+			ability_activated = true;
+		}
+		int max_shot_distance = (ability_activated ? 5 : 3);
 		if ((std::abs(curr_row - dest_row) <= max_shot_distance && std::abs(curr_row - dest_row) != 0 &&
 			std::abs(curr_column - dest_column) <= max_shot_distance && std::abs(curr_column - dest_column) != 0
 			&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)))/*with king on board*/ {
@@ -86,8 +90,9 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 }
 
 void Bishop::activate_ability(Gamestate gamestate, Game& game) {
-	this->curr_ability_reload = 2;//plus one because it is lowered by one after every move including this one
-	this->curr_ability_length = 2; //the ability holds only for the next move, but this stat is lowered after every move
+	this->curr_ability_reload = 2;//one plus one because it is lowered by one after every move including this one
+	this->curr_ability_length = 2;
+	game.set_input_mode(gamestate, InputMode::BISHOP_ABILITY);
 }
 
 MoveResult Bishop::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {

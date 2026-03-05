@@ -94,6 +94,9 @@ MoveResult Piece::can_be_eliminated(attackType attack_type, Game& game) {
 }
 
 MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game) {
+	if (game.get_moves_left() <= 0) {
+		return MoveResult::NO_MOVES_LEFT;
+	}
 	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
 		return MoveResult::NOT_YOUR_TURN;
 	}
@@ -101,9 +104,7 @@ MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	//check if the piece is in the pieces that can move this turn
-	if (game.get_moves_left() <= 0) {
-		return MoveResult::NO_MOVES_LEFT;
-	}
+	
 	if (is_piece_in_can_move(game.get_pieces_can_move()) == false) {
 		return MoveResult::CANT_MOVE_THIS_TURN;
 	}

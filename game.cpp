@@ -179,6 +179,22 @@ void Game::handle_events() {
 	else if (this->last_clicked.size() == 1) {
 		handle_other_buttons();
 	}
+	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN
+		&& white_input_mode == InputMode::BISHOP_ABILITY) {
+		for (auto& piece : pieces) {
+			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+				handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece);
+			}
+		}
+	}
+	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::BLACK_TURN
+		&& black_input_mode == InputMode::BISHOP_ABILITY) {
+		for (auto& piece : pieces) {
+			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+				handle_bishop_abiltiy(gamestate == Gamestate::BLACK_TURN, piece);
+			}
+		}
+	}
 	//after the airstrike, queen gets one free move
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
 		white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
@@ -233,7 +249,6 @@ void Game::handle_events() {
 }
 
 void Game::handle_queen_select_airstrike(bool white_on_move) {
-
 	for (auto& piece : pieces) {
 		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE //piece is queen selecting square
 			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate //correct player is on move
@@ -250,6 +265,22 @@ void Game::handle_queen_select_airstrike(bool white_on_move) {
 		}
 	}
 	clear_buttons_clicked();
+}
+
+void Game::handle_bishop_abiltiy(bool white_on_move, Piece* bishop) {
+	int dest_row = this->last_clicked.back()->get_id() / 8;
+	int dest_column = this->last_clicked.back()->get_id() % 8;
+	MoveResult attack_result = bishop->can_attack(bishop->get_row(), bishop->get_column(), dest_row, dest_column, gamestate,
+		gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+	if (attack_result == MoveResult::VALID) {
+		bishop->attack(dest_row, dest_column, *this, bishop->get_attack_type());
+		set_message_for_user("A piece was attacked");
+		(gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode) = InputMode::NORMAL;
+		this->clear_buttons_clicked();
+	}
+	else {
+		handle_normal_moves();
+	}
 }
 
 void Game::handle_normal_moves() {
@@ -296,7 +327,7 @@ void Game::handle_normal_moves() {
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
-				set_message_for_user("A piece was taken");
+				set_message_for_user("A piece was attacked");
 				moves_left--;
 				clear_last_clicked = true;
 			}
@@ -322,13 +353,14 @@ void Game::handle_normal_moves() {
 			}
 		}
 	}
+	if (clear_last_clicked) {
+		this->clear_buttons_clicked();
+	}
 	if (last_clicked.size() > 1) {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
 	}
-	if (clear_last_clicked) {
-		this->clear_buttons_clicked();
-	}
+	
 	if (piece_attacking != nullptr) {
 		piece_attacking->reset_reload();
 		piece_attacking->set_moves_since_last_took(0);
@@ -394,12 +426,24 @@ void Game::switchGamestate() {
 		if (white_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
 			white_input_mode = InputMode::AIRSTRIKE_RESOLVE_ATTACK;
 		}
+
 		//switches the gamestate
 		gamestate = Gamestate::BLACK_TURN;
 		//black is on the move, before the move, queen performs the airstrike attack and the player gets two moves
 		//first must be with the queen (solved in handle_events)
 		if (black_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 			switchGamestateAfterQueenAbility(false);
+		}
+		if (black_input_mode == InputMode::BISHOP_ABILITY) {
+			bool found_bishop_with_activated_ability = false;
+			for (auto& piece : pieces) {
+				if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+					found_bishop_with_activated_ability = true;
+				}
+			}
+			if (!found_bishop_with_activated_ability) {
+				black_input_mode = InputMode::NORMAL;
+			}
 		}
 		set_message_for_user("Black on turn");
 		who_is_on_move.setString("Black on turn");
@@ -411,6 +455,17 @@ void Game::switchGamestate() {
 		gamestate = Gamestate::WHITE_TURN;
 		if (white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 			switchGamestateAfterQueenAbility(true);
+		}
+		if (white_input_mode == InputMode::BISHOP_ABILITY) {
+			bool found_bishop_with_activated_ability = false;
+			for (auto& piece : pieces) {
+				if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+					found_bishop_with_activated_ability = true;
+				}
+			}
+			if (!found_bishop_with_activated_ability) {
+				white_input_mode = InputMode::NORMAL;
+			}
 		}
 		set_message_for_user("White on turn");
 		who_is_on_move.setString("White on turn");

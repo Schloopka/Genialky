@@ -11,7 +11,8 @@ enum class InputMode {
 	AIRSTRIKE_SELECT_TARGET, //player is selecting target for airstrike
 	AFTER_AIRSTRIKE_SELECT_TARGET, //after selecting target, player is again on the move
 	AIRSTRIKE_RESOLVE_ATTACK, //resolving the airstrike attack and the queen can move again
-	CHOOSING_FROM_MENU //player is choosing from a menu of options	
+	CHOOSING_FROM_MENU, //player is choosing from a menu of options	
+	BISHOP_ABILITY
 };
 enum class airStrikePhase {
 	NOT_ACTIVE,
