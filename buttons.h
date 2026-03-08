@@ -17,6 +17,8 @@ public:
 	virtual void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game);
 	virtual void draw_button(sf::RenderWindow& window);
 	int get_id();
+	int get_row();
+	int get_column();
 	sf::RectangleShape get_button_shape();
 protected: 
 	sf::RectangleShape button_shape;

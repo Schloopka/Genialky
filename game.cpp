@@ -169,35 +169,28 @@ void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> butto
 void Game::append_buttons_clicked(Button* button) {
 	this->last_clicked.push_back(button);
 }
+
 void Game::handle_events() {
-	std::string butt_row = std::to_string(last_clicked.back()->get_id() / 8 + 1);
-	std::string butt_column = std::to_string(last_clicked.back()->get_id() % 8 + 1);
-	set_message_for_user("Clicked square - row " + butt_row + " column " + butt_column);
+	std::string button_row = std::to_string(last_clicked.back()->get_row() + 1);
+	std::string button_column = std::to_string(last_clicked.back()->get_column() + 1);
+	set_message_for_user("Clicked square - row " + button_row + " column " + button_column);
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.clear();
 	}
 	else if (this->last_clicked.size() == 1) {
 		handle_other_buttons();
 	}
-	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN
-		&& white_input_mode == InputMode::BISHOP_ABILITY) {
+	else if (this->last_clicked.size() == 2
+		&& (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode) == InputMode::BISHOP_ABILITY) {
 		for (auto& piece : pieces) {
 			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
 				handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece);
 			}
 		}
 	}
-	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::BLACK_TURN
-		&& black_input_mode == InputMode::BISHOP_ABILITY) {
-		for (auto& piece : pieces) {
-			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
-				handle_bishop_abiltiy(gamestate == Gamestate::BLACK_TURN, piece);
-			}
-		}
-	}
 	//after the airstrike, queen gets one free move
-	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
-		white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
+	else if (this->last_clicked.size() == 2 &&
+		(gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode) == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
 		handle_normal_moves(); //illegal move (which includes doubleclicking the same square) means the player doesnt want to move the queen after airstrike
 		std::vector<Piece*> pieces_without_queens;
 		for (const auto& piece : pieces)
@@ -209,22 +202,7 @@ void Game::handle_events() {
 		}
 		set_pieces_can_move(pieces_without_queens); //every piece can move after the queen free move
 		moves_left = 1; //the player gets one move even if they made no move with the queen
-		white_input_mode = InputMode::NORMAL; //after the queen free move, then the white player can continue their turn normally
-	}
-	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::BLACK_TURN &&
-		black_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
-		handle_normal_moves(); //illegal move means the player doesnt want to move the queen after airstrike
-		std::vector<Piece*> pieces_without_queens;
-		for (const auto& piece : pieces)
-		{
-			if (piece->get_type() != PieceType::QUEEN)
-			{
-				pieces_without_queens.push_back(piece);
-			}
-		}
-		set_pieces_can_move(pieces_without_queens); //every piece can move after the queen free move
-		moves_left = 1; //the player gets one move even if they made no move with the queen
-		black_input_mode = InputMode::NORMAL; //after the queen free move, then the white player can continue their turn normally
+		(gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode) = InputMode::NORMAL; //after the queen free move, then the white player can continue their turn normally
 	}
 	//queen ability - airstrike from the special square
 	else if (this->last_clicked.size() == 2 && gamestate == Gamestate::WHITE_TURN &&
@@ -253,11 +231,11 @@ void Game::handle_queen_select_airstrike(bool white_on_move) {
 		if (piece->get_air_strike_phase() == airStrikePhase::SELECTING_SQUARE //piece is queen selecting square
 			&& (white_on_move ? Gamestate::WHITE_TURN : Gamestate::BLACK_TURN) == gamestate //correct player is on move
 			&& (piece->is_piece_white() == white_on_move) //the piece is of player who is on move
-			&& std::abs(piece->get_air_strike_original_square().first - this->last_clicked.back()->get_id() / 8) <= 4
-			&& std::abs(piece->get_air_strike_original_square().second - this->last_clicked.back()->get_id() % 8) <= 4)/*distance limitations*/ {
+			&& std::abs(piece->get_air_strike_original_square().first - this->last_clicked.back()->get_row()) <= 4
+			&& std::abs(piece->get_air_strike_original_square().second - this->last_clicked.back()->get_column()) <= 4)/*distance limitations*/ {
 			piece->ability_air_strike_select_square(
-				this->last_clicked.back()->get_id() / 8,
-				this->last_clicked.back()->get_id() % 8);
+				this->last_clicked.back()->get_row(),
+				this->last_clicked.back()->get_column());
 			(white_on_move ? white_input_mode : black_input_mode) = InputMode::AFTER_AIRSTRIKE_SELECT_TARGET;
 			piece->set_air_strike_phase(airStrikePhase::RESOLVING_ATTACK);
 			set_message_for_user("Airstrike target selected");
@@ -268,8 +246,8 @@ void Game::handle_queen_select_airstrike(bool white_on_move) {
 }
 
 void Game::handle_bishop_abiltiy(bool white_on_move, Piece* bishop) {
-	int dest_row = this->last_clicked.back()->get_id() / 8;
-	int dest_column = this->last_clicked.back()->get_id() % 8;
+	int dest_row = this->last_clicked.back()->get_row();
+	int dest_column = this->last_clicked.back()->get_column();
 	MoveResult attack_result = bishop->can_attack(bishop->get_row(), bishop->get_column(), dest_row, dest_column, gamestate,
 		gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
 	if (attack_result == MoveResult::VALID) {
@@ -284,8 +262,8 @@ void Game::handle_bishop_abiltiy(bool white_on_move, Piece* bishop) {
 }
 
 void Game::handle_normal_moves() {
-	int dest_row = this->last_clicked.back()->get_id() / 8;
-	int dest_column = this->last_clicked.back()->get_id() % 8;
+	int dest_row = this->last_clicked.back()->get_row();
+	int dest_column = this->last_clicked.back()->get_column();
 	bool clear_last_clicked = false;
 	Piece* piece_attacking = nullptr;
 	for (auto& piece : pieces) {
@@ -360,7 +338,6 @@ void Game::handle_normal_moves() {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
 	}
-	
 	if (piece_attacking != nullptr) {
 		piece_attacking->reset_reload();
 		piece_attacking->set_moves_since_last_took(0);
@@ -387,7 +364,6 @@ void Game::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
 
-//returns true if any piece was eliminated
 bool Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type) {
 	int old_num_of_pieces = pieces.size();
 	pieces.erase(
@@ -429,57 +405,35 @@ void Game::switchGamestate() {
 	//any piece can move again
 	set_pieces_can_move(pieces);
 	//switch the gamestate and inputmode
-	if (gamestate == Gamestate::WHITE_TURN) {
-		/*if the white player was selecting airstrike target, then he made normal move
-		and he will start the next move by resolving the airstrike and moving the queen again*/
-		if (white_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
-			white_input_mode = InputMode::AIRSTRIKE_RESOLVE_ATTACK;
-		}
-
-		//switches the gamestate
-		gamestate = Gamestate::BLACK_TURN;
-		//black is on the move, before the move, queen performs the airstrike attack and the player gets two moves
-		//first must be with the queen (solved in handle_events)
-		if (black_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
-			switchGamestateAfterQueenAbility(false);
-		}
-		if (black_input_mode == InputMode::BISHOP_ABILITY) {
-			bool found_bishop_with_activated_ability = false;
-			for (auto& piece : pieces) {
-				if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
-					found_bishop_with_activated_ability = true;
-				}
-			}
-			if (!found_bishop_with_activated_ability) {
-				black_input_mode = InputMode::NORMAL;
-			}
-		}
-		set_message_for_user("Black on turn");
-		who_is_on_move.setString("Black on turn");
-	}
-	else if (gamestate == Gamestate::BLACK_TURN) {
-		if (black_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
-			black_input_mode = InputMode::AIRSTRIKE_RESOLVE_ATTACK;
-		}
-		gamestate = Gamestate::WHITE_TURN;
-		if (white_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
-			switchGamestateAfterQueenAbility(true);
-		}
-		if (white_input_mode == InputMode::BISHOP_ABILITY) {
-			bool found_bishop_with_activated_ability = false;
-			for (auto& piece : pieces) {
-				if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
-					found_bishop_with_activated_ability = true;
-				}
-			}
-			if (!found_bishop_with_activated_ability) {
-				white_input_mode = InputMode::NORMAL;
-			}
-		}
-		set_message_for_user("White on turn");
-		who_is_on_move.setString("White on turn");
-	}
 	
+	InputMode& on_move_input_mode = (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode);
+	InputMode& opponent_input_mode = (gamestate == Gamestate::WHITE_TURN ? black_input_mode : white_input_mode);
+	/*if the white player was selecting airstrike target, then he made normal move
+	and he will start the next move by resolving the airstrike and moving the queen again*/
+	if (on_move_input_mode == InputMode::AFTER_AIRSTRIKE_SELECT_TARGET) {
+		on_move_input_mode = InputMode::AIRSTRIKE_RESOLVE_ATTACK;
+	}
+
+	//switches the gamestate
+	gamestate = (gamestate == Gamestate::WHITE_TURN ? Gamestate::BLACK_TURN : Gamestate::WHITE_TURN);
+	//black is on the move, before the move, queen performs the airstrike attack and the player gets two moves
+	//first must be with the queen (solved in handle_events)
+	if (opponent_input_mode == InputMode::AIRSTRIKE_RESOLVE_ATTACK) {
+		switchGamestateAfterQueenAbility(false);
+	}
+	if (opponent_input_mode == InputMode::BISHOP_ABILITY) {
+		bool found_bishop_with_activated_ability = false;
+		for (auto& piece : pieces) {
+			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+				found_bishop_with_activated_ability = true;
+			}
+		}
+		if (!found_bishop_with_activated_ability) {
+			opponent_input_mode = InputMode::NORMAL;
+		}
+	}
+	set_message_for_user(gamestate == Gamestate::WHITE_TURN ? "White on turn" : "Black on Turn");
+	who_is_on_move.setString(gamestate == Gamestate::WHITE_TURN ? "White on turn" : "Black on Turn");
 }
 
 void Game::switchGamestateAfterQueenAbility(bool white_on_turn) {
@@ -501,14 +455,7 @@ bool Game::only_one_piece_left(bool is_color_white) {
 	int count = 0;
 	if (is_color_white == true) {
 		for (auto& piece : pieces) {
-			if (piece->is_piece_white() == true) {
-				count++;
-			}
-		}
-	}
-	if (is_color_white == false) {
-		for (auto& piece : pieces) {
-			if (piece->is_piece_white() == false) {
+			if (piece->is_piece_white() == is_color_white) {
 				count++;
 			}
 		}
@@ -541,6 +488,7 @@ void Game::set_input_mode(Gamestate gamestate, InputMode input_mode) {
 InputMode Game::get_input_mode(bool is_white) {
 	return (is_white ? white_input_mode : black_input_mode);
 }
+
 void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type) {
 	//add new piece
 	switch (piece_type) {
@@ -569,7 +517,7 @@ void Game::update_stats() {
 	//after player's move, temporary stats of their pieces are lowered
 	if (gamestate == Gamestate::WHITE_TURN) {
 		for (auto& piece : pieces) {
-			if (piece->is_piece_white()) {			
+			if (piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN )) {			
 				//if stun if lowered, then the piece doesnt reload
 				if (piece->get_curr_stun() > 0) {
 					piece->set_curr_stun(piece->get_curr_stun() - 1); //lowers stun by one
@@ -584,7 +532,7 @@ void Game::update_stats() {
 			}
 		}
 	}
-	if (gamestate == Gamestate::BLACK_TURN) {
+	/*if (gamestate == Gamestate::BLACK_TURN) {
 		for (auto& piece : pieces) {
 			if (piece->is_piece_white() == false) {
 				if (piece->get_curr_stun() > 0) {
@@ -599,7 +547,7 @@ void Game::update_stats() {
 				piece->set_moves_since_last_took(piece->get_moves_since_last_took() + 1);
 			}
 		}
-	}
+	}*/
 	//poison is in half-moves, because some pieces need to die right after their move/ability
 	//and also poison opponent's piece to kill them after the move ends
 	for (auto& piece : pieces) {

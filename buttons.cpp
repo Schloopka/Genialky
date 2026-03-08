@@ -48,6 +48,12 @@ void Button::isClicked(const sf::RenderWindow& window, const sf::Event& event, G
 int Button::get_id() {
 	return this->id;
 }
+int Button::get_column() {
+	return this->id % 8;
+}
+int Button::get_row() {
+	return this->id / 8;
+}
 sf::RectangleShape Button::get_button_shape() {
 	return button_shape;
 }
