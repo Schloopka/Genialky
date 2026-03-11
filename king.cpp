@@ -67,10 +67,10 @@ MoveResult King::can_activate_ability(Gamestate gamestate, InputMode inputmode, 
 	if (curr_ability_reload > 0) {
 		return MoveResult::REALOADING;
 	}
-	if (is_white && not game.only_one_piece_left(true)) {
+	if (is_white && not game.player_has_only_one_piece_left(true)) {
 		return MoveResult::CANT_ACTIVATE_ABILITY;
 	}
-	if (not is_white && not game.only_one_piece_left(false)) {
+	if (not is_white && not game.player_has_only_one_piece_left(false)) {
 		return MoveResult::CANT_ACTIVATE_ABILITY;
 	}
 	return MoveResult::VALID;

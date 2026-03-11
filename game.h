@@ -23,20 +23,23 @@ public:
 	Game();
 	~Game();
 
-	void run();
-	void setup();
-	void setup_texts();
-	void render_background(sf::RenderWindow& window);
-	void render_pieces(sf::RenderWindow& window); //renders pieces, called after every move
-	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window
-	void render_texts(sf::RenderWindow& window); //renders the text that describes what happened to user
-	void make_buttons(sf::RenderWindow& window); //make buttons at the start of the game, put them into vector
-	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector
-	void set_message_for_user(std::string message);
-	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons);//check for events and calls isClicked if button is clicked
+	void run(); //mainloop of the game
+	void setup(); //calls functions to set up game, pieces and render background with fields for texts
+	void setup_texts(); // creates fields for texts
+	void render_background(sf::RenderWindow& window); //renders background of the window
+	void render_pieces(sf::RenderWindow& window); //renders all pieces
+	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window including menu buttons if there are any
+	void render_texts(sf::RenderWindow& window); //renders the text that describes, what happened, to user
+	void make_buttons(sf::RenderWindow& window); //make buttons which are permament (squares buttons, end turn button), put them into vector
+	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector, also loads their textures
+	void set_message_for_user(std::string message); //changes the text of message_for_user text field
+	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons); //event loop, if any button is clicked, appropriate handle_fucntion is called
 
 
-	void handle_events(); //handles events when a button is clicked
+	void handle_events(); /*looks at vector of last_clicked buttons and depending on current stats calls appropriate function which will handle the case 
+	or does nothing when no case can be executed
+	If no case is executed and length of vector is more then one, erases first button out of the vector (this allows the user to missclick, then click two buttons 
+	that can interact with each other and they don't have to care about parity of number of buttons clicked*/
 	void handle_normal_moves(); //handles normal moves when two squares are clicked
 	void handle_queen_select_airstrike(bool white_on_move); //handles events if the player must choose where queen lands after airstrike
 	void handle_bishop_abiltiy(bool white_on_move, Piece* bishop);//handles events when bishops ability is activated
@@ -44,14 +47,18 @@ public:
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
 	void append_buttons_clicked(Button* button);
 
-	bool eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);//eliminate piece from a square, also checks, if the piece can be eliminated
+	bool eliminate_pieces_from(int dest_row, int dest_column, attackType attack_type);/*eliminate piece from a square, also checks, if the piece can be eliminated
+	returns true if any piece was eliminated (pieces can be immune to attack)*/
 	bool is_there_a_piece(int row, int column); //returns true if there is a piece on that square
-	bool only_one_piece_left(bool is_color_white);//returns true if there is only one piece left
+	bool player_has_only_one_piece_left(bool is_player_white);//returns true if there is only one piece left for the player in argument
 
-	void update_stats(); //after each turn, every piece of the person whose move ended has their stun, root or reload lowered by one (in this order)
-	void switchGamestate(); //makes the opposite player move
-	void switchGamestateAfterQueenAbility(bool white_on_move); //special switching gamestate after queen ability was used
-	
+	void update_stats(); /*lowers every piece of player who is on move(taken from gamestate) their stun, root or reload lowered by one(in this order)
+	also lowers every pieces poison by one because it is stored in halfmoves*/
+	void switchGamestate(); /*kills all pieces which should die of poison, change the gamestate and inputmode of players acordingly to situation in game
+	changes the texts displayed*/
+	void move_queen_back_to_board(bool white_on_move); //move the queen from ability square to board based on queen airstrike data
+	void handle_queen_after_landing(); /*handles moves after the queen landed, if user makes move with a queen, it is done and user has one more move
+	else makes move with other piece but the user doesnt get other free move*/
 	void promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type);
 	
 	void set_pieces_can_move(std::vector<Piece*> pieces);
