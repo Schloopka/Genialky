@@ -1,5 +1,5 @@
 #include "piece.h"
-#include "game.h"
+#include "../game.h"
 #include <vector>
 
 #include <iostream>

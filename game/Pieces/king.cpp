@@ -2,8 +2,8 @@
 
 #include "king.h"
 #include "piece.h"
-#include "gamestate.h"
-#include "game.h"
+#include "../gamestate.h"
+#include "../game.h"
 
 
 
@@ -91,10 +91,10 @@ bool King::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = kingTexture.loadFromFile("pieces/white-king.png");
+		ok = kingTexture.loadFromFile("Textures and fonts/white-king.png");
 	}
 	else {
-		bool ok = kingTexture.loadFromFile("pieces/black-king.png");
+		ok = kingTexture.loadFromFile("Textures and fonts/black-king.png");
 	}
 
 	if (!ok) {

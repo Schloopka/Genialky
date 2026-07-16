@@ -4,14 +4,14 @@
 #include <memory>
 #include "game.h"
 
-#include "piece.h"
-#include "pawn.h"
-#include "bishop.h"
-#include "knight.h"
-#include "king.h"
-#include "rook.h"
-#include "queen.h"
-#include "menu.h"
+#include "./Pieces/piece.h"
+#include "./Pieces/pawn.h"
+#include "./Pieces/bishop.h"
+#include "./Pieces/knight.h"
+#include "./Pieces/king.h"
+#include "./Pieces/rook.h"
+#include "./Pieces/queen.h"
+#include "./Input/menu.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -33,7 +33,7 @@ Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user
 Game::~Game() = default;
 
 void Game::setup() {
-	if (!font.openFromFile("arial1.ttf")) {
+	if (!font.openFromFile("Textures and fonts/arial1.ttf")) {
 		std::cout << "Error";
 	}
 	render_background(window);

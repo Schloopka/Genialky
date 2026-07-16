@@ -2,8 +2,8 @@
 
 #include "pawn.h"
 #include "piece.h"
-#include "gamestate.h"
-#include "game.h"
+#include "../gamestate.h"
+#include "../game.h"
 
 Pawn::Pawn(bool is_white, int row, int column) {
 	this->is_white = is_white;
@@ -26,7 +26,7 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
-	//white moving forward - kopík
+	//white moving forward - kopï¿½k
 	if (is_white) {
 		if (not has_moved) {
 			if (curr_column == dest_column && (curr_row == dest_row - 2 || curr_row == dest_row - 1) 
@@ -66,7 +66,7 @@ MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int des
 	if (curr_reload > 0) {
 		return MoveResult::REALOADING;
 	}
-	//check if white pawn can attack this square - kopík
+	//check if white pawn can attack this square - kopï¿½k
 	if (is_white) {
 		if ((dest_row - curr_row == 1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == 2 && std::abs(dest_column - curr_column) == 2)) {
 			return MoveResult::VALID;
@@ -131,10 +131,10 @@ bool Pawn::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = pawnTexture.loadFromFile("pieces/white-pawn.png");
+		ok = pawnTexture.loadFromFile("Textures and fonts/white-pawn.png");
 	}
 	else {
-		bool ok = pawnTexture.loadFromFile("pieces/black-pawn.png");
+		ok = pawnTexture.loadFromFile("Textures and fonts/black-pawn.png");
 	}
 	
 	if (!ok) {

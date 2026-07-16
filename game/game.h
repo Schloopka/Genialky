@@ -8,10 +8,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include "gamestate.h"
 #include <memory>
-/*#include "buttons.h"
-#include "piece.h"
 
-#include "menu.h"*/
 
 class Menu;
 class Button;

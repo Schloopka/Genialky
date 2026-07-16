@@ -2,8 +2,8 @@
 
 #include "bishop.h"
 #include "piece.h"
-#include "gamestate.h"
-#include "game.h"
+#include "../gamestate.h"
+#include "../game.h"
 
 
 
@@ -30,7 +30,7 @@ MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int 
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
-	//kušník
+	//kuï¿½nï¿½k
 	if (std::abs(curr_row - dest_row) == 1 && std::abs(curr_column - dest_column) == 1) {//can move one diagonally
 		return MoveResult::VALID;
 	}
@@ -47,7 +47,7 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 	}
 	//if the piece is reloading, it cant attack with shooting attack, but can do physical attack
 	if (curr_reload == 0) {
-		//kušník
+		//kuï¿½nï¿½k
 		//if the diagonal distance is less than 3 and it does not attack itsself
 		bool ability_activated = false;
 		if ((is_white ? game.get_input_mode(true) : game.get_input_mode(false)) == InputMode::BISHOP_ABILITY) {
@@ -109,7 +109,7 @@ MoveResult Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 }
 
 std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
-	//kušník
+	//kuï¿½nï¿½k
 	return { {dest_row, dest_column} };
 }
 
@@ -117,10 +117,10 @@ bool Bishop::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = bishopTexture.loadFromFile("pieces/white-bishop.png");
+		ok = bishopTexture.loadFromFile("Textures and fonts/white-bishop.png");
 	}
 	else {
-		bool ok = bishopTexture.loadFromFile("pieces/black-bishop.png");
+		ok = bishopTexture.loadFromFile("Textures and fonts/black-bishop.png");
 	}
 
 	if (!ok) {

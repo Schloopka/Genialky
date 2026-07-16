@@ -1,7 +1,7 @@
 #include "menu.h"
 #include "buttons.h"
 #include "game.h"
-#include "piece.h"
+#include "../Pieces/piece.h"
 
 Menu::Menu(){}
 

@@ -4,8 +4,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include "gamestate.h"
-#include "buttons.h"
+#include "../gamestate.h"
+#include "../Input/buttons.h"
 
 class Game;
 

@@ -2,8 +2,8 @@
 
 #include "queen.h"
 #include "piece.h"
-#include "gamestate.h"
-#include "game.h"
+#include "../gamestate.h"
+#include "../game.h"
 
 
 
@@ -139,10 +139,10 @@ bool Queen::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = queenTexture.loadFromFile("pieces/white-queen.png");
+		ok = queenTexture.loadFromFile("Textures and fonts/white-queen.png");
 	}
 	else {
-		bool ok = queenTexture.loadFromFile("pieces/black-queen.png");
+		ok = queenTexture.loadFromFile("Textures and fonts/black-queen.png");
 	}
 
 	if (!ok) {

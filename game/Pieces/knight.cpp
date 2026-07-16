@@ -2,8 +2,8 @@
 
 #include "knight.h"
 #include "piece.h"
-#include "gamestate.h"
-#include "game.h"
+#include "../gamestate.h"
+#include "../game.h"
 
 
 
@@ -116,10 +116,10 @@ bool Knight::load_texture() {
 
 	bool ok = true;
 	if (is_white) {
-		bool ok = knightTexture.loadFromFile("pieces/white-knight.png");
+		ok = knightTexture.loadFromFile("Textures and fonts/white-knight.png");
 	}
 	else {
-		bool ok = knightTexture.loadFromFile("pieces/black-knight.png");
+		ok = knightTexture.loadFromFile("Textures and fonts/black-knight.png");
 	}
 
 	if (!ok) {
