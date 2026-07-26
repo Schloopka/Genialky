@@ -20,6 +20,8 @@ public:
     virtual void render(sf::RenderWindow&) = 0;
     virtual ~Menu() = default;
 
+    const std::vector<MenuButton*>& get_buttons() const;
+
 };
 
 class PieceMenu : public Menu {

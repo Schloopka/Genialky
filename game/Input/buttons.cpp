@@ -54,9 +54,15 @@ int Button::get_column() {
 int Button::get_row() {
 	return this->id / 8;
 }
-sf::RectangleShape Button::get_button_shape() {
+const sf::RectangleShape& Button::get_shape() const{
 	return button_shape;
 }
+const sf::Text& Button::get_text() const{
+	return button_text;
+}
+
+
+
 
 SquareButton::SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id, sf::Font& font)
 	: Button(position, size, id, font), row(row), column(column)

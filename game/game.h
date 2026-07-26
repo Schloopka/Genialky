@@ -7,6 +7,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "gamestate.h"
+#include "output/renderer.h"
 #include <memory>
 
 
@@ -23,12 +24,11 @@ public:
 	void run(); //mainloop of the game
 	void setup(); //calls functions to set up game, pieces and render background with fields for texts
 	void setup_texts(); // creates fields for texts
-	void render_background(sf::RenderWindow& window); //renders background of the window
 	void render_pieces(sf::RenderWindow& window); //renders all pieces
 	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window including menu buttons if there are any
 	void render_texts(sf::RenderWindow& window); //renders the text that describes, what happened, to user
-	void make_buttons(sf::RenderWindow& window); //make buttons which are permament (squares buttons, end turn button), put them into vector
-	void setup_pieces(sf::RenderWindow& window); //sets up pieces and puts them into a vector, also loads their textures
+	void make_buttons(); //make buttons which are permament (squares buttons, end turn button), put them into vector
+	void setup_pieces(); //sets up pieces and puts them into a vector, also loads their textures
 	void set_message_for_user(std::string message); //changes the text of message_for_user text field
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons); //event loop, if any button is clicked, appropriate handle_fucntion is called
 
@@ -73,11 +73,15 @@ public:
 	void set_moves_left(int num); 
 	void set_to_delete_menu(bool val);
 	std::pair<int, int> get_after_menu_coordinates();
-	std::vector<Piece*> get_pieces();
 
+
+	std::vector<Piece*> get_pieces();
+	const std::vector<Button*>& get_buttons() const;
+	const Menu* get_menu() const;
 	sf::Font font;
 private:
 	sf::RenderWindow window;
+	Renderer _renderer;
 	sf::Text message_for_user;
 	sf::Text who_is_on_move;
 

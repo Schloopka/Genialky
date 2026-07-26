@@ -19,7 +19,9 @@ public:
 	int get_id();
 	int get_row();
 	int get_column();
-	sf::RectangleShape get_button_shape();
+	const sf::RectangleShape& get_shape() const;
+	const sf::Text& get_text() const;
+
 protected: 
 	sf::RectangleShape button_shape;
 	sf::Text button_text;

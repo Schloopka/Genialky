@@ -21,7 +21,8 @@
 class Buttons;
 class PieceMenu;
 
-Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font), who_is_on_move(this->font)
+Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font), who_is_on_move(this->font),
+				_renderer(window)
 {
 	gamestate = Gamestate::WHITE_TURN;
 	white_input_mode = InputMode::NORMAL;
@@ -36,14 +37,14 @@ void Game::setup() {
 	if (!font.openFromFile("Textures and fonts/arial1.ttf")) {
 		std::cout << "Error";
 	}
-	render_background(window);
-	make_buttons(window);
-	setup_pieces(window);
+	_renderer.render_background();
+	make_buttons();
+	setup_pieces();
 	set_pieces_can_move(pieces);
 	setup_texts();
 }
 
-void Game::setup_pieces(sf::RenderWindow & window) {
+void Game::setup_pieces() {
 	//pawns
 	for (int i = 0; i < 8; i++) {
 		//white
@@ -91,11 +92,6 @@ void Game::setup_texts() {
 	
 }
 
-void Game::render_background(sf::RenderWindow& window) {
-	sf::Color background(180, 180, 180);
-	window.clear(background);
-}
-
 void Game::render_pieces(sf::RenderWindow& window) {
 	for (auto& piece : pieces) {
 		piece->display(window);
@@ -121,7 +117,7 @@ void Game::set_message_for_user(std::string message) {
 	this->message_for_user.setString(message);
 }
 
-void Game::make_buttons(sf::RenderWindow& window) {
+void Game::make_buttons() {
 	//board squares
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
@@ -600,6 +596,14 @@ void Game::update_stats() {
 std::vector<Piece*> Game::get_pieces() {
 	return pieces;
 }
+
+const std::vector<Button*>& Game::get_buttons() const{
+	return buttons;
+}
+
+const Menu* Game::get_menu() const{
+	return activeMenu.get();
+}
 void Game::set_king_on_board(bool is_on_board, bool is_white) {
 	if (is_white) {
 		this->white_king_on_board = is_on_board;
@@ -633,9 +637,7 @@ std::pair<int, int> Game::get_after_menu_coordinates() {
 void Game::run() {
 	while (window.isOpen()) {
 		check_for_events(window, buttons);
-		window.clear();
-		this->render_background(window);
-		this->render_buttons(window);
+		_renderer.render_game(*this);
 		this->render_pieces(window);
 		this->render_texts(window);
 		window.display();

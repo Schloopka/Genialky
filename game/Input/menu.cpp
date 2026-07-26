@@ -5,12 +5,9 @@
 
 Menu::Menu(){}
 
-void Menu::render(sf::RenderWindow& window) {
-	for (MenuButton* button : buttons) {
-		button->draw_button(window);
-	}
+const std::vector<MenuButton*>& Menu::get_buttons() const{
+	return buttons;
 }
-
 
 
 PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
@@ -28,7 +25,7 @@ void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& 
 		if (event.is<sf::Event::MouseButtonPressed>()) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 			sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-			if (button->get_button_shape().getGlobalBounds().contains(mousePosF)) {
+			if (button->get_shape().getGlobalBounds().contains(mousePosF)) {
 				handle_events(*button, game);
 
 			}

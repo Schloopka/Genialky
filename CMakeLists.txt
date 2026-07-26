@@ -21,6 +21,7 @@ set(SOURCES
     game/Pieces/piece.cpp
     game/Pieces/queen.cpp
     game/Pieces/rook.cpp
+    game/output/renderer.cpp
 )
 add_executable(Genialky ${SOURCES})
 target_compile_features(Genialky PRIVATE cxx_std_17)
@@ -35,6 +36,7 @@ target_include_directories(Genialky PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/game
     ${CMAKE_CURRENT_SOURCE_DIR}/game/Input
     ${CMAKE_CURRENT_SOURCE_DIR}/game/Pieces
+    ${CMAKE_CURRENT_SOURCE_DIR}/game/output
 )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Genialky)
