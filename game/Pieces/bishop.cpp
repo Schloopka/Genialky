@@ -104,6 +104,5 @@ MoveResult Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 }
 
 std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
-	//ku�n�k
 	return { {dest_row, dest_column} };
 }
