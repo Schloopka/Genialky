@@ -76,10 +76,6 @@ void Game::setup_pieces() {
 	//queens
 	pieces.push_back(new Queen(true, 0, 3));
 	pieces.push_back(new Queen(false, 7, 3));
-	//load textures
-	for (auto& piece : pieces) {
-		piece->load_texture();
-	}
 }
 
 void Game::setup_texts() {
@@ -91,14 +87,6 @@ void Game::setup_texts() {
 	who_is_on_move.setFillColor(sf::Color::Black);
 	
 }
-
-void Game::render_pieces(sf::RenderWindow& window) {
-	for (auto& piece : pieces) {
-		piece->display(window);
-	}
-}
-
-
 
 void Game::render_texts(sf::RenderWindow& window) {
 	window.draw(message_for_user);
@@ -585,7 +573,7 @@ void Game::update_stats() {
 	}
 }
 
-std::vector<Piece*> Game::get_pieces() {
+std::vector<Piece*> Game::get_pieces() const {
 	return pieces;
 }
 
@@ -630,7 +618,6 @@ void Game::run() {
 	while (window.isOpen()) {
 		check_for_events(window, buttons);
 		_renderer.render_game(*this);
-		this->render_pieces(window);
 		this->render_texts(window);
 		window.display();
 	}

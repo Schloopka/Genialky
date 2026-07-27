@@ -9,6 +9,7 @@
 
 
 Knight::Knight(bool is_white, int row, int column) {
+	this->type = PieceType::KNIGHT;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -16,13 +17,6 @@ Knight::Knight(bool is_white, int row, int column) {
 	this->attack_type = attackType::PHYSICAL;
 }
 
-void Knight::display(sf::RenderWindow& window) {
-	sf::Sprite knightSprite(knightTexture);
-	knightSprite.setPosition({ 36.f + column * 100.f, 740.f - row * 100.f });
-	knightSprite.setScale({ 1.0f, 0.9f });
-	window.draw(knightSprite);
-
-}
 //returns true if it can move to the second square
 MoveResult Knight::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move

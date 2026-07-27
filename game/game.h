@@ -75,7 +75,7 @@ public:
 	std::pair<int, int> get_after_menu_coordinates();
 
 
-	std::vector<Piece*> get_pieces();
+	std::vector<Piece*> get_pieces() const;
 	const std::vector<Button*>& get_buttons() const;
 	const Menu* get_menu() const;
 	sf::Font font;

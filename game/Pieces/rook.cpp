@@ -9,6 +9,7 @@
 
 
 Rook::Rook(bool is_white, int row, int column) {
+	this->type = PieceType::ROOK;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -18,13 +19,7 @@ Rook::Rook(bool is_white, int row, int column) {
 	this->poison_attack = 1;
 }
 
-void Rook::display(sf::RenderWindow& window) {
-	sf::Sprite rookSprite(rookTexture);
-	rookSprite.setPosition({ 36.f + column * 100.f, 740.f - row * 100.f });
-	rookSprite.setScale({ 1.0f, 0.9f });
-	window.draw(rookSprite);
 
-}
 //returns true if it can move to the second square
 MoveResult Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	//We cant use the can_do_anything function, because it contains moves_left == 0 condition and rook can sometimes move when there are no moves left

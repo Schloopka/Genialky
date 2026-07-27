@@ -13,7 +13,7 @@ class Game;
 class Queen : public Piece {
 public:
 	Queen(bool is_white, int row, int column);
-	void display(sf::RenderWindow& window) override;
+	/*void display(sf::RenderWindow& window) override;*/
 	MoveResult can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	bool load_texture() override;
 	MoveResult can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
@@ -27,8 +27,6 @@ public:
 	std::pair<int, int> get_air_strike_target_square() override;
 	std::pair<int, int> get_air_strike_original_square() override; 
 	std::vector<MenuOption> get_menu_options(Game& game) override;
-	PieceType get_type() override;
-
 private:
 	sf::Texture queenTexture;
 protected:

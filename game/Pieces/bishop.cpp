@@ -9,6 +9,7 @@
 
 
 Bishop::Bishop(bool is_white, int row, int column) {
+	this->type = PieceType::BISHOP;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -17,13 +18,7 @@ Bishop::Bishop(bool is_white, int row, int column) {
 	this->attack_type = attackType::SHOOTING;
 }
 
-void Bishop::display(sf::RenderWindow& window) {
-	sf::Sprite bishopSprite(bishopTexture);
-	bishopSprite.setPosition({ 36.f + column * 100.f, 740.f - row * 100.f });
-	bishopSprite.setScale({ 1.0f, 0.9f });
-	window.draw(bishopSprite);
 
-}
 //returns true if it can move to the second square
 MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move

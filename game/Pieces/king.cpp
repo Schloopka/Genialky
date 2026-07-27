@@ -9,6 +9,7 @@
 
 
 King::King(bool is_white, int row, int column) {
+	this->type = PieceType::KING;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -17,13 +18,6 @@ King::King(bool is_white, int row, int column) {
 	this->attack_type = attackType::PHYSICAL;
 }
 
-void King::display(sf::RenderWindow& window) {
-	sf::Sprite kingSprite(kingTexture);
-	kingSprite.setPosition({ 36.f + column * 100.f, 740.f - row * 100.f });
-	kingSprite.setScale({ 1.0f, 0.9f });
-	window.draw(kingSprite);
-
-}
 //returns true if it can move to the second square
 MoveResult King::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {

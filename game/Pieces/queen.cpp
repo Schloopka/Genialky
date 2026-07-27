@@ -9,6 +9,7 @@
 
 
 Queen::Queen(bool is_white, int row, int column) {
+	this->type = PieceType::QUEEN;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -18,7 +19,7 @@ Queen::Queen(bool is_white, int row, int column) {
 	this->air_strike_data.phase = airStrikePhase::NOT_ACTIVE;
 }
 
-void Queen::display(sf::RenderWindow& window) {
+/*void Queen::display(sf::RenderWindow& window) {
 	sf::Sprite queenSprite(queenTexture);
 	//standard position
 	if (air_strike_data.phase == airStrikePhase::NOT_ACTIVE) {
@@ -38,7 +39,7 @@ void Queen::display(sf::RenderWindow& window) {
 	queenSprite.setScale({ 0.9f, 0.9f });
 	window.draw(queenSprite);
 
-}
+}*/
 //returns true if it can move to the second square
 MoveResult Queen::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
@@ -132,9 +133,6 @@ std::vector<MenuOption> Queen::get_menu_options(Game& game) {
 	return { MenuOption::DONT_MOVE, MenuOption::MOVE_TO_ATTACKED_SQUARE };
 }
 
-PieceType Queen::get_type() {
-	return PieceType::QUEEN;
-}
 bool Queen::load_texture() {
 
 	bool ok = true;

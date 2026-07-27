@@ -6,6 +6,7 @@
 #include "../game.h"
 
 Pawn::Pawn(bool is_white, int row, int column) {
+	this->type = PieceType::PAWN;
 	this->is_white = is_white;
 	this->row = row;
 	this->column = column;
@@ -13,13 +14,7 @@ Pawn::Pawn(bool is_white, int row, int column) {
 	this->promotes = true;
 }
 
-void Pawn::display(sf::RenderWindow& window) {
-	sf::Sprite pawnSprite(pawnTexture);
-	pawnSprite.setPosition({ 38.f + column  * 100.f, 736.f - row  * 100.f });
-	pawnSprite.setScale({ 1.0f, 0.9f });
-	window.draw(pawnSprite);
-	
-}
+
 //returns true if it can move to the second square
 MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move

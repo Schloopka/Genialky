@@ -7,9 +7,6 @@ class Game;
 
 Piece::Piece():row(0), column(0), is_white(true), attack_type(attackType::ELIMINATION){}
 
-void Piece::display(sf::RenderWindow& window) {
-
-}
 
 bool Piece::load_texture() {
 	return true;
@@ -23,7 +20,7 @@ int Piece::get_row() const{
 	return this->row;
 }
 
-bool Piece::is_piece_white() {
+bool Piece::is_piece_white() const {
 	if (is_white) {
 		return true;
 	}
@@ -192,7 +189,7 @@ int Piece::get_moves_since_last_took() {
 void Piece::set_moves_since_last_took(int num) {
 	this->moves_since_last_took_a_piece = num;
 }
-airStrikePhase Piece::get_air_strike_phase() {
+airStrikePhase Piece::get_air_strike_phase() const {
 	return this->air_strike_data.phase;
 }
 
@@ -210,8 +207,8 @@ std::pair<int, int> Piece::get_air_strike_target_square() {
 std::pair<int, int> Piece::get_air_strike_original_square() {
 	return { 0, 0 };
 }
-PieceType Piece::get_type() {
-	return PieceType::PAWN;
+PieceType Piece::get_type() const {
+	return type;
 }
 std::vector<MenuOption> Piece::get_menu_options(Game& game) {
 	return {};

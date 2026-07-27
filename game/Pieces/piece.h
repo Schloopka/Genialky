@@ -26,7 +26,6 @@ struct AirStrikeData
 class Piece {
 public:
 	Piece();
-	virtual void display(sf::RenderWindow& window);
 	virtual bool load_texture();
 
 	void move_piece_to(int dest_row, int des_column);
@@ -40,7 +39,7 @@ public:
 
 	MoveResult can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game); //check if the piece is not stunned, player is on move, piece is in pieces that can move
 	bool is_piece_in_can_move(std::vector<Piece*> pieces_can_move);
-	bool is_piece_white(); //returns true if the piece is white
+	bool is_piece_white() const; //returns true if the piece is white
 
 	bool get_moves_when_attack();
 	void set_moves_when_attack(bool val);
@@ -71,10 +70,9 @@ public:
 	void set_moves_since_last_took(int num);
 
 	attackType get_attack_type();
-	virtual PieceType get_type(); //this function is applied only to difference between queen and not queen
-	//if you want to use it to other pieces, you have to update it in classes of concrete pieces
+	virtual PieceType get_type() const;
 
-	airStrikePhase get_air_strike_phase();
+	airStrikePhase get_air_strike_phase() const;
 	void set_air_strike_phase(airStrikePhase phase);
 	virtual void ability_air_strike_select_square(int target_row, int target_column);
 	virtual std::pair<int, int> get_air_strike_target_square();
@@ -83,7 +81,7 @@ public:
 	virtual std::vector<MenuOption> get_menu_options(Game& game);
 
 protected:
-	PieceType type;
+	PieceType type = PieceType::PAWN;
 	int row = 0;
 	int column = 0;
 	bool is_white;
