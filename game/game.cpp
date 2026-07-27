@@ -34,42 +34,37 @@ void Game::setup() {
 	_renderer.render_background();
 	make_buttons();
 	setup_pieces();
-	set_pieces_can_move(pieces);
+	set_all_pieces_can_move();
 	_renderer.setup_texts();
 }
 
-void Game::setup_pieces() {
-	//pawns
-	for (int i = 0; i < 8; i++) {
-		//white
-		pieces.push_back(new Pawn(true, 1, i));
-	}
+void Game::setup_pieces()
+{
+    for (int i = 0; i < 8; ++i) {
+        pieces.push_back(std::make_unique<Pawn>(true, 1, i));
+        pieces.push_back(std::make_unique<Pawn>(false, 6, i));
+    }
 
-	for (int i = 0; i < 8; i++) {
-		//black
-		pieces.push_back(new Pawn(false, 6, i));
-	}
-	//bishops
-	pieces.push_back(new Bishop(true, 0, 2));
-	pieces.push_back(new Bishop(true, 0, 5));
-	pieces.push_back(new Bishop(false, 7, 2));
-	pieces.push_back(new Bishop(false, 7, 5));
-	//knights
-	pieces.push_back(new Knight(true, 0, 1));
-	pieces.push_back(new Knight(true, 0, 6));
-	pieces.push_back(new Knight(false, 7, 1));
-	pieces.push_back(new Knight(false, 7, 6));
-	//kings
-	pieces.push_back(new King(true, 0, 4));
-	pieces.push_back(new King(false, 7, 4));
-	//rooks
-	pieces.push_back(new Rook(true, 0, 0));
-	pieces.push_back(new Rook(true, 0, 7));
-	pieces.push_back(new Rook(false, 7, 0));
-	pieces.push_back(new Rook(false, 7, 7));
-	//queens
-	pieces.push_back(new Queen(true, 0, 3));
-	pieces.push_back(new Queen(false, 7, 3));
+    pieces.push_back(std::make_unique<Bishop>(true, 0, 2));
+    pieces.push_back(std::make_unique<Bishop>(true, 0, 5));
+    pieces.push_back(std::make_unique<Bishop>(false, 7, 2));
+    pieces.push_back(std::make_unique<Bishop>(false, 7, 5));
+
+    pieces.push_back(std::make_unique<Knight>(true, 0, 1));
+    pieces.push_back(std::make_unique<Knight>(true, 0, 6));
+    pieces.push_back(std::make_unique<Knight>(false, 7, 1));
+    pieces.push_back(std::make_unique<Knight>(false, 7, 6));
+
+    pieces.push_back(std::make_unique<King>(true, 0, 4));
+    pieces.push_back(std::make_unique<King>(false, 7, 4));
+
+    pieces.push_back(std::make_unique<Rook>(true, 0, 0));
+    pieces.push_back(std::make_unique<Rook>(true, 0, 7));
+    pieces.push_back(std::make_unique<Rook>(false, 7, 0));
+    pieces.push_back(std::make_unique<Rook>(false, 7, 7));
+
+    pieces.push_back(std::make_unique<Queen>(true, 0, 3));
+    pieces.push_back(std::make_unique<Queen>(false, 7, 3));
 }
 
 void Game::set_message_for_user(std::string message) {
@@ -144,11 +139,12 @@ void Game::handle_events() {
 		handle_other_buttons();
 	}
 	//handling bishop activity
-	else if (this->last_clicked.size() == 2
-		&& (on_move_input_mode) == InputMode::BISHOP_ABILITY) {
+		else if (this->last_clicked.size() == 2
+			&& (on_move_input_mode) == InputMode::BISHOP_ABILITY) {
 		for (auto& piece : pieces) {
 			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
-				handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece);
+				handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece.get());
+				return;
 			}
 		}
 	}
@@ -208,10 +204,10 @@ void Game::handle_queen_after_landing() {
 	{
 		if (piece->get_type() != PieceType::QUEEN)
 		{
-			pieces_without_queens.push_back(piece);
+			pieces_without_queens.push_back(piece.get());
 		}
 		else if (piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)){
-			queens.push_back(piece); //we select queens of only good colour
+			queens.push_back(piece.get()); //we select queens of only good colour
 		}
 	}
 	bool queen_made_valid_move = false;
@@ -313,7 +309,7 @@ void Game::handle_normal_moves() {
 			}
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (attack_result == MoveResult::VALID) { //if the piece can attack the second square
-				piece_attacking = piece;
+				piece_attacking = piece.get();
 				if (piece->does_instant_attack()) {
 					piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				}
@@ -332,8 +328,8 @@ void Game::handle_normal_moves() {
 				moves_left--;
 				clear_last_clicked = true;
 			}
-			else {
-				MoveResult result_for_message = MoveResult::NOT_VALID;
+				else {
+					MoveResult result_for_message = MoveResult::NOT_VALID;
 				if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
 					result_for_message = move_result;
 				}
@@ -343,10 +339,14 @@ void Game::handle_normal_moves() {
 				if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
 					result_for_message = ability_result;
 				}
-				set_message_for_user(move_result_to_string(result_for_message));
+					set_message_for_user(move_result_to_string(result_for_message));
+				}
+				// Attacking can erase an element from pieces, invalidating this
+				// vector's iterators. The selected piece has now been handled, so
+				// never advance the range-for iterator.
+				break;
 			}
 		}
-	}
 	if (clear_last_clicked) {
 		this->clear_buttons_clicked();
 	}
@@ -384,11 +384,31 @@ bool Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attac
 	int old_num_of_pieces = pieces.size();
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
-			[dest_row, dest_column, attack_type, this](Piece* piece) {
+			[dest_row, dest_column, attack_type, this](const std::unique_ptr<Piece>& piece) {
 				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type, *this)==MoveResult::VALID;
 			}),
 		pieces.end()
 	);
+
+	// pieces_can_move is a non-owning view. Remove pointers whose owners were
+	// erased above before any later code can try to use them.
+	pieces_can_move.erase(
+		std::remove_if(
+			pieces_can_move.begin(),
+			pieces_can_move.end(),
+			[this](const Piece* candidate) {
+				return std::none_of(
+					pieces.begin(),
+					pieces.end(),
+					[candidate](const std::unique_ptr<Piece>& piece) {
+						return piece.get() == candidate;
+					}
+				);
+			}
+		),
+		pieces_can_move.end()
+	);
+
 	int new_num_of_pieces = pieces.size();
 	if (new_num_of_pieces == old_num_of_pieces) {
 		return false;
@@ -413,13 +433,13 @@ void Game::switchGamestate() {
 
 	//eliminates poisoned pieces which poison ticked down to 0
 	pieces.erase(std::remove_if(pieces.begin(), pieces.end(),
-			[](const Piece* piece) {
+			[](const std::unique_ptr<Piece>& piece) {
 				return piece->get_poisoned_for() == 0;
 			}),
 		pieces.end()
 	);
 	//any piece can move again
-	set_pieces_can_move(pieces);
+	set_all_pieces_can_move();
 	InputMode& on_move_input_mode = (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode);//who was on move before end of turn
 	InputMode& opponent_input_mode = (gamestate == Gamestate::WHITE_TURN ? black_input_mode : white_input_mode); //who will be on move after
 	/*if the white player was selecting airstrike target, then he made normal move
@@ -460,6 +480,7 @@ void Game::move_queen_back_to_board(bool white_on_turn) {
 			piece->set_air_strike_phase(airStrikePhase::NOT_ACTIVE); //the ability is over for the queen, so reset the state to default
 			piece->set_ability_reload(7);
 			piece->attack(taget_row, target_column, *this, piece->get_attack_type());
+			break;
 		}
 	}
 	moves_left = 2; //queen can move again after airstrike
@@ -485,7 +506,16 @@ std::vector<Piece*> Game::get_pieces_can_move() {
 }
 
 void Game::set_pieces_can_move(std::vector<Piece*> pieces) {
-	this->pieces_can_move = pieces;
+	pieces_can_move = std::move(pieces);
+}
+void Game::set_all_pieces_can_move()
+{
+    pieces_can_move.clear();
+    pieces_can_move.reserve(pieces.size());
+
+    for (const auto& piece : pieces) {
+        pieces_can_move.push_back(piece.get());
+    }
 }
 
 void Game::set_input_mode(Gamestate gamestate, InputMode input_mode) {
@@ -505,16 +535,16 @@ void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordi
 	//add new piece
 	switch (piece_type) {
 	case PieceType::BISHOP:
-		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.push_back(std::make_unique<Bishop>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::KNIGHT:
-		pieces.push_back(new Knight(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.push_back(std::make_unique<Knight>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::ROOK:
-		pieces.push_back(new Rook(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.push_back(std::make_unique<Rook>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::QUEEN:
-		pieces.push_back(new Queen(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.push_back(std::make_unique<Queen>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	};
 	//delete the pawn
@@ -548,7 +578,14 @@ void Game::update_stats() {
 }
 
 std::vector<Piece*> Game::get_pieces() const {
-	return pieces;
+	std::vector<Piece*> result;
+    result.reserve(pieces.size());
+
+    for (const auto& piece : pieces) {
+        result.push_back(piece.get());
+    }
+
+    return result;
 }
 
 const std::vector<Button*>& Game::get_buttons() const{

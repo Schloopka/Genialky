@@ -55,6 +55,7 @@ public:
 	void promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type);
 	
 	void set_pieces_can_move(std::vector<Piece*> pieces);
+	void set_all_pieces_can_move();
 	std::vector<Piece*> get_pieces_can_move();
 
 	void set_input_mode(Gamestate gamestate, InputMode input_mode);//depending on gamestate, sets the input mode for that player
@@ -83,7 +84,7 @@ private:
 
 	std::vector<Button*> buttons; //vector of all buttons except menu buttons
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options
-	std::vector<Piece*> pieces; //vector of all pieces on board
+	std::vector<std::unique_ptr<Piece>> pieces; //vector of all pieces on board
 	std::vector<Piece*> pieces_can_move; //pieces that can move this turn, used when there is restriction which pieces can move
 	std::vector<Button*> last_clicked; //vector of last clicked buttons
 	Gamestate gamestate = Gamestate::WHITE_TURN;

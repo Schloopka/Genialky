@@ -26,6 +26,7 @@ struct AirStrikeData
 class Piece {
 public:
 	Piece();
+	virtual ~Piece() = default;
 
 	void move_piece_to(int dest_row, int des_column);
 	virtual MoveResult can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game);
