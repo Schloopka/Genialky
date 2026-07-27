@@ -98,15 +98,7 @@ void Game::render_pieces(sf::RenderWindow& window) {
 	}
 }
 
-void Game::render_buttons(sf::RenderWindow& window) {
-	for (auto& button : buttons) {
-		button->draw_button(window);
-	}
-	if (activeMenu != nullptr) {
-		activeMenu->render(window);
-	}
 
-}
 
 void Game::render_texts(sf::RenderWindow& window) {
 	window.draw(message_for_user);

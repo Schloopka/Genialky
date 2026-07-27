@@ -5,13 +5,14 @@
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include <vector>
+#include "../Input/buttons.h"
 
 class Game;
 class Button;
 class Menu;
 
-class Renderer{
+
+class Renderer {
 private:
     sf::RenderWindow& window;
     const sf::Color background = sf::Color(180, 180, 180);

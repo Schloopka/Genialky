@@ -64,8 +64,3 @@ void PieceMenu::handle_events(MenuButton& button, Game& game) {
 	}
 	game.set_to_delete_menu(true);
 }
-void PieceMenu::render(sf::RenderWindow& window) {
-	for (MenuButton* button : buttons) {
-		button->draw_button(window);
-	}
-}
