@@ -21,27 +21,21 @@
 class Buttons;
 class PieceMenu;
 
-Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), message_for_user(this->font), who_is_on_move(this->font),
-				_renderer(window)
+Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), _renderer(window)
 {
 	gamestate = Gamestate::WHITE_TURN;
 	white_input_mode = InputMode::NORMAL;
 	black_input_mode = InputMode::NORMAL;
-	message_for_user.setString("Welcome to the game, white on turn");
-	who_is_on_move.setString("White on move");
 }
 
 Game::~Game() = default;
 
 void Game::setup() {
-	if (!font.openFromFile("Textures and fonts/arial1.ttf")) {
-		std::cout << "Error";
-	}
 	_renderer.render_background();
 	make_buttons();
 	setup_pieces();
 	set_pieces_can_move(pieces);
-	setup_texts();
+	_renderer.setup_texts();
 }
 
 void Game::setup_pieces() {
@@ -78,40 +72,25 @@ void Game::setup_pieces() {
 	pieces.push_back(new Queen(false, 7, 3));
 }
 
-void Game::setup_texts() {
-	message_for_user.setCharacterSize(30);
-	message_for_user.setPosition({ 200.f,900.f });
-	message_for_user.setFillColor(sf::Color::Black);
-	who_is_on_move.setCharacterSize(30);
-	who_is_on_move.setPosition({ 800.f,900.f });
-	who_is_on_move.setFillColor(sf::Color::Black);
-	
-}
-
-void Game::render_texts(sf::RenderWindow& window) {
-	window.draw(message_for_user);
-	window.draw(who_is_on_move);
-}
-
 void Game::set_message_for_user(std::string message) {
-	this->message_for_user.setString(message);
+	this->action_description = message;
 }
 
 void Game::make_buttons() {
 	//board squares
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
-			this->buttons.push_back(new SquareButton({ 50.f + 100.f * c, 750.f - 100.f * r }, {100.f, 100.f}, r, c, 8 * r + c, font));
+			this->buttons.push_back(new SquareButton({ 50.f + 100.f * c, 750.f - 100.f * r }, {100.f, 100.f}, r, c, 8 * r + c));
 		}
 	}
 	
 	//queen ability squares
-	this->buttons.push_back(new SquareButton({900.f, 500.f}, { 100.f, 100.f }, 8, 0, 65, font));
-	this->buttons.push_back(new SquareButton({ 900.f, 300.f }, { 100.f, 100.f }, 8, 1, 66, font));
+	this->buttons.push_back(new SquareButton({900.f, 500.f}, { 100.f, 100.f }, 8, 0, 65));
+	this->buttons.push_back(new SquareButton({ 900.f, 300.f }, { 100.f, 100.f }, 8, 1, 66));
 
 	//end turn button
 	std::string text = "End turn";
-	this->buttons.push_back(new Button({ 900.f, 425.f }, { 150.f, 50.f }, 67, font, text));
+	this->buttons.push_back(new Button({ 900.f, 425.f }, { 150.f, 50.f }, 67, text));
 	
 	
 }
@@ -470,7 +449,6 @@ void Game::switchGamestate() {
 		}
 	}
 	set_message_for_user(gamestate == Gamestate::WHITE_TURN ? "White on turn" : "Black on Turn");
-	who_is_on_move.setString(gamestate == Gamestate::WHITE_TURN ? "White on turn" : "Black on Turn");
 }
 
 void Game::move_queen_back_to_board(bool white_on_turn) {
@@ -577,6 +555,14 @@ const std::vector<Button*>& Game::get_buttons() const{
 	return buttons;
 }
 
+const std::string& Game::get_action_descrtiption() const{
+	return action_description;
+}
+
+Gamestate Game::get_gamestate() const{
+	return gamestate;
+}
+
 const Menu* Game::get_menu() const{
 	return activeMenu.get();
 }
@@ -614,7 +600,5 @@ void Game::run() {
 	while (window.isOpen()) {
 		check_for_events(window, buttons);
 		_renderer.render_game(*this);
-		this->render_texts(window);
-		window.display();
 	}
 }

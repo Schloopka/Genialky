@@ -23,12 +23,8 @@ public:
 
 	void run(); //mainloop of the game
 	void setup(); //calls functions to set up game, pieces and render background with fields for texts
-	void setup_texts(); // creates fields for texts
-	void render_pieces(sf::RenderWindow& window); //renders all pieces
-	void render_buttons(sf::RenderWindow& window); //renders all the buttons to window including menu buttons if there are any
-	void render_texts(sf::RenderWindow& window); //renders the text that describes, what happened, to user
 	void make_buttons(); //make buttons which are permament (squares buttons, end turn button), put them into vector
-	void setup_pieces(); //sets up pieces and puts them into a vector, also loads their textures
+	void setup_pieces(); //sets up pieces and puts them into a vector
 	void set_message_for_user(std::string message); //changes the text of message_for_user text field
 	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons); //event loop, if any button is clicked, appropriate handle_fucntion is called
 
@@ -74,16 +70,16 @@ public:
 	void set_to_delete_menu(bool val);
 	std::pair<int, int> get_after_menu_coordinates();
 
-
+	Gamestate get_gamestate() const;
 	std::vector<Piece*> get_pieces() const;
 	const std::vector<Button*>& get_buttons() const;
 	const Menu* get_menu() const;
-	sf::Font font;
+	const std::string& get_action_descrtiption() const;
+
 private:
 	sf::RenderWindow window;
 	Renderer _renderer;
-	sf::Text message_for_user;
-	sf::Text who_is_on_move;
+	std::string action_description;
 
 	std::vector<Button*> buttons; //vector of all buttons except menu buttons
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options

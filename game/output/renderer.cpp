@@ -9,8 +9,10 @@
 #include <stdexcept>
 #include <utility>
 
-Renderer::Renderer(sf::RenderWindow& window) : window(window) {
+Renderer::Renderer(sf::RenderWindow& window) : window(window), 
+                                            action_description(this->font), who_is_on_move(this->font) {
     setup_textures();
+    setup_texts();
 }
 
 void Renderer::render_background() {
@@ -22,6 +24,8 @@ void Renderer::render_game(const Game& game) {
     render_buttons(game.get_buttons());
     render(game.get_menu());
     render_pieces(game.get_pieces());
+    render_texts(game.get_action_descrtiption(), game.get_gamestate());
+    window.display();
 }
 
 void Renderer::render_buttons(const std::vector<Button*>& buttons) {
@@ -41,8 +45,48 @@ void Renderer::render(const Menu* menu) {
 }
 
 void Renderer::render(const Button& button) {
-    window.draw(button.get_shape());
-    window.draw(button.get_text());
+    sf::RectangleShape shape(button.get_size());
+    shape.setPosition(button.get_position());
+
+    const auto* square_button = dynamic_cast<const SquareButton*>(&button);
+    const auto* menu_button = dynamic_cast<const MenuButton*>(&button);
+
+    if (square_button != nullptr) {
+        const sf::Color dark_square(181, 136, 99);
+        const sf::Color light_square(248, 219, 161);
+        const bool is_dark =
+            (square_button->get_row() + square_button->get_column()) % 2 == 1;
+        shape.setFillColor(is_dark ? dark_square : light_square);
+    } else {
+        shape.setFillColor(sf::Color::Blue);
+    }
+
+    window.draw(shape);
+
+    if (button.get_text().empty()) {
+        return;
+    }
+
+    sf::Text text(font);
+    text.setString(button.get_text());
+    text.setFillColor(sf::Color::Black);
+    text.setCharacterSize(25);
+
+    const sf::Vector2f position = button.get_position();
+    const sf::Vector2f size = button.get_size();
+    if (menu_button != nullptr) {
+        text.setPosition({
+            position.x + size.x / 10.f,
+            position.y + size.y / 6.f
+        });
+    } else {
+        text.setPosition({
+            position.x + size.x / 5.f,
+            position.y + size.y / 5.f
+        });
+    }
+
+    window.draw(text);
 }
 
 void Renderer::render_pieces(const std::vector<Piece*>& pieces) {
@@ -124,4 +168,25 @@ void Renderer::load_texture(
     }
 
     piece_textures.emplace(PieceVisualKey{type, is_white}, std::move(texture));
+}
+
+void Renderer::setup_texts(){
+    const std::string path = "Textures and fonts/arial1.ttf";
+    if (!font.openFromFile(path)){
+        throw std::runtime_error("Failed to load font: " + path);
+    }
+    action_description.setString("Welcome to the game, white on turn");
+	who_is_on_move.setString("White on move");
+    action_description.setCharacterSize(30);
+	action_description.setPosition({ 200.f,900.f });
+	action_description.setFillColor(sf::Color::Black);
+	who_is_on_move.setCharacterSize(30);
+	who_is_on_move.setPosition({ 800.f,900.f });
+	who_is_on_move.setFillColor(sf::Color::Black);
+}
+void Renderer::render_texts(std::string s_action_description, Gamestate gamestate){
+    this->action_description.setString(s_action_description);
+    this->who_is_on_move.setString(gamestate == Gamestate::WHITE_TURN ? "White on move" : "Black on move");
+    window.draw(this->action_description);
+	window.draw(this->who_is_on_move);
 }

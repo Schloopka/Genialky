@@ -1,104 +1,90 @@
 #include "buttons.h"
-#include "game.h"
+#include "../game.h"
 
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Window/Event.hpp>
+#include <utility>
 
+Button::Button(
+	sf::Vector2f position,
+	sf::Vector2f size,
+	int id,
+	std::string text
+) : position(position), size(size), button_text(std::move(text)), id(id) {}
 
-class Game;
+void Button::isClicked(
+	const sf::RenderWindow& window,
+	const sf::Event& event,
+	Game& game
+) {
+	if (!event.is<sf::Event::MouseButtonPressed>()) {
+		return;
+	}
 
-Button::Button(sf::Vector2f position, sf::Vector2f size, int id,  sf::Font& font, const std::string& text="") : button_text(font) {
+	const sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
+	const sf::Vector2f point{
+		static_cast<float>(mouse_position.x),
+		static_cast<float>(mouse_position.y)
+	};
 
-	this->button_shape.setPosition(position);
-	this->button_shape.setSize(size);
-	this->button_shape.setFillColor(sf::Color::Blue);
-	this->button_text.setFont(font);
-	this->button_text.setString(text);
-	this->button_text.setPosition({ position.x + size.x / 5.f, position.y + size.y / 5.f });
-	this->button_text.setFillColor(sf::Color::Black);
-	this->button_text.setCharacterSize(25);
-
-	this->id = id;
-
-}
-/*Button::Button(sf::Vector2f position, sf::Vector2f size, int id) :button_text(font)
-{
-	button_shape.setPosition(position);
-	button_shape.setSize(size);
-	this->id = id;
-}*/
-void Button::draw_button(sf::RenderWindow& window) {
-	window.draw(button_shape);
-	window.draw(button_text);
-}
-void Button::isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game) {
-	if (event.is<sf::Event::MouseButtonPressed>()) {
-		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-		sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-		if (button_shape.getGlobalBounds().contains(mousePosF)) {
-			game.append_buttons_clicked(this);
-			/*game.handle_events();*/
-
-		}
+	if (contains(point)) {
+		game.append_buttons_clicked(this);
 	}
 }
 
-int Button::get_id() {
-	return this->id;
+int Button::get_id() const {
+	return id;
 }
-int Button::get_column() {
-	return this->id % 8;
+
+int Button::get_column() const {
+	return id % 8;
 }
-int Button::get_row() {
-	return this->id / 8;
+
+int Button::get_row() const {
+	return id / 8;
 }
-const sf::RectangleShape& Button::get_shape() const{
-	return button_shape;
+
+sf::Vector2f Button::get_position() const {
+	return position;
 }
-const sf::Text& Button::get_text() const{
+
+sf::Vector2f Button::get_size() const {
+	return size;
+}
+
+const std::string& Button::get_text() const {
 	return button_text;
 }
 
-
-
-
-SquareButton::SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id, sf::Font& font)
-	: Button(position, size, id, font), row(row), column(column)
-{
-	button_shape.setPosition(position);
-	button_shape.setSize(size);
-	//colours of squares
-	sf::Color black(181, 136, 99);
-	sf::Color white(248, 219, 161);
-	if ((row % 2 + column % 2) % 2 == 1){
-		button_shape.setFillColor(black);
-	}
-	else {
-		button_shape.setFillColor(white);
-	}
-	this->id = id;
+bool Button::contains(sf::Vector2f point) const {
+	return point.x >= position.x
+		&& point.x <= position.x + size.x
+		&& point.y >= position.y
+		&& point.y <= position.y + size.y;
 }
 
-MenuButton::MenuButton(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, MenuOption menu_option)
-	:Button(position, size, id, font), menu_option(menu_option) {
-	button_shape.setPosition(position);
-	button_shape.setSize(size);
-	this->button_shape.setFillColor(sf::Color::Blue);
-	this->button_text.setFont(font);
-	std::string button_text = menu_option_to_string(menu_option);
-	this->button_text.setString(button_text);
-	this->button_text.setPosition({ position.x + size.x / 10.f, position.y + size.y / 6.f });
-	this->button_text.setFillColor(sf::Color::Black);
-	this->button_text.setCharacterSize(25);
+SquareButton::SquareButton(
+	sf::Vector2f position,
+	sf::Vector2f size,
+	int row,
+	int column,
+	int id
+) : Button(position, size, id), column(column), row(row) {}
 
+int SquareButton::get_row() const {
+	return row;
 }
 
-MenuOption MenuButton::get_menu_option() {
-	return this->menu_option;
+int SquareButton::get_column() const {
+	return column;
 }
 
+MenuButton::MenuButton(
+	sf::Vector2f position,
+	sf::Vector2f size,
+	int id,
+	MenuOption menu_option
+) : Button(position, size, id, menu_option_to_string(menu_option)),
+	menu_option(menu_option) {}
 
-
-
+MenuOption MenuButton::get_menu_option() const {
+	return menu_option;
+}

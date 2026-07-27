@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum class Gamestate {
 	WHITE_TURN,
 	BLACK_TURN,
@@ -94,4 +96,3 @@ inline std::string menu_option_to_string(MenuOption option) {
 	default:                   return "Unknown";
 	}
 }
-

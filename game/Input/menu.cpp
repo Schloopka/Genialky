@@ -15,7 +15,7 @@ PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
 	this->options = this->piece.get_menu_options(game);
 	int i = 0;
 	for (auto& option : options) {
-		buttons.push_back(new MenuButton({ 1000.f, 100.f + (i)*100.f}, {150.f, 50.f}, i, game.font, option));
+		buttons.push_back(new MenuButton({ 1000.f, 100.f + (i)*100.f}, {150.f, 50.f}, i, option));
 		i++;
 	}
 }
@@ -25,7 +25,7 @@ void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& 
 		if (event.is<sf::Event::MouseButtonPressed>()) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 			sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-			if (button->get_shape().getGlobalBounds().contains(mousePosF)) {
+			if (button->contains(mousePosF)) {
 				handle_events(*button, game);
 
 			}

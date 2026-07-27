@@ -1,52 +1,57 @@
 #pragma once
 
-#include "menu.h"
+#include "../gamestate.h"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <string>
+
 class Game;
-enum class MenuOption;
+
 class Button {
 public:
-	Button(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, const std::string& text);
-	Button(sf::Vector2f position, sf::Vector2f size, int id);
+	Button(sf::Vector2f position, sf::Vector2f size, int id, std::string text = "");
+	virtual ~Button() = default;
 
-	Button() = default;
 	virtual void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game);
-	virtual void draw_button(sf::RenderWindow& window);
-	int get_id();
-	int get_row();
-	int get_column();
-	const sf::RectangleShape& get_shape() const;
-	const sf::Text& get_text() const;
 
-protected: 
-	sf::RectangleShape button_shape;
-	sf::Text button_text;
+	int get_id() const;
+	virtual int get_row() const;
+	virtual int get_column() const;
+	sf::Vector2f get_position() const;
+	sf::Vector2f get_size() const;
+	const std::string& get_text() const;
+	bool contains(sf::Vector2f point) const;
+
+protected:
+	sf::Vector2f position;
+	sf::Vector2f size;
+	std::string button_text;
 	int id = 0;
-
 };
 
 class SquareButton : public Button {
 private:
-	int column ;
+	int column;
 	int row;
-	
-public:
-	SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id, sf::Font& font);
-	/*void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game) override;*/
 
+public:
+	SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id);
+
+	int get_row() const override;
+	int get_column() const override;
 };
 
 class MenuButton : public Button {
 private:
 	MenuOption menu_option;
+
 public:
-	MenuButton(sf::Vector2f position, sf::Vector2f size, int id, sf::Font& font, MenuOption menu_option);
+	MenuButton(sf::Vector2f position, sf::Vector2f size, int id, MenuOption menu_option);
 	MenuButton(const MenuButton&) = delete;
 	MenuButton& operator=(const MenuButton&) = delete;
-	MenuOption get_menu_option();
 
+	MenuOption get_menu_option() const;
 };
