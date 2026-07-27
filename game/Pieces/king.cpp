@@ -79,21 +79,3 @@ MoveResult King::can_be_eliminated(attackType attack_type, Game& game) {
 	game.set_king_on_board(false, is_white);
 	return MoveResult::VALID;
 }
-
-
-bool King::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = kingTexture.loadFromFile("Textures and fonts/white-king.png");
-	}
-	else {
-		ok = kingTexture.loadFromFile("Textures and fonts/black-king.png");
-	}
-
-	if (!ok) {
-		std::cerr << "Failed to load textures." << std::endl;
-		return false;
-	}
-	return true;
-}

@@ -528,19 +528,15 @@ void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordi
 	switch (piece_type) {
 	case PieceType::BISHOP:
 		pieces.push_back(new Bishop(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
-		pieces.back()->load_texture();
 		break;
 	case PieceType::KNIGHT:
 		pieces.push_back(new Knight(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
-		pieces.back()->load_texture();
 		break;
 	case PieceType::ROOK:
 		pieces.push_back(new Rook(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
-		pieces.back()->load_texture();
 		break;
 	case PieceType::QUEEN:
 		pieces.push_back(new Queen(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
-		pieces.back()->load_texture();
 		break;
 	};
 	//delete the pawn

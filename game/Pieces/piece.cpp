@@ -8,10 +8,6 @@ class Game;
 Piece::Piece():row(0), column(0), is_white(true), attack_type(attackType::ELIMINATION){}
 
 
-bool Piece::load_texture() {
-	return true;
-}
-
 int Piece::get_column() const{
 	return this->column;
 }

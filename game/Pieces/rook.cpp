@@ -104,19 +104,3 @@ MoveResult Rook::can_be_eliminated(attackType attack_type, Game& game) {
 }
 
 
-bool Rook::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = rookTexture.loadFromFile("Textures and fonts/white-rook.png");
-	}
-	else {
-		ok = rookTexture.loadFromFile("Textures and fonts/black-rook.png");
-	}
-
-	if (!ok) {
-		std::cerr << "Failed to load textures." << std::endl;
-		return false;
-	}
-	return true;
-}

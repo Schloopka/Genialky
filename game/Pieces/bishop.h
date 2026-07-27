@@ -13,7 +13,6 @@ class Bishop : public Piece {
 public:
 	Bishop(bool is_white, int row, int column);
 	MoveResult can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
-	bool load_texture() override;
 	MoveResult can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	MoveResult can_be_eliminated(attackType attack_type, Game& game) override;
 	void activate_ability(Gamestate gamestate, Game& game) override;

@@ -106,19 +106,3 @@ std::vector<std::vector<int>> Knight::get_attacked_squares(int curr_row, int cur
 	return { {dest_row, dest_column} };
 }
 
-bool Knight::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = knightTexture.loadFromFile("Textures and fonts/white-knight.png");
-	}
-	else {
-		ok = knightTexture.loadFromFile("Textures and fonts/black-knight.png");
-	}
-
-	if (!ok) {
-		std::cerr << "Failed to load textures." << std::endl;
-		return false;
-	}
-	return true;
-}

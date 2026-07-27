@@ -107,20 +107,3 @@ std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int cur
 	//ku�n�k
 	return { {dest_row, dest_column} };
 }
-
-bool Bishop::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = bishopTexture.loadFromFile("Textures and fonts/white-bishop.png");
-	}
-	else {
-		ok = bishopTexture.loadFromFile("Textures and fonts/black-bishop.png");
-	}
-
-	if (!ok) {
-		std::cerr << "Failed to load textures." << std::endl;
-		return false;
-	}
-	return true;
-}

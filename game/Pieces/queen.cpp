@@ -133,19 +133,3 @@ std::vector<MenuOption> Queen::get_menu_options(Game& game) {
 	return { MenuOption::DONT_MOVE, MenuOption::MOVE_TO_ATTACKED_SQUARE };
 }
 
-bool Queen::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = queenTexture.loadFromFile("Textures and fonts/white-queen.png");
-	}
-	else {
-		ok = queenTexture.loadFromFile("Textures and fonts/black-queen.png");
-	}
-
-	if (!ok) {
-		std::cerr << "Failed to load textures." << std::endl;
-		return false;
-	}
-	return true;
-}

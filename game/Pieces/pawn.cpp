@@ -122,19 +122,3 @@ std::vector<MenuOption> Pawn::get_menu_options(Game& game) {
 	}
 }
 
-bool Pawn::load_texture() {
-
-	bool ok = true;
-	if (is_white) {
-		ok = pawnTexture.loadFromFile("Textures and fonts/white-pawn.png");
-	}
-	else {
-		ok = pawnTexture.loadFromFile("Textures and fonts/black-pawn.png");
-	}
-	
-	if (!ok) {
-		std::cerr << "Failed to load enemy textures." << std::endl;
-		return false;
-	}
-	return true;
-}
