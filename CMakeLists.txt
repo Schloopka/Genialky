@@ -14,6 +14,7 @@ set(SOURCES
     game/game.cpp
     game/Input/buttons.cpp
     game/Input/menu.cpp
+    game/Input/inputer.cpp
     game/Pieces/bishop.cpp
     game/Pieces/king.cpp
     game/Pieces/knight.cpp
@@ -22,6 +23,7 @@ set(SOURCES
     game/Pieces/queen.cpp
     game/Pieces/rook.cpp
     game/output/renderer.cpp
+    
 )
 add_executable(Genialky ${SOURCES})
 target_compile_features(Genialky PRIVATE cxx_std_17)

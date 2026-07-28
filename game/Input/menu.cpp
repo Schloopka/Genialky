@@ -5,8 +5,14 @@
 
 Menu::Menu(){}
 
-const std::vector<MenuButton*>& Menu::get_buttons() const{
-	return buttons;
+std::vector<MenuButton*> Menu::get_buttons() const{
+	std::vector<MenuButton*> result;
+	result.reserve(buttons.size());
+	for (auto& button : buttons){
+		result.push_back(button.get());
+	}
+
+	return result;
 }
 
 
@@ -15,18 +21,19 @@ PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
 	this->options = this->piece.get_menu_options(game);
 	int i = 0;
 	for (auto& option : options) {
-		buttons.push_back(new MenuButton({ 1000.f, 100.f + (i)*100.f}, {150.f, 50.f}, i, option));
+		buttons.push_back(std::make_unique<MenuButton>(sf::Vector2f({ 1000.f, 100.f + (i)*100.f}), 
+										sf::Vector2f({150.f, 50.f}), i, option));
 		i++;
 	}
 }
 
 void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) {
-	for (MenuButton* button : buttons) {
+	for (MenuButton* button : get_buttons()) {
 		if (event.is<sf::Event::MouseButtonPressed>()) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 			sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 			if (button->contains(mousePosF)) {
-				handle_events(*button, game);
+				this->handle_events(*button, game);
 
 			}
 		}

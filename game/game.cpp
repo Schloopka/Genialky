@@ -21,7 +21,7 @@
 class Buttons;
 class PieceMenu;
 
-Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), _renderer(window)
+Game::Game():window(sf::VideoMode({ 1200, 1000 }), "Genialky"), _renderer(window), _inputer(window)
 {
 	gamestate = Gamestate::WHITE_TURN;
 	white_input_mode = InputMode::NORMAL;
@@ -86,47 +86,42 @@ void Game::make_buttons() {
 														 8, 0, 65));
 	this->buttons.push_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 300.f), sf::Vector2f( 100.f, 100.f), 
 															8, 1, 66));
-
 	//end turn button
 	std::string text = "End turn";
 	this->buttons.push_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f ), sf::Vector2f(150.f, 50.f ), 
 															67, text));
 }
 
-void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons) {
-	while (const std::optional event = window.pollEvent())
-	{
-		if (event->is<sf::Event::Closed>())
-		{
-			window.close();
-		}
-		if (event->is<sf::Event::MouseButtonPressed>()) {
-			//if there is an active menu, we dont want to allow any other clicks
-			if (activeMenu != nullptr) {
-				activeMenu->process_clicks(window, *event, *this);
-				//if menu is meant to be destroyed after something is clicked, 
-				if (to_delete_menu) {
-					activeMenu = nullptr;
-					to_delete_menu = false;
-				}
-			}
-			//handle square buttons
-			else {
-				for (auto& squarebutton : buttons) {
-					squarebutton->isClicked(window, *event, *this);
-				}
-				if (!last_clicked.empty()) {
-					handle_events();
-				}
-			}
-		}
-	}
-}
-
 void Game::append_buttons_clicked(Button* button) {
 	this->last_clicked.push_back(button);
 }
 
+void Game::process_input(){
+	const InputAction action = _inputer.poll(get_buttons(), activeMenu.get());
+	switch (action.type){
+		case InputActionType::CloseWindow:
+			window.close();
+			break;
+		case InputActionType::ButtonClicked:
+			last_clicked.push_back(action.button);
+			handle_events();
+			break;
+		case InputActionType::MenuButtonClicked:
+			activeMenu->handle_events(*action.menu_button, *this);
+					//if menu is meant to be destroyed after something is clicked, 
+			if (to_delete_menu) {
+				activeMenu = nullptr;
+				to_delete_menu = false;
+			}
+			break;
+		case InputActionType::None:
+        	break;
+		default:
+			break;
+	}
+
+
+}
 void Game::handle_events() {
 	std::string button_row = std::to_string(last_clicked.back()->get_row() + 1);
 	std::string button_column = std::to_string(last_clicked.back()->get_column() + 1);
@@ -142,14 +137,14 @@ void Game::handle_events() {
 		handle_other_buttons();
 	}
 	//handling bishop activity
-		else if (this->last_clicked.size() == 2
-			&& (on_move_input_mode) == InputMode::BISHOP_ABILITY) {
-		for (auto& piece : pieces) {
-			if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
-				handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece.get());
-				return;
-			}
+	else if (this->last_clicked.size() == 2
+		&& (on_move_input_mode) == InputMode::BISHOP_ABILITY) {
+	for (auto& piece : pieces) {
+		if (piece->get_ability_length() > 0 && piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)) {
+			handle_bishop_abiltiy(gamestate == Gamestate::WHITE_TURN, piece.get());
+			return;
 		}
+	}
 	}
 	//after the airstrike, queen gets one free move
 	else if (this->last_clicked.size() == 2 &&
@@ -646,7 +641,7 @@ std::pair<int, int> Game::get_after_menu_coordinates() {
 }
 void Game::run() {
 	while (window.isOpen()) {
-		check_for_events(window, get_buttons());
+		process_input();
 		_renderer.render_game(*this);
 	}
 }
