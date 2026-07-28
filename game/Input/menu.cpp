@@ -26,7 +26,7 @@ void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& 
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 			sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 			if (button->contains(mousePosF)) {
-				handle_events(*button, game);
+				this->handle_events(*button, game);
 
 			}
 		}

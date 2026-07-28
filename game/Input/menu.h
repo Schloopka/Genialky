@@ -16,6 +16,7 @@ protected:
 public:
     Menu();
     virtual void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) = 0;
+    virtual void handle_events(MenuButton& button, Game& game) = 0;
     virtual ~Menu() = default;
 
     const std::vector<MenuButton*>& get_buttons() const;
@@ -30,5 +31,5 @@ public:
     PieceMenu(Piece& piece, Game& game);
 
     void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) override;
-    void handle_events(MenuButton& button, Game& game);
+    void handle_events(MenuButton& button, Game& game) override;
 };
