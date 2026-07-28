@@ -75,19 +75,22 @@ void Game::make_buttons() {
 	//board squares
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
-			this->buttons.push_back(new SquareButton({ 50.f + 100.f * c, 750.f - 100.f * r }, {100.f, 100.f}, r, c, 8 * r + c));
+			this->buttons.push_back(std::make_unique<SquareButton>(
+				sf::Vector2f( 50.f + 100.f * c, 750.f - 100.f * r ), sf::Vector2f(100.f, 100.f), 
+				r, c, 8 * r + c));
 		}
 	}
 	
 	//queen ability squares
-	this->buttons.push_back(new SquareButton({900.f, 500.f}, { 100.f, 100.f }, 8, 0, 65));
-	this->buttons.push_back(new SquareButton({ 900.f, 300.f }, { 100.f, 100.f }, 8, 1, 66));
+	this->buttons.push_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 500.f), sf::Vector2f( 100.f, 100.f),
+														 8, 0, 65));
+	this->buttons.push_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 300.f), sf::Vector2f( 100.f, 100.f), 
+															8, 1, 66));
 
 	//end turn button
 	std::string text = "End turn";
-	this->buttons.push_back(new Button({ 900.f, 425.f }, { 150.f, 50.f }, 67, text));
-	
-	
+	this->buttons.push_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f ), sf::Vector2f(150.f, 50.f ), 
+															67, text));
 }
 
 void Game::check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons) {
@@ -385,7 +388,8 @@ bool Game::eliminate_pieces_from(int dest_row, int dest_column, attackType attac
 	pieces.erase(
 		std::remove_if(pieces.begin(), pieces.end(),
 			[dest_row, dest_column, attack_type, this](const std::unique_ptr<Piece>& piece) {
-				return piece->get_row() == dest_row && piece->get_column() == dest_column && piece->can_be_eliminated(attack_type, *this)==MoveResult::VALID;
+				return piece->get_row() == dest_row && piece->get_column() == dest_column && 
+				piece->can_be_eliminated(attack_type, *this)==MoveResult::VALID;
 			}),
 		pieces.end()
 	);
@@ -588,8 +592,15 @@ std::vector<Piece*> Game::get_pieces() const {
     return result;
 }
 
-const std::vector<Button*>& Game::get_buttons() const{
-	return buttons;
+const std::vector<Button*> Game::get_buttons() const{
+	std::vector<Button*> result;
+    result.reserve(buttons.size());
+
+    for (const auto& button : buttons) {
+        result.push_back(button.get());
+    }
+
+    return result;
 }
 
 const std::string& Game::get_action_descrtiption() const{
@@ -635,7 +646,7 @@ std::pair<int, int> Game::get_after_menu_coordinates() {
 }
 void Game::run() {
 	while (window.isOpen()) {
-		check_for_events(window, buttons);
+		check_for_events(window, get_buttons());
 		_renderer.render_game(*this);
 	}
 }

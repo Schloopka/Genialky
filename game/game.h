@@ -73,7 +73,7 @@ public:
 
 	Gamestate get_gamestate() const;
 	std::vector<Piece*> get_pieces() const;
-	const std::vector<Button*>& get_buttons() const;
+	const std::vector<Button*> get_buttons() const;
 	const Menu* get_menu() const;
 	const std::string& get_action_descrtiption() const;
 
@@ -82,7 +82,7 @@ private:
 	Renderer _renderer;
 	std::string action_description;
 
-	std::vector<Button*> buttons; //vector of all buttons except menu buttons
+	std::vector<std::unique_ptr<Button>> buttons; //vector of all buttons except menu buttons
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options
 	std::vector<std::unique_ptr<Piece>> pieces; //vector of all pieces on board
 	std::vector<Piece*> pieces_can_move; //pieces that can move this turn, used when there is restriction which pieces can move
