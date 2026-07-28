@@ -27,8 +27,7 @@ public:
 	void make_buttons(); //make buttons which are permament (squares buttons, end turn button), put them into vector
 	void setup_pieces(); //sets up pieces and puts them into a vector
 	void set_message_for_user(std::string message); //changes the text of message_for_user text field
-	void check_for_events(sf::RenderWindow& window, std::vector<Button*> buttons); //event loop, if any button is clicked, appropriate handle_fucntion is called
-
+	
 	void process_input();
 
 	void handle_events(); /*looks at vector of last_clicked buttons and depending on current stats calls appropriate function which will handle the case 
