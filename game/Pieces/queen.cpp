@@ -19,27 +19,7 @@ Queen::Queen(bool is_white, int row, int column) {
 	this->air_strike_data.phase = airStrikePhase::NOT_ACTIVE;
 }
 
-/*void Queen::display(sf::RenderWindow& window) {
-	sf::Sprite queenSprite(queenTexture);
-	//standard position
-	if (air_strike_data.phase == airStrikePhase::NOT_ACTIVE) {
-		queenSprite.setPosition({ 42.f + column * 100.f, 740.f - row * 100.f });
-	}
-	//ability is activated, show the queen on the special square
-	else if ((air_strike_data.phase == airStrikePhase::SELECTING_SQUARE || air_strike_data.phase == airStrikePhase::RESOLVING_ATTACK)
-		&& is_white){
-		queenSprite.setPosition({ 893.f, 490.f });
-	}
-	else if (air_strike_data.phase == airStrikePhase::SELECTING_SQUARE || air_strike_data.phase == airStrikePhase::RESOLVING_ATTACK
-		&& is_white == false) {
-		queenSprite.setPosition({ 893.f, 290.f });
-	}
 
-
-	queenSprite.setScale({ 0.9f, 0.9f });
-	window.draw(queenSprite);
-
-}*/
 //returns true if it can move to the second square
 MoveResult Queen::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
@@ -65,10 +45,10 @@ MoveResult Queen::can_attack(int curr_row, int curr_column, int dest_row, int de
 		return MoveResult::REALOADING;
 	}
 	//if queen is after airstrike attack, it has to move
-	bool is_after_air_strike_attack = (game.get_input_mode(is_white) == InputMode::AIRSTRIKE_RESOLVE_ATTACK ? true : false);
+	bool is_after_air_strike_attack = game.get_input_mode(is_white) == InputMode::AIRSTRIKE_RESOLVE_ATTACK;
 	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1
 		&& (curr_row != dest_row || curr_column != dest_column) && game.get_king_on_board(is_white)
-		&& not is_after_air_strike_attack) {
+		&& !is_after_air_strike_attack) {
 		instant_attack = false;
 		return MoveResult::VALID;
 	}

@@ -13,7 +13,6 @@ class Game;
 class Queen : public Piece {
 public:
 	Queen(bool is_white, int row, int column);
-	/*void display(sf::RenderWindow& window) override;*/
 	MoveResult can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	MoveResult can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) override;
 	MoveResult can_be_eliminated(attackType attack_type, Game& game) override;
