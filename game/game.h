@@ -37,7 +37,7 @@ public:
 	void handle_normal_moves(); //handles normal moves when two squares are clicked
 	void handle_queen_select_airstrike(bool white_on_move); //handles events if the player must choose where queen lands after airstrike
 	void handle_bishop_abiltiy(bool white_on_move, Piece* bishop);//handles events when bishops ability is activated
-	void handle_other_buttons(); //handles other buttons such as ending turn
+	void try_end_turn(); //handles other buttons such as ending turn
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
 	void append_buttons_clicked(Button* button);
 

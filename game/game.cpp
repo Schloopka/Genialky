@@ -89,7 +89,10 @@ void Game::make_buttons() {
 	//end turn button
 	std::string text = "End turn";
 	this->buttons.push_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f ), sf::Vector2f(150.f, 50.f ), 
-															67, text));
+															67, text, 
+														[](Game& game){
+															game.try_end_turn();
+														}));
 }
 
 void Game::append_buttons_clicked(Button* button) {
@@ -103,8 +106,12 @@ void Game::process_input(){
 			window.close();
 			break;
 		case InputActionType::ButtonClicked:
-			last_clicked.push_back(action.button);
-			handle_events();
+			if (action.button->has_onlclick()) {
+				action.button->click(*this);
+			} else {
+				last_clicked.push_back(action.button);
+				handle_events();
+			}
 			break;
 		case InputActionType::MenuButtonClicked:
 			activeMenu->handle_events(*action.menu_button, *this);
@@ -131,10 +138,6 @@ void Game::handle_events() {
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
-	}
-	//handling special buttons which need only one click like end turn
-	else if (this->last_clicked.size() == 1) {
-		handle_other_buttons();
 	}
 	//handling bishop activity
 	else if (this->last_clicked.size() == 2
@@ -358,19 +361,16 @@ void Game::handle_normal_moves() {
 	}
 }
 
-void Game::handle_other_buttons() {
-	if (last_clicked.front()->get_id() == 67) {
-		if (moves_left <= 0) {
-			update_stats();
-			switchGamestate();
-			clear_buttons_clicked();
-		}
-		else {
-			set_message_for_user("You have to make a move until ending turn");
-			this->last_clicked.clear(); //if player clicks to end move and cant end it, 
-			//we clear the buttons so it doesnt mess when they click on normal button again
-		}
-
+void Game::try_end_turn() {
+	if (moves_left <= 0) {
+		update_stats();
+		switchGamestate();
+		clear_buttons_clicked();
+	}
+	else {
+		set_message_for_user("You have to make a move until ending turn");
+		this->last_clicked.clear(); //if player clicks to end move and cant end it, 
+		//we clear the buttons so it doesnt mess when they click on normal button again
 	}
 }
 

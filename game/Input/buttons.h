@@ -7,15 +7,16 @@
 #include <SFML/Window/Event.hpp>
 
 #include <string>
-
+#include <functional>
 class Game;
 
 class Button {
 public:
-	Button(sf::Vector2f position, sf::Vector2f size, int id, std::string text = "");
-	virtual ~Button() = default;
+	using ClickHandler = std::function<void(Game&)>;
 
-	virtual void isClicked(const sf::RenderWindow& window, const sf::Event& event, Game& game);
+	Button(sf::Vector2f position, sf::Vector2f size, int id, std::string text = "",
+		ClickHandler on_click = {});
+	virtual ~Button() = default;
 
 	int get_id() const;
 	virtual int get_row() const;
@@ -25,11 +26,15 @@ public:
 	const std::string& get_text() const;
 	bool contains(sf::Vector2f point) const;
 
+	bool has_onlclick() const;
+	void click(Game& game) const;
+
 protected:
 	sf::Vector2f position;
 	sf::Vector2f size;
 	std::string button_text;
 	int id = 0;
+	ClickHandler on_click;
 };
 
 class SquareButton : public Button {
@@ -39,10 +44,10 @@ private:
 
 public:
 	SquareButton(sf::Vector2f position, sf::Vector2f size, int row, int column, int id);
-
 	int get_row() const override;
 	int get_column() const override;
 };
+
 
 class MenuButton : public Button {
 private:

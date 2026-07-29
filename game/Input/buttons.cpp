@@ -7,29 +7,20 @@ Button::Button(
 	sf::Vector2f position,
 	sf::Vector2f size,
 	int id,
-	std::string text
-) : position(position), size(size), button_text(std::move(text)), id(id) {}
+	std::string text,
+	ClickHandler on_click
+) : position(position), size(size), button_text(std::move(text)), 
+	id(id), on_click(std::move(on_click)) {}
 
-void Button::isClicked(
-	const sf::RenderWindow& window,
-	const sf::Event& event,
-	Game& game
-) {
-	if (!event.is<sf::Event::MouseButtonPressed>()) {
-		return;
-	}
-
-	const sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
-	const sf::Vector2f point{
-		static_cast<float>(mouse_position.x),
-		static_cast<float>(mouse_position.y)
-	};
-
-	if (contains(point)) {
-		game.append_buttons_clicked(this);
+void Button::click(Game& game) const {
+	if (on_click) {
+		on_click(game);
 	}
 }
 
+bool Button::has_onlclick() const {
+	return static_cast<bool>(on_click);
+}
 int Button::get_id() const {
 	return id;
 }
@@ -68,6 +59,7 @@ SquareButton::SquareButton(
 	int column,
 	int id
 ) : Button(position, size, id), column(column), row(row) {}
+
 
 int SquareButton::get_row() const {
 	return row;
