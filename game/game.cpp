@@ -41,30 +41,30 @@ void Game::setup() {
 void Game::setup_pieces()
 {
     for (int i = 0; i < 8; ++i) {
-        pieces.push_back(std::make_unique<Pawn>(true, 1, i));
-        pieces.push_back(std::make_unique<Pawn>(false, 6, i));
+        pieces.emplace_back(std::make_unique<Pawn>(true, 1, i));
+        pieces.emplace_back(std::make_unique<Pawn>(false, 6, i));
     }
 
-    pieces.push_back(std::make_unique<Bishop>(true, 0, 2));
-    pieces.push_back(std::make_unique<Bishop>(true, 0, 5));
-    pieces.push_back(std::make_unique<Bishop>(false, 7, 2));
-    pieces.push_back(std::make_unique<Bishop>(false, 7, 5));
+    pieces.emplace_back(std::make_unique<Bishop>(true, 0, 2));
+    pieces.emplace_back(std::make_unique<Bishop>(true, 0, 5));
+    pieces.emplace_back(std::make_unique<Bishop>(false, 7, 2));
+    pieces.emplace_back(std::make_unique<Bishop>(false, 7, 5));
 
-    pieces.push_back(std::make_unique<Knight>(true, 0, 1));
-    pieces.push_back(std::make_unique<Knight>(true, 0, 6));
-    pieces.push_back(std::make_unique<Knight>(false, 7, 1));
-    pieces.push_back(std::make_unique<Knight>(false, 7, 6));
+    pieces.emplace_back(std::make_unique<Knight>(true, 0, 1));
+    pieces.emplace_back(std::make_unique<Knight>(true, 0, 6));
+    pieces.emplace_back(std::make_unique<Knight>(false, 7, 1));
+    pieces.emplace_back(std::make_unique<Knight>(false, 7, 6));
 
-    pieces.push_back(std::make_unique<King>(true, 0, 4));
-    pieces.push_back(std::make_unique<King>(false, 7, 4));
+    pieces.emplace_back(std::make_unique<King>(true, 0, 4));
+    pieces.emplace_back(std::make_unique<King>(false, 7, 4));
 
-    pieces.push_back(std::make_unique<Rook>(true, 0, 0));
-    pieces.push_back(std::make_unique<Rook>(true, 0, 7));
-    pieces.push_back(std::make_unique<Rook>(false, 7, 0));
-    pieces.push_back(std::make_unique<Rook>(false, 7, 7));
+    pieces.emplace_back(std::make_unique<Rook>(true, 0, 0));
+    pieces.emplace_back(std::make_unique<Rook>(true, 0, 7));
+    pieces.emplace_back(std::make_unique<Rook>(false, 7, 0));
+    pieces.emplace_back(std::make_unique<Rook>(false, 7, 7));
 
-    pieces.push_back(std::make_unique<Queen>(true, 0, 3));
-    pieces.push_back(std::make_unique<Queen>(false, 7, 3));
+    pieces.emplace_back(std::make_unique<Queen>(true, 0, 3));
+    pieces.emplace_back(std::make_unique<Queen>(false, 7, 3));
 }
 
 void Game::set_message_for_user(std::string message) {
@@ -75,20 +75,20 @@ void Game::make_buttons() {
 	//board squares
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
-			this->buttons.push_back(std::make_unique<SquareButton>(
+			this->buttons.emplace_back(std::make_unique<SquareButton>(
 				sf::Vector2f( 50.f + 100.f * c, 750.f - 100.f * r ), sf::Vector2f(100.f, 100.f), 
 				r, c, 8 * r + c));
 		}
 	}
 	
 	//queen ability squares
-	this->buttons.push_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 500.f), sf::Vector2f( 100.f, 100.f),
+	this->buttons.emplace_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 500.f), sf::Vector2f( 100.f, 100.f),
 														 8, 0, 65));
-	this->buttons.push_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 300.f), sf::Vector2f( 100.f, 100.f), 
+	this->buttons.emplace_back(std::make_unique<SquareButton>(sf::Vector2f(900.f, 300.f), sf::Vector2f( 100.f, 100.f), 
 															8, 1, 66));
 	//end turn button
 	std::string text = "End turn";
-	this->buttons.push_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f ), sf::Vector2f(150.f, 50.f ), 
+	this->buttons.emplace_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f ), sf::Vector2f(150.f, 50.f ), 
 															67, text, 
 														[](Game& game){
 															game.try_end_turn();
@@ -96,7 +96,7 @@ void Game::make_buttons() {
 }
 
 void Game::append_buttons_clicked(Button* button) {
-	this->last_clicked.push_back(button);
+	this->last_clicked.emplace_back(button);
 }
 
 void Game::process_input(){
@@ -109,7 +109,7 @@ void Game::process_input(){
 			if (action.button->has_onlclick()) {
 				action.button->click(*this);
 			} else {
-				last_clicked.push_back(action.button);
+				last_clicked.emplace_back(action.button);
 				handle_events();
 			}
 			break;
@@ -205,10 +205,10 @@ void Game::handle_queen_after_landing() {
 	{
 		if (piece->get_type() != PieceType::QUEEN)
 		{
-			pieces_without_queens.push_back(piece.get());
+			pieces_without_queens.emplace_back(piece.get());
 		}
 		else if (piece->is_piece_white() == (gamestate == Gamestate::WHITE_TURN)){
-			queens.push_back(piece.get()); //we select queens of only good colour
+			queens.emplace_back(piece.get()); //we select queens of only good colour
 		}
 	}
 	bool queen_made_valid_move = false;
@@ -513,7 +513,7 @@ void Game::set_all_pieces_can_move()
     pieces_can_move.reserve(pieces.size());
 
     for (const auto& piece : pieces) {
-        pieces_can_move.push_back(piece.get());
+        pieces_can_move.emplace_back(piece.get());
     }
 }
 
@@ -534,16 +534,16 @@ void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordi
 	//add new piece
 	switch (piece_type) {
 	case PieceType::BISHOP:
-		pieces.push_back(std::make_unique<Bishop>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Bishop>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::KNIGHT:
-		pieces.push_back(std::make_unique<Knight>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Knight>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::ROOK:
-		pieces.push_back(std::make_unique<Rook>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Rook>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	case PieceType::QUEEN:
-		pieces.push_back(std::make_unique<Queen>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Queen>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
 		break;
 	};
 	//delete the pawn
@@ -581,7 +581,7 @@ std::vector<Piece*> Game::get_pieces() const {
     result.reserve(pieces.size());
 
     for (const auto& piece : pieces) {
-        result.push_back(piece.get());
+        result.emplace_back(piece.get());
     }
 
     return result;
@@ -592,7 +592,7 @@ const std::vector<Button*> Game::get_buttons() const{
     result.reserve(buttons.size());
 
     for (const auto& button : buttons) {
-        result.push_back(button.get());
+        result.emplace_back(button.get());
     }
 
     return result;
