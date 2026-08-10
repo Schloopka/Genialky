@@ -6,7 +6,6 @@
 #include "../Pieces/piece.h"
 #include "../Pieces/queen.h"
 
-#include <stdexcept>
 #include <utility>
 
 Renderer::Renderer(sf::RenderWindow& window) : window(window), 

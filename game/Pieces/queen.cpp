@@ -1,7 +1,6 @@
-#include <iostream>
+
 
 #include "queen.h"
-#include "piece.h"
 #include "../gamestate.h"
 #include "../game.h"
 

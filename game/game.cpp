@@ -1,22 +1,9 @@
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <memory>
+
 #include "game.h"
 
-#include "./Pieces/piece.h"
-#include "./Pieces/pawn.h"
-#include "./Pieces/bishop.h"
-#include "./Pieces/knight.h"
-#include "./Pieces/king.h"
-#include "./Pieces/rook.h"
-#include "./Pieces/queen.h"
-#include "./Input/menu.h"
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/Text.hpp>
 
 class Buttons;
 class PieceMenu;

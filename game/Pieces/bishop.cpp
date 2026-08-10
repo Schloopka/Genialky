@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "bishop.h"
-#include "piece.h"
+
 #include "../gamestate.h"
 #include "../game.h"
 
@@ -20,7 +20,8 @@ Bishop::Bishop(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
+	Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -35,7 +36,8 @@ MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int 
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, 
+	Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);

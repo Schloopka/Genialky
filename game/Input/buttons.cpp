@@ -1,7 +1,9 @@
 #include "buttons.h"
-#include "../game.h"
+
 
 #include <utility>
+
+class Game;
 
 Button::Button(
 	sf::Vector2f position,

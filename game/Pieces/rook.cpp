@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "rook.h"
-#include "piece.h"
+
 #include "../gamestate.h"
 #include "../game.h"
 
@@ -21,7 +21,8 @@ Rook::Rook(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Rook::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
+	Gamestate gamestate, InputMode inputmode, Game& game) {
 	//We cant use the can_do_anything function, because it contains moves_left == 0 condition and rook can sometimes move when there are no moves left
 	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
 		return MoveResult::NOT_YOUR_TURN;

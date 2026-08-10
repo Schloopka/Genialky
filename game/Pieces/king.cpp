@@ -1,7 +1,5 @@
-#include <iostream>
 
 #include "king.h"
-#include "piece.h"
 #include "../gamestate.h"
 #include "../game.h"
 

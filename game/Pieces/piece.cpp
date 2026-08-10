@@ -1,8 +1,8 @@
 #include "piece.h"
 #include "../game.h"
-#include <vector>
 
-#include <iostream>
+
+
 class Game;
 
 Piece::Piece():row(0), column(0), is_white(true), attack_type(attackType::ELIMINATION){}
@@ -64,9 +64,7 @@ void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_
 		for (std::vector<int> square_coordinates : attacked_squares) {
 			for (auto& piece : game.get_pieces()) {
 				if (piece->get_row() == square_coordinates.front() && piece->get_column() == square_coordinates.back()) {
-					std::cout << piece->get_row() << piece->get_column()<< "poisoned for " << poison_attack << std::endl;
 					piece->set_poisoned_for(poison_attack); 
-
 				}
 			}
 		}

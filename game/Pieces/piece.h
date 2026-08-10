@@ -1,14 +1,12 @@
 #pragma once
-#include <string>
+
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Window/Event.hpp>
 
 #include "../gamestate.h"
-#include "../Input/buttons.h"
+
+#include <vector>
 
 class Game;
-
 
 struct AirStrikeData
 {

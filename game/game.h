@@ -2,11 +2,20 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SFML/Graphics.hpp>
+
 #include <SFML/Window.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/Text.hpp>
+
 #include "gamestate.h"
+
+#include "./Pieces/piece.h"
+#include "./Pieces/pawn.h"
+#include "./Pieces/bishop.h"
+#include "./Pieces/knight.h"
+#include "./Pieces/king.h"
+#include "./Pieces/rook.h"
+#include "./Pieces/queen.h"
+#include "./Input/menu.h"
+
 #include "output/renderer.h"
 #include "Input/inputer.h"
 #include <memory>
@@ -82,6 +91,7 @@ private:
 	sf::RenderWindow window;
 	Renderer _renderer;
 	Inputer _inputer;
+	
 	std::string action_description;
 
 	std::vector<std::unique_ptr<Button>> buttons; //vector of all buttons except menu buttons

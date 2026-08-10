@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "pawn.h"
-#include "piece.h"
 #include "../gamestate.h"
 #include "../game.h"
 
@@ -16,7 +13,8 @@ Pawn::Pawn(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
+	Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -53,7 +51,8 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, 
+	Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
@@ -77,7 +76,6 @@ MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int des
 
 MoveResult Pawn::can_be_eliminated(attackType attack_type, Game& game) {
 	if (attack_type == attackType::SHOOTING && moves_since_last_moved >= 2) {
-		std::cout << "I have shield" << std::endl;
 		return MoveResult::SHIELDED;
 	}
 	return MoveResult::VALID;
@@ -93,7 +91,8 @@ void Pawn::attack(int dest_row, int dest_column, Game& game, attackType attack_t
 	}
 
 }
-std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
+std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_column, 
+	int dest_row, int dest_column, Game& game) {
 	//white to the right
 	if ((dest_row - curr_row == 1 && dest_column - curr_column == 1) || (dest_row - curr_row == 2 && dest_column - curr_column == 2)) {
 		return { { curr_row + 1, curr_column + 1 },  {curr_row + 2, curr_column + 2 } };
