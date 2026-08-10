@@ -117,11 +117,9 @@ void Game::process_input(){
 
 }
 void Game::handle_events() {
-	std::string button_row = std::to_string(last_clicked.back()->get_row() + 1);
-	std::string button_column = std::to_string(last_clicked.back()->get_column() + 1);
-	//set_message_for_user("Clicked square - row " + button_row + " column " + button_column);
-	InputMode& on_move_input_mode = (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode);
-	//never more than two squares interact, so we remove the first one and try again
+	InputMode on_move_input_mode = (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode);
+	
+	//more than two squares never interact, so we remove the first one and try again
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
@@ -316,25 +314,24 @@ void Game::handle_normal_moves() {
 				moves_left--;
 				clear_last_clicked = true;
 			}
-				else {
-					MoveResult result_for_message = MoveResult::NOT_VALID;
-				if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
-					result_for_message = move_result;
-				}
-				if (attack_result != MoveResult::NOT_VALID && attack_result != MoveResult::VALID) {
-					result_for_message = attack_result;
-				}
-				if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
-					result_for_message = ability_result;
-				}
-					set_message_for_user(move_result_to_string(result_for_message));
-				}
-				// Attacking can erase an element from pieces, invalidating this
-				// vector's iterators. The selected piece has now been handled, so
-				// never advance the range-for iterator.
-				break;
+			else {
+				MoveResult result_for_message = MoveResult::NOT_VALID;
+			if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
+				result_for_message = move_result;
 			}
+			if (attack_result != MoveResult::NOT_VALID && attack_result != MoveResult::VALID) {
+				result_for_message = attack_result;
+			}
+			if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
+				result_for_message = ability_result;
+			}
+				set_message_for_user(move_result_to_string(result_for_message));
+			}
+			// Attacking can erase an element from pieces, invalidating this
+			// vector's iterators. The selected piece has now been handled, so
+			// never advance the range-for iterator.
 		}
+	}
 	if (clear_last_clicked) {
 		this->clear_buttons_clicked();
 	}

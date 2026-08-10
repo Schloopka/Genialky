@@ -1,8 +1,6 @@
 #include "inputer.h"
 
-Inputer::Inputer(sf::RenderWindow& window) : window(window){
-
-}
+Inputer::Inputer(sf::RenderWindow& window) : window(window){}
 
 InputAction Inputer::poll(const std::vector<Button*>& buttons, const Menu* active_menu){
     while (const std::optional event = window.pollEvent())
