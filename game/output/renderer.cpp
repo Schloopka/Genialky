@@ -20,16 +20,20 @@ void Renderer::render_background() {
 
 void Renderer::render_game(const Game& game) {
     render_background();
-    render_buttons(game.get_buttons());
+    render_buttons(game.get_buttons(), game.get_last_clicked_buttons());
     render(game.get_menu());
     render_pieces(game.get_pieces());
     render_texts(game.get_action_descrtiption(), game.get_gamestate());
     window.display();
 }
 
-void Renderer::render_buttons(const std::vector<Button*>& buttons) {
+void Renderer::render_buttons(const std::vector<Button*>& buttons, 
+                            const std::vector<Button*>& last_clicked) {
     for (const Button* button : buttons) {
-        render(*button);
+        render(*button, false);
+    }
+    for (const Button* button : last_clicked) {
+        render(*button, true);
     }
 }
 
@@ -39,11 +43,11 @@ void Renderer::render(const Menu* menu) {
     }
 
     for (const MenuButton* button : menu->get_buttons()) {
-        render(*button);
+        render(*button, false);
     }
 }
 
-void Renderer::render(const Button& button) {
+void Renderer::render(const Button& button, bool is_clicked) {
     sf::RectangleShape shape(button.get_size());
     shape.setPosition(button.get_position());
 
@@ -53,9 +57,10 @@ void Renderer::render(const Button& button) {
     if (square_button != nullptr) {
         const sf::Color dark_square(181, 136, 99);
         const sf::Color light_square(248, 219, 161);
+        const sf::Color green_square(144, 238, 144);
         const bool is_dark =
             (square_button->get_row() + square_button->get_column()) % 2 == 1;
-        shape.setFillColor(is_dark ? dark_square : light_square);
+        shape.setFillColor(is_clicked ? green_square :is_dark ? dark_square : light_square);
     } else {
         shape.setFillColor(sf::Color::Blue);
     }

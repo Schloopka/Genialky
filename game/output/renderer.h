@@ -44,8 +44,6 @@ private:
     void setup_textures();
     void load_texture(PieceType type, bool is_white, const std::string& filename);
 
-    
-
     sf::Font font;
     sf::Text action_description;
     sf::Text who_is_on_move;
@@ -55,8 +53,8 @@ public:
 
     void render_background();
     void render_game(const Game& game);
-    void render_buttons(const std::vector<Button*>& buttons);
-    void render(const Button& button);
+    void render_buttons(const std::vector<Button*>& buttons, const std::vector<Button*>& last_clicked);
+    void render(const Button& button, bool is_clicked);
     void render(const Menu* menu);
     void render_pieces(const std::vector<Piece*>& pieces);
     void render(Piece& piece);

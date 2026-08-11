@@ -262,7 +262,7 @@ void Game::handle_bishop_abiltiy(bool white_on_move, Piece* bishop) {
 void Game::handle_normal_moves() {
 	int dest_row = this->last_clicked.back()->get_row();
 	int dest_column = this->last_clicked.back()->get_column();
-	bool clear_last_clicked = false;
+	bool action_performed = false;
 	Piece* piece_attacking = nullptr;
 	for (auto& piece : pieces) {
 		if (piece->is_piece_white() != (gamestate == Gamestate::WHITE_TURN)
@@ -291,7 +291,7 @@ void Game::handle_normal_moves() {
 				set_message_for_user("A piece was moved");
 				piece_was_moved_this_turn = true;
 				moves_left--;
-				clear_last_clicked = true;
+				action_performed = true;
 			}
 			//if it cant move there, perhaps it can take a piece from that square
 			else if (attack_result == MoveResult::VALID) { //if the piece can attack the second square
@@ -305,36 +305,38 @@ void Game::handle_normal_moves() {
 				}
 				set_message_for_user("A piece was attacked");
 				moves_left--;
-				clear_last_clicked = true;
+				action_performed = true;
 			}
 			else if (piece->get_row() == dest_row && piece->get_column() == dest_column
 				&& ability_result==MoveResult::VALID) {
 				piece->activate_ability(gamestate, *this);
 				set_message_for_user("Ability activated");
 				moves_left--;
-				clear_last_clicked = true;
+				action_performed = true;
 			}
 			else {
 				MoveResult result_for_message = MoveResult::NOT_VALID;
-			if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
-				result_for_message = move_result;
-			}
-			if (attack_result != MoveResult::NOT_VALID && attack_result != MoveResult::VALID) {
-				result_for_message = attack_result;
-			}
-			if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
-				result_for_message = ability_result;
-			}
+				if (move_result != MoveResult::NOT_VALID && move_result != MoveResult::VALID) {
+					result_for_message = move_result;
+				}
+				if (attack_result != MoveResult::NOT_VALID && attack_result != MoveResult::VALID) {
+					result_for_message = attack_result;
+				}
+				if (ability_result != MoveResult::NOT_VALID && ability_result != MoveResult::VALID) {
+					result_for_message = ability_result;
+				}
 				set_message_for_user(move_result_to_string(result_for_message));
 			}
 			// Attacking can erase an element from pieces, invalidating this
 			// vector's iterators. The selected piece has now been handled, so
 			// never advance the range-for iterator.
 		}
+		if (action_performed) {
+			this->clear_buttons_clicked();
+			break;
+		}
 	}
-	if (clear_last_clicked) {
-		this->clear_buttons_clicked();
-	}
+	
 	if (last_clicked.size() > 1) {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
@@ -581,6 +583,18 @@ const std::vector<Button*> Game::get_buttons() const{
 
     return result;
 }
+
+const std::vector<Button*> Game::get_last_clicked_buttons() const{
+	std::vector<Button*> result;
+    result.reserve(buttons.size());
+
+    for (const auto& button : last_clicked) {
+        result.emplace_back(button);
+    }
+
+    return result;
+}
+
 
 const std::string& Game::get_action_descrtiption() const{
 	return action_description;

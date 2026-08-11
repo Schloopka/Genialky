@@ -84,6 +84,7 @@ public:
 	Gamestate get_gamestate() const;
 	std::vector<Piece*> get_pieces() const;
 	const std::vector<Button*> get_buttons() const;
+	const std::vector<Button*> get_last_clicked_buttons() const;
 	const Menu* get_menu() const;
 	const std::string& get_action_descrtiption() const;
 
@@ -91,7 +92,7 @@ private:
 	sf::RenderWindow window;
 	Renderer _renderer;
 	Inputer _inputer;
-	
+
 	std::string action_description;
 
 	std::vector<std::unique_ptr<Button>> buttons; //vector of all buttons except menu buttons
