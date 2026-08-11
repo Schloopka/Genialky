@@ -84,6 +84,9 @@ public:
 	Gamestate get_gamestate() const;
 	std::vector<Piece*> get_pieces() const;
 	const std::vector<Button*> get_buttons() const;
+	Button* get_button(int row, int column) const;
+	void create_possible_actions();
+	const std::vector<Button*> get_possible_actions() const;
 	const std::vector<Button*> get_last_clicked_buttons() const;
 	const Menu* get_menu() const;
 	const std::string& get_action_descrtiption() const;
@@ -96,10 +99,12 @@ private:
 	std::string action_description;
 
 	std::vector<std::unique_ptr<Button>> buttons; //vector of all buttons except menu buttons
+	std::vector<Button*> last_clicked; //vector of last clicked buttons
+	std::vector<Button*> possible_actions;
 	std::unique_ptr<Menu> activeMenu; //displayed menu when player has to choose from more options
 	std::vector<std::unique_ptr<Piece>> pieces; //vector of all pieces on board
 	std::vector<Piece*> pieces_can_move; //pieces that can move this turn, used when there is restriction which pieces can move
-	std::vector<Button*> last_clicked; //vector of last clicked buttons
+	
 	Gamestate gamestate = Gamestate::WHITE_TURN;
 	InputMode white_input_mode = InputMode::NORMAL;
 	InputMode black_input_mode = InputMode::NORMAL;

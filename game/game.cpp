@@ -118,11 +118,20 @@ void Game::process_input(){
 }
 void Game::handle_events() {
 	InputMode on_move_input_mode = (gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode);
-	
+	possible_actions.clear();
 	//more than two squares never interact, so we remove the first one and try again
 	if (this->last_clicked.size() > 2) {
 		this->last_clicked.erase(last_clicked.begin());
 		handle_events();
+	}
+	//if square with no piece is clicked, it cannot ever activate a move
+	else if (this->last_clicked.size() == 1 && 
+		!is_there_a_piece(this->last_clicked[0]->get_row(), this->last_clicked[0]->get_row())){
+		clear_buttons_clicked();
+	}
+	//generate possible moves
+	else if (this->last_clicked.size() == 1){
+		create_possible_actions();
 	}
 	//handling bishop activity
 	else if (this->last_clicked.size() == 2
@@ -581,7 +590,45 @@ const std::vector<Button*> Game::get_buttons() const{
         result.emplace_back(button.get());
     }
 
-    return result;
+	return result;
+}
+
+Button* Game::get_button(int row, int column) const {
+	for (const auto& button : buttons) {
+		if (button->get_row() == row && button->get_column() == column) {
+			return button.get();
+		}
+	}
+
+	return nullptr;
+}
+
+void Game::create_possible_actions(){
+	int last_clicked_row = this->last_clicked[0]->get_row();
+	int last_clicked_column = this->last_clicked[0]->get_column();
+	InputMode input_mode = gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode;
+	Piece* activated_piece = nullptr;
+	for (auto piece : pieces_can_move){
+		if (piece->get_row() == last_clicked_row && piece->get_column() == last_clicked_column){
+			activated_piece = piece;
+		}
+	}
+	for (int r = 0; r < 8; r++){
+		for (int c = 0; c < 8; c++){
+			bool can_move = activated_piece->can_move_to(activated_piece->get_row(), activated_piece->get_column(),
+				r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
+			bool can_attack = activated_piece->can_attack(activated_piece->get_row(), activated_piece->get_column(),
+			r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
+			if (can_move || can_attack){
+				possible_actions.emplace_back(get_button(r, c));
+			}
+		}
+	}
+	bool can_activate_ability = activated_piece->can_activate_ability(this->gamestate, input_mode, *this) == MoveResult::VALID;
+}
+
+const std::vector<Button*> Game::get_possible_actions() const {
+    return possible_actions;
 }
 
 const std::vector<Button*> Game::get_last_clicked_buttons() const{

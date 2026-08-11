@@ -6,6 +6,7 @@
 #include "../Pieces/piece.h"
 #include "../Pieces/queen.h"
 
+#include <algorithm>
 #include <utility>
 
 Renderer::Renderer(sf::RenderWindow& window) : window(window), 
@@ -20,7 +21,7 @@ void Renderer::render_background() {
 
 void Renderer::render_game(const Game& game) {
     render_background();
-    render_buttons(game.get_buttons(), game.get_last_clicked_buttons());
+    render_buttons(game.get_buttons(), game.get_last_clicked_buttons(), game.get_possible_actions());
     render(game.get_menu());
     render_pieces(game.get_pieces());
     render_texts(game.get_action_descrtiption(), game.get_gamestate());
@@ -28,12 +29,45 @@ void Renderer::render_game(const Game& game) {
 }
 
 void Renderer::render_buttons(const std::vector<Button*>& buttons, 
-                            const std::vector<Button*>& last_clicked) {
+                            const std::vector<Button*>& last_clicked,
+                            const std::vector<Button*>& possible_actions) {
     for (const Button* button : buttons) {
         render(*button, false);
     }
     for (const Button* button : last_clicked) {
         render(*button, true);
+    }
+    for (const Button* button : possible_actions) {
+        if (button == nullptr) {
+            continue;
+        }
+
+        const sf::Vector2f position = button->get_position();
+        const sf::Vector2f size = button->get_size();
+        const float marker_size = std::min(size.x, size.y) * 0.2f;
+
+        sf::ConvexShape marker(3);
+        marker.setFillColor(sf::Color::Green);
+
+        marker.setPoint(0, position);
+        marker.setPoint(1, {position.x + marker_size, position.y});
+        marker.setPoint(2, {position.x, position.y + marker_size});
+        window.draw(marker);
+
+        marker.setPoint(0, {position.x + size.x, position.y});
+        marker.setPoint(1, {position.x + size.x - marker_size, position.y});
+        marker.setPoint(2, {position.x + size.x, position.y + marker_size});
+        window.draw(marker);
+
+        marker.setPoint(0, {position.x, position.y + size.y});
+        marker.setPoint(1, {position.x + marker_size, position.y + size.y});
+        marker.setPoint(2, {position.x, position.y + size.y - marker_size});
+        window.draw(marker);
+
+        marker.setPoint(0, {position.x + size.x, position.y + size.y});
+        marker.setPoint(1, {position.x + size.x - marker_size, position.y + size.y});
+        marker.setPoint(2, {position.x + size.x, position.y + size.y - marker_size});
+        window.draw(marker);
     }
 }
 

@@ -53,7 +53,8 @@ public:
 
     void render_background();
     void render_game(const Game& game);
-    void render_buttons(const std::vector<Button*>& buttons, const std::vector<Button*>& last_clicked);
+    void render_buttons(const std::vector<Button*>& buttons, 
+        const std::vector<Button*>& last_clicked, const std::vector<Button*>& possible_actions);
     void render(const Button& button, bool is_clicked);
     void render(const Menu* menu);
     void render_pieces(const std::vector<Piece*>& pieces);
