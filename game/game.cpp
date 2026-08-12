@@ -126,7 +126,8 @@ void Game::handle_events() {
 	}
 	//if square with no piece is clicked, it cannot ever activate a move
 	else if (this->last_clicked.size() == 1 && 
-		!is_there_a_piece(this->last_clicked[0]->get_row(), this->last_clicked[0]->get_row())){
+		!is_there_a_piece(this->last_clicked[0]->get_row(), this->last_clicked[0]->get_row())
+		&& on_move_input_mode != InputMode::AIRSTRIKE_SELECT_TARGET){
 		clear_buttons_clicked();
 	}
 	//generate possible moves
@@ -613,18 +614,23 @@ void Game::create_possible_actions(){
 			activated_piece = piece;
 		}
 	}
-	for (int r = 0; r < 8; r++){
-		for (int c = 0; c < 8; c++){
-			bool can_move = activated_piece->can_move_to(activated_piece->get_row(), activated_piece->get_column(),
+	if (activated_piece != nullptr){
+		for (int r = 0; r < 8; r++){
+			for (int c = 0; c < 8; c++){
+				bool can_move = activated_piece->can_move_to(activated_piece->get_row(), activated_piece->get_column(),
+					r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
+				bool can_attack = activated_piece->can_attack(activated_piece->get_row(), activated_piece->get_column(),
 				r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
-			bool can_attack = activated_piece->can_attack(activated_piece->get_row(), activated_piece->get_column(),
-			r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
-			if (can_move || can_attack){
-				possible_actions.emplace_back(get_button(r, c));
+				if (can_move || can_attack){
+					possible_actions.emplace_back(get_button(r, c));
+				}
 			}
 		}
+		bool can_activate_ability = activated_piece->can_activate_ability(this->gamestate, input_mode, *this) == MoveResult::VALID;
+		if (can_activate_ability){
+			possible_actions.emplace_back(get_button(activated_piece->get_row(), activated_piece->get_column()));
+		}
 	}
-	bool can_activate_ability = activated_piece->can_activate_ability(this->gamestate, input_mode, *this) == MoveResult::VALID;
 }
 
 const std::vector<Button*> Game::get_possible_actions() const {
