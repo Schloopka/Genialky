@@ -23,6 +23,7 @@ public:
 	sf::Vector2f get_size() const;
 	const std::string& get_text() const;
 	bool contains(sf::Vector2f point) const;
+	void set_geometry(sf::Vector2f position, sf::Vector2f size);
 
 	bool has_onlclick() const;
 	void click(Game& game) const;

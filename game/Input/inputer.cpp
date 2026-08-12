@@ -9,6 +9,9 @@ InputAction Inputer::poll(const std::vector<Button*>& buttons, const Menu* activ
 		{
 			return InputAction(InputActionType::CloseWindow);
 		}
+		if (const auto* resized = event->getIf<sf::Event::Resized>()) {
+			return {InputActionType::WindowResized, resized->size};
+		}
 		if (event->is<sf::Event::MouseButtonPressed>()) {
             const sf::Vector2i pixel_position = sf::Mouse::getPosition(window);
             const sf::Vector2f position{

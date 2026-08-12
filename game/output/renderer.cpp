@@ -9,6 +9,23 @@
 #include <algorithm>
 #include <utility>
 
+namespace {
+constexpr float original_width = 1200.f;
+constexpr float original_height = 1000.f;
+
+sf::Vector2f get_scale(const sf::RenderWindow& window) {
+    const sf::Vector2u size = window.getSize();
+    return {
+        static_cast<float>(size.x) / original_width,
+        static_cast<float>(size.y) / original_height
+    };
+}
+
+unsigned int scaled_text_size(unsigned int original_size, float scale) {
+    return std::max(1u, static_cast<unsigned int>(original_size * scale));
+}
+}
+
 Renderer::Renderer(sf::RenderWindow& window) : window(window), 
                                             action_description(this->font), who_is_on_move(this->font) {
     setup_textures();
@@ -108,7 +125,8 @@ void Renderer::render(const Button& button, bool is_clicked) {
     sf::Text text(font);
     text.setString(button.get_text());
     text.setFillColor(sf::Color::Black);
-    text.setCharacterSize(25);
+    const sf::Vector2f scale = get_scale(window);
+    text.setCharacterSize(scaled_text_size(25, std::min(scale.x, scale.y)));
 
     const sf::Vector2f position = button.get_position();
     const sf::Vector2f size = button.get_size();
@@ -146,11 +164,12 @@ void Renderer::render(Piece& piece) {
     }
 
     sf::Sprite sprite(texture->second);
+    const sf::Vector2f scale = get_scale(window);
     sprite.setPosition({
-        42.f + piece.get_column() * 100.f,
-        740.f - piece.get_row() * 100.f
+        (42.f + piece.get_column() * 100.f) * scale.x,
+        (740.f - piece.get_row() * 100.f) * scale.y
     });
-    sprite.setScale({0.9f, 0.9f});
+    sprite.setScale({0.9f * scale.x, 0.9f * scale.y});
     window.draw(sprite);
 }
 
@@ -163,19 +182,20 @@ void Renderer::render(Queen& queen) {
 
     sf::Sprite sprite(texture->second);
     const airStrikePhase phase = queen.get_air_strike_phase();
+    const sf::Vector2f scale = get_scale(window);
 
     if (phase == airStrikePhase::NOT_ACTIVE) {
         sprite.setPosition({
-            42.f + queen.get_column() * 100.f,
-            740.f - queen.get_row() * 100.f
+            (42.f + queen.get_column() * 100.f) * scale.x,
+            (740.f - queen.get_row() * 100.f) * scale.y
         });
     } else if (queen.is_piece_white()) {
-        sprite.setPosition({893.f, 490.f});
+        sprite.setPosition({893.f * scale.x, 490.f * scale.y});
     } else {
-        sprite.setPosition({893.f, 290.f});
+        sprite.setPosition({893.f * scale.x, 290.f * scale.y});
     }
 
-    sprite.setScale({0.9f, 0.9f});
+    sprite.setScale({0.9f * scale.x, 0.9f * scale.y});
     window.draw(sprite);
 }
 
@@ -223,8 +243,14 @@ void Renderer::setup_texts(){
 	who_is_on_move.setFillColor(sf::Color::Black);
 }
 void Renderer::render_texts(std::string s_action_description, Gamestate gamestate){
+    const sf::Vector2f scale = get_scale(window);
     this->action_description.setString(s_action_description);
     this->who_is_on_move.setString(gamestate == Gamestate::WHITE_TURN ? "White on move" : "Black on move");
+    action_description.setPosition({200.f * scale.x, 900.f * scale.y});
+    who_is_on_move.setPosition({800.f * scale.x, 900.f * scale.y});
+    const unsigned int character_size = scaled_text_size(30, std::min(scale.x, scale.y));
+    action_description.setCharacterSize(character_size);
+    who_is_on_move.setCharacterSize(character_size);
     window.draw(this->action_description);
 	window.draw(this->who_is_on_move);
 }

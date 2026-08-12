@@ -15,6 +15,18 @@ std::vector<MenuButton*> Menu::get_buttons() const{
 	return result;
 }
 
+void Menu::resize_buttons(sf::Vector2u window_size) {
+	const float scale_x = static_cast<float>(window_size.x) / 1200.f;
+	const float scale_y = static_cast<float>(window_size.y) / 1000.f;
+
+	for (std::size_t i = 0; i < buttons.size(); ++i) {
+		buttons[i]->set_geometry(
+			{1000.f * scale_x, (100.f + static_cast<float>(i) * 100.f) * scale_y},
+			{150.f * scale_x, 50.f * scale_y}
+		);
+	}
+}
+
 
 PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
 	this->piece = piece;

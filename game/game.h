@@ -34,6 +34,7 @@ public:
 	void run(); //mainloop of the game
 	void setup(); //calls functions to set up game, pieces and render background with fields for texts
 	void make_buttons(); //make buttons which are permament (squares buttons, end turn button), put them into vector
+	void resize_buttons(sf::Vector2u window_size); //resizes and repositions buttons to match the window
 	void setup_pieces(); //sets up pieces and puts them into a vector
 	void set_message_for_user(std::string message); //changes the text of message_for_user text field
 	

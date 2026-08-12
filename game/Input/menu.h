@@ -20,6 +20,7 @@ public:
     virtual ~Menu() = default;
 
     std::vector<MenuButton*> get_buttons() const;
+	void resize_buttons(sf::Vector2u window_size);
 
 };
 

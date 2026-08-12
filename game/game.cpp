@@ -82,6 +82,53 @@ void Game::make_buttons() {
 														}));
 }
 
+void Game::resize_buttons(sf::Vector2u window_size) {
+	constexpr float original_width = 1200.f;
+	constexpr float original_height = 1000.f;
+
+	if (window_size.x == 0 || window_size.y == 0) {
+		return;
+	}
+
+	// Keep drawing coordinates in pixels. Otherwise SFML's original view would
+	// apply an additional scale after the button geometry is resized.
+	window.setView(sf::View(sf::FloatRect(
+		{0.f, 0.f},
+		{static_cast<float>(window_size.x), static_cast<float>(window_size.y)}
+	)));
+
+	const float scale_x = static_cast<float>(window_size.x) / original_width;
+	const float scale_y = static_cast<float>(window_size.y) / original_height;
+
+	for (auto& button : buttons) {
+		sf::Vector2f position;
+		sf::Vector2f size;
+
+		if (button->get_id() < 64) {
+			position = {
+				(50.f + 100.f * button->get_column()) * scale_x,
+				(750.f - 100.f * button->get_row()) * scale_y
+			};
+			size = {100.f * scale_x, 100.f * scale_y};
+		} else if (button->get_id() == 65 || button->get_id() == 66) {
+			position = {
+				900.f * scale_x,
+				(button->get_id() == 65 ? 500.f : 300.f) * scale_y
+			};
+			size = {100.f * scale_x, 100.f * scale_y};
+		} else {
+			position = {900.f * scale_x, 425.f * scale_y};
+			size = {150.f * scale_x, 50.f * scale_y};
+		}
+
+		button->set_geometry(position, size);
+	}
+
+	if (activeMenu != nullptr) {
+		activeMenu->resize_buttons(window_size);
+	}
+}
+
 void Game::append_buttons_clicked(Button* button) {
 	this->last_clicked.emplace_back(button);
 }
@@ -91,6 +138,9 @@ void Game::process_input(){
 	switch (action.type){
 		case InputActionType::CloseWindow:
 			window.close();
+			break;
+		case InputActionType::WindowResized:
+			resize_buttons(action.window_size);
 			break;
 		case InputActionType::ButtonClicked:
 			if (action.button->has_onlclick()) {
@@ -295,6 +345,7 @@ void Game::handle_normal_moves() {
 				//if pawn promotes or not
 				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
+					activeMenu->resize_buttons(window.getSize());
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				else {
@@ -313,6 +364,7 @@ void Game::handle_normal_moves() {
 				}
 				else {
 					activeMenu = std::make_unique<PieceMenu>(*piece, *this);
+					activeMenu->resize_buttons(window.getSize());
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				set_message_for_user("A piece was attacked");

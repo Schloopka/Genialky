@@ -54,6 +54,11 @@ bool Button::contains(sf::Vector2f point) const {
 		&& point.y <= position.y + size.y;
 }
 
+void Button::set_geometry(sf::Vector2f new_position, sf::Vector2f new_size) {
+	position = new_position;
+	size = new_size;
+}
+
 SquareButton::SquareButton(
 	sf::Vector2f position,
 	sf::Vector2f size,

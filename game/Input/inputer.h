@@ -15,6 +15,7 @@
 enum class InputActionType {
     None,
     CloseWindow,
+	WindowResized,
     ButtonClicked,
     MenuButtonClicked
 };
@@ -23,10 +24,13 @@ struct InputAction {
     InputActionType type = InputActionType::None;
     Button* button = nullptr;
     MenuButton* menu_button = nullptr;
+	sf::Vector2u window_size{};
 
     InputAction(InputActionType type):type(type){}
     InputAction(InputActionType type, Button* button, MenuButton* menu_button)
         :type(type), button(button), menu_button(menu_button) {}
+	InputAction(InputActionType type, sf::Vector2u window_size)
+		:type(type), window_size(window_size) {}
     InputAction(){}
 };
 
