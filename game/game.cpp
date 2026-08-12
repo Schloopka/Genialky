@@ -126,7 +126,7 @@ void Game::handle_events() {
 	}
 	//if square with no piece is clicked, it cannot ever activate a move
 	else if (this->last_clicked.size() == 1 && 
-		!is_there_a_piece(this->last_clicked[0]->get_row(), this->last_clicked[0]->get_row())
+		!is_there_a_piece(this->last_clicked[0]->get_row(), this->last_clicked[0]->get_column())
 		&& on_move_input_mode != InputMode::AIRSTRIKE_SELECT_TARGET){
 		clear_buttons_clicked();
 	}
