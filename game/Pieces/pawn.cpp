@@ -13,7 +13,7 @@ Pawn::Pawn(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
+MoveResult Pawn::can_move_to(int dest_row, int dest_column, 
 	Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
@@ -22,26 +22,26 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 	//white moving forward - kop�k
 	if (is_white) {
 		if (not has_moved) {
-			if (curr_column == dest_column && (curr_row == dest_row - 2 || curr_row == dest_row - 1) 
-				&& game.is_there_a_piece(curr_row + 1, curr_column) == false /*check we dont go over any piece*/) {
+			if (column == dest_column && (row == dest_row - 2 || row == dest_row - 1) 
+				&& game.is_there_a_piece(row + 1, column) == false /*check we dont go over any piece*/) {
 				return MoveResult::VALID;
 			}
 		}
 		if (has_moved) {
-			if (curr_column == dest_column && curr_row == dest_row - 1) {
+			if (column == dest_column && row == dest_row - 1) {
 				return MoveResult::VALID;
 			}
 		}
 	}
 	if (not is_white) {
 		if (not has_moved) {
-			if (curr_column == dest_column && ( curr_row == dest_row + 2 || curr_row == dest_row + 1)
-				&& game.is_there_a_piece(curr_row - 1, curr_column) == false/*check we dont go over any piece*/) {
+			if (column == dest_column && ( row == dest_row + 2 || row == dest_row + 1)
+				&& game.is_there_a_piece(row - 1, column) == false/*check we dont go over any piece*/) {
 				return MoveResult::VALID;
 			}
 		}
 		if (has_moved) {
-			if (curr_column == dest_column && curr_row == dest_row + 1) {
+			if (column == dest_column && row == dest_row + 1) {
 				return MoveResult::VALID;
 			}
 		}
@@ -51,7 +51,7 @@ MoveResult Pawn::can_move_to(int curr_row, int curr_column, int dest_row, int de
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, 
+MoveResult Pawn::can_attack(int dest_row, int dest_column, 
 	Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -62,12 +62,14 @@ MoveResult Pawn::can_attack(int curr_row, int curr_column, int dest_row, int des
 	}
 	//check if white pawn can attack this square - kop�k
 	if (is_white) {
-		if ((dest_row - curr_row == 1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == 2 && std::abs(dest_column - curr_column) == 2)) {
+		if ((dest_row - row == 1 && std::abs(dest_column - column) == 1) || 
+		(dest_row - row == 2 && std::abs(dest_column - column) == 2)) {
 			return MoveResult::VALID;
 		}
 	}
-	if (not is_white) {
-		if ((dest_row - curr_row == -1 && std::abs(dest_column - curr_column) == 1) || (dest_row - curr_row == -2 && std::abs(dest_column - curr_column) == 2)) {
+	if (!is_white) {
+		if ((dest_row - row == -1 && std::abs(dest_column - column) == 1) || 
+		(dest_row - row == -2 && std::abs(dest_column - column) == 2)) {
 			return MoveResult::VALID;
 		}
 	}
@@ -81,33 +83,32 @@ MoveResult Pawn::can_be_eliminated(attackType attack_type, Game& game) {
 	return MoveResult::VALID;
 }
 void Pawn::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
-	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(row, column, dest_row, dest_column, game);
+	std::vector<std::pair<int, int>> attacked_squares = this->get_attacked_squares(dest_row, dest_column, game);
 	
-	for (std::vector<int> square_coordinates : attacked_squares) {
-		if (game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type) == false
-			&& game.is_there_a_piece(square_coordinates.front(), square_coordinates.back())) {
+	for (std::pair<int, int> square_coordinates : attacked_squares) {
+		if (game.eliminate_pieces_from(square_coordinates.first, square_coordinates.second, attack_type) == false
+			&& game.is_there_a_piece(square_coordinates.first, square_coordinates.second)) {
 			break;
 		}
 	}
 
 }
-std::vector<std::vector<int>> Pawn::get_attacked_squares(int curr_row, int curr_column, 
-	int dest_row, int dest_column, Game& game) {
+std::vector<std::pair<int, int>> Pawn::get_attacked_squares(int dest_row, int dest_column, Game& game) {
 	//white to the right
-	if ((dest_row - curr_row == 1 && dest_column - curr_column == 1) || (dest_row - curr_row == 2 && dest_column - curr_column == 2)) {
-		return { { curr_row + 1, curr_column + 1 },  {curr_row + 2, curr_column + 2 } };
+	if ((dest_row - row == 1 && dest_column - column == 1) || (dest_row - row == 2 && dest_column - column == 2)) {
+		return { { row + 1, column + 1 },  {row + 2, column + 2 } };
 	}
 	//white to the left
-	if ((dest_row - curr_row == 1 && dest_column - curr_column == -1) || (dest_row - curr_row == 2 && dest_column - curr_column == -2)) {
-		return { { curr_row + 1, curr_column - 1 },  {curr_row + 2, curr_column - 2 } };
+	if ((dest_row - row == 1 && dest_column - column == -1) || (dest_row - row == 2 && dest_column - column == -2)) {
+		return { { row + 1, column - 1 },  {row + 2, column - 2 } };
 	}
 	//black to the left
-	if ((dest_row - curr_row == -1 && dest_column - curr_column == -1) || (dest_row - curr_row == -2 && dest_column - curr_column == -2)) {
-		return { { curr_row - 1, curr_column - 1 },  {curr_row - 2, curr_column - 2 } };
+	if ((dest_row - row == -1 && dest_column - column == -1) || (dest_row - row == -2 && dest_column - column == -2)) {
+		return { { row - 1, column - 1 },  {row - 2, column - 2 } };
 	}
 	//black to the right
-	if ((dest_row - curr_row == -1 && dest_column - curr_column == 1) || (dest_row - curr_row == -2 && dest_column - curr_column == +2)) {
-		return { { curr_row - 1, curr_column + 1 },  {curr_row - 2, curr_column + 2 } };
+	if ((dest_row - row == -1 && dest_column - column == 1) || (dest_row - row == -2 && dest_column - column == +2)) {
+		return { { row - 1, column + 1 },  {row - 2, column + 2 } };
 	}
 	return { {-1, -1} };
 }

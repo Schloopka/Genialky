@@ -20,14 +20,13 @@ Bishop::Bishop(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
-	Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_move_to(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
 	//ku�n�k
-	if (std::abs(curr_row - dest_row) == 1 && std::abs(curr_column - dest_column) == 1) {//can move one diagonally
+	if (std::abs(row - dest_row) == 1 && std::abs(column - dest_column) == 1) {//can move one diagonally
 		return MoveResult::VALID;
 	}
 
@@ -36,8 +35,7 @@ MoveResult Bishop::can_move_to(int curr_row, int curr_column, int dest_row, int 
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, 
-	Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Bishop::can_attack(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -51,17 +49,17 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 			ability_activated = true;
 		}
 		int max_shot_distance = (ability_activated ? 5 : 3);
-		if ((std::abs(curr_row - dest_row) <= max_shot_distance && std::abs(curr_row - dest_row) != 0 &&
-			std::abs(curr_column - dest_column) <= max_shot_distance && std::abs(curr_column - dest_column) != 0
-			&& std::abs(curr_row - dest_row) == std::abs(curr_column - dest_column)))/*with king on board*/ {
-			int distance = std::abs(curr_row - dest_row); //how far the bishop shoots, we need to check it doesnt shoot over any other piece
-			bool shoot_up = (dest_row > curr_row ? true : false); //if shot is to higher row
-			bool shoot_right = (dest_column > curr_column ? true : false);//if shot is to higher column (to the right)
+		if ((std::abs(row - dest_row) <= max_shot_distance && std::abs(row - dest_row) != 0 &&
+			std::abs(column - dest_column) <= max_shot_distance && std::abs(column - dest_column) != 0
+			&& std::abs(row - dest_row) == std::abs(column - dest_column)))/*with king on board*/ {
+			int distance = std::abs(row - dest_row); //how far the bishop shoots, we need to check it doesnt shoot over any other piece
+			bool shoot_up = (dest_row > row ? true : false); //if shot is to higher row
+			bool shoot_right = (dest_column > column ? true : false);//if shot is to higher column (to the right)
 			std::pair<int, int> directions = { (shoot_up ? 1 : -1), (shoot_right ? 1 : -1) };
 			//check if there are no pieces in the way
 			for (int i = 1; i < distance; i++) {
 
-				if (game.is_there_a_piece(curr_row + i * directions.first, curr_column + i * directions.second)) {
+				if (game.is_there_a_piece(row + i * directions.first, column + i * directions.second)) {
 					return MoveResult::SHOT_OVER_PIECE;
 				}
 			}
@@ -71,8 +69,8 @@ MoveResult Bishop::can_attack(int curr_row, int curr_column, int dest_row, int d
 			return MoveResult::VALID;
 		}
 	}
-	if (((std::abs(curr_row - dest_row) == 1 && curr_column == dest_column)
-		|| (std::abs(curr_column - dest_column) == 1 && curr_row == dest_row))
+	if (((std::abs(row - dest_row) == 1 && column == dest_column)
+		|| (std::abs(column - dest_column) == 1 && row == dest_row))
 		&& game.get_king_on_board(is_white)) {
 		//next attack is physical with no reload
 		attack_type = attackType::PHYSICAL;
@@ -105,6 +103,6 @@ MoveResult Bishop::can_be_eliminated(attackType attack_type, Game& game) {
 	return MoveResult::VALID;
 }
 
-std::vector<std::vector<int>> Bishop::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
+std::vector<std::pair<int, int>> Bishop::get_attacked_squares(int dest_row, int dest_column, Game& game) {
 	return { {dest_row, dest_column} };
 }

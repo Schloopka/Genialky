@@ -20,13 +20,13 @@ Queen::Queen(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Queen::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Queen::can_move_to(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
-	if (std::abs(curr_row - dest_row) <= 2 && std::abs(curr_column - dest_column) <= 2
-		&& (curr_row != dest_row || curr_column != dest_column)) {
+	if (std::abs(row - dest_row) <= 2 && std::abs(column - dest_column) <= 2
+		&& (row != dest_row || column != dest_column)) {
 		return MoveResult::VALID;
 	}
 	return MoveResult::NOT_VALID;
@@ -34,7 +34,7 @@ MoveResult Queen::can_move_to(int curr_row, int curr_column, int dest_row, int d
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Queen::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Queen::can_attack(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -45,14 +45,14 @@ MoveResult Queen::can_attack(int curr_row, int curr_column, int dest_row, int de
 	}
 	//if queen is after airstrike attack, it has to move
 	bool is_after_air_strike_attack = game.get_input_mode(is_white) == InputMode::AIRSTRIKE_RESOLVE_ATTACK;
-	if (std::abs(curr_row - dest_row) <= 1 && std::abs(curr_column - dest_column) <= 1
-		&& (curr_row != dest_row || curr_column != dest_column) && game.get_king_on_board(is_white)
+	if (std::abs(row - dest_row) <= 1 && std::abs(column - dest_column) <= 1
+		&& (row != dest_row || column != dest_column) && game.get_king_on_board(is_white)
 		&& !is_after_air_strike_attack) {
 		instant_attack = false;
 		return MoveResult::VALID;
 	}
-	else if (std::abs(curr_row - dest_row) <= 2 && std::abs(curr_column - dest_column) <= 2
-		&& (curr_row != dest_row || curr_column != dest_column)) {
+	else if (std::abs(row - dest_row) <= 2 && std::abs(column - dest_column) <= 2
+		&& (row != dest_row || column != dest_column)) {
 		instant_attack = true;
 		moves_when_attack = true;
 		return MoveResult::VALID;
@@ -61,7 +61,7 @@ MoveResult Queen::can_attack(int curr_row, int curr_column, int dest_row, int de
 
 }
 
-std::vector<std::vector<int>> Queen::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
+std::vector<std::pair<int, int>> Queen::get_attacked_squares(int dest_row, int dest_column, Game& game) {
 
 	return { {dest_row, dest_column} };
 }

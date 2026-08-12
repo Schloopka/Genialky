@@ -9,12 +9,11 @@ class Game;
 class Knight : public Piece {
 public:
 	Knight(bool is_white, int row, int column);
-	MoveResult can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, 
+	MoveResult can_move_to(int dest_row, int dest_column, 
 		Gamestate gamestate, InputMode inputmode, Game& game) override;
-	MoveResult can_attack(int curr_row, int curr_column, int dest_row, int dest_column, 
+	MoveResult can_attack(int dest_row, int dest_column, 
 		Gamestate gamestate, InputMode inputmode, Game& game) override;
-	std::vector<std::vector<int>> get_attacked_squares(int curr_row, int curr_column, 
-		int dest_row, int dest_column, Game& game) override;
+	std::vector<std::pair<int, int>> get_attacked_squares(int dest_row, int dest_column, Game& game) override;
 
 	void attack(int dest_row, int dest_column, Game& game, attackType attack_type) override;
 private:

@@ -40,30 +40,17 @@ void Piece::move_piece_to(int dest_row, int dest_column) {
 	this->moves_since_last_moved = -1; //set to -1, because at the end of the move, it is increased by 1
 }
 
-MoveResult Piece::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	return MoveResult::NOT_VALID;
-}
-
-MoveResult Piece::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
-	return MoveResult::NOT_VALID;
-}
-
-std::vector<std::vector<int>> Piece::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
-	std::vector<std::vector<int>> result = { {-1, -1} };
-	return result;
-}
-
 void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
-	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(row, column, dest_row, dest_column, game);
+	std::vector<std::pair<int, int>> attacked_squares = this->get_attacked_squares(dest_row, dest_column, game);
 	if (poisons_when_attacks == false) {
-		for (std::vector<int> square_coordinates : attacked_squares) {
-			game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type);
+		for (std::pair<int, int> square_coordinates : attacked_squares) {
+			game.eliminate_pieces_from(square_coordinates.first, square_coordinates.second, attack_type);
 		}
 	}
 	else if (poisons_when_attacks == true) {
-		for (std::vector<int> square_coordinates : attacked_squares) {
+		for (std::pair<int, int> square_coordinates : attacked_squares) {
 			for (auto& piece : game.get_pieces()) {
-				if (piece->get_row() == square_coordinates.front() && piece->get_column() == square_coordinates.back()) {
+				if (piece->get_row() == square_coordinates.first && piece->get_column() == square_coordinates.second) {
 					piece->set_poisoned_for(poison_attack); 
 				}
 			}
@@ -78,6 +65,10 @@ void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_
 
 MoveResult Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
 	return MoveResult::NOT_VALID;
+}
+
+void Piece::activate_ability(Gamestate gamestate, Game& game){
+	
 }
 
 MoveResult Piece::can_be_eliminated(attackType attack_type, Game& game) {
@@ -107,10 +98,6 @@ MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game
 	}
 	
 	return MoveResult::VALID;
-}
-
-void Piece::activate_ability(Gamestate gamestate, Game& game){
-	
 }
 
 int Piece::get_reload() {

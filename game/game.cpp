@@ -196,6 +196,7 @@ void Game::handle_queen_after_landing() {
 	int original_column = this->last_clicked.front()->get_column();
 	std::vector<Piece*> queens;
 	std::vector<Piece*> pieces_without_queens;
+	InputMode curr_inputmode = gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode;
 	for (const auto& piece : pieces)
 	{
 		if (piece->get_type() != PieceType::QUEEN)
@@ -213,10 +214,10 @@ void Game::handle_queen_after_landing() {
 		if (original_row != piece->get_row() || original_column != piece->get_column()) {
 			continue;
 		}
-		MoveResult move_result = piece->can_move_to(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
-			gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
-		MoveResult attack_result = piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
-			gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+		MoveResult move_result = piece->can_move_to(dest_row, dest_column, gamestate,
+			curr_inputmode, *this);
+		MoveResult attack_result = piece->can_attack(dest_row, dest_column, gamestate,
+			curr_inputmode, *this);
 		if (move_result == MoveResult::VALID //if the piece can move to the second square
 			&& is_there_a_piece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
 			piece->move_piece_to(dest_row, dest_column);
@@ -256,7 +257,7 @@ void Game::handle_queen_after_landing() {
 void Game::handle_bishop_abiltiy(bool white_on_move, Piece* bishop) {
 	int dest_row = this->last_clicked.back()->get_row();
 	int dest_column = this->last_clicked.back()->get_column();
-	MoveResult attack_result = bishop->can_attack(bishop->get_row(), bishop->get_column(), dest_row, dest_column, gamestate,
+	MoveResult attack_result = bishop->can_attack(dest_row, dest_column, gamestate,
 		gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
 	if (attack_result == MoveResult::VALID) {
 		bishop->attack(dest_row, dest_column, *this, bishop->get_attack_type());
@@ -274,6 +275,7 @@ void Game::handle_normal_moves() {
 	int dest_column = this->last_clicked.back()->get_column();
 	bool action_performed = false;
 	Piece* piece_attacking = nullptr;
+	InputMode curr_inputmode = gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode;
 	for (auto& piece : pieces) {
 		if (piece->is_piece_white() != (gamestate == Gamestate::WHITE_TURN)
 			|| piece->is_piece_white() == (gamestate == Gamestate::BLACK_TURN)) {
@@ -281,12 +283,12 @@ void Game::handle_normal_moves() {
 		}
 		else if (8 * piece->get_row() + piece->get_column() == (this->last_clicked.front()->get_id())) //if the piece is on the first clicked square
 		{
-			MoveResult move_result = piece->can_move_to(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
-				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
-			MoveResult attack_result = piece->can_attack(piece->get_row(), piece->get_column(), dest_row, dest_column, gamestate,
-				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+			MoveResult move_result = piece->can_move_to(dest_row, dest_column, gamestate,
+				curr_inputmode, *this);
+			MoveResult attack_result = piece->can_attack(dest_row, dest_column, gamestate,
+				curr_inputmode, *this);
 			MoveResult ability_result = piece->can_activate_ability(gamestate,
-				gamestate == Gamestate::WHITE_TURN ? white_input_mode : black_input_mode, *this);
+				curr_inputmode, *this);
 			//if piece can move to second clicked square, then it is moved there, also checks if there is no piece on that square
 			if (move_result == MoveResult::VALID //if the piece can move to the second square
 				&& is_there_a_piece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
@@ -617,10 +619,8 @@ void Game::create_possible_actions(){
 	if (activated_piece != nullptr){
 		for (int r = 0; r < 8; r++){
 			for (int c = 0; c < 8; c++){
-				bool can_move = activated_piece->can_move_to(activated_piece->get_row(), activated_piece->get_column(),
-					r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
-				bool can_attack = activated_piece->can_attack(activated_piece->get_row(), activated_piece->get_column(),
-				r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
+				bool can_move = activated_piece->can_move_to(r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
+				bool can_attack = activated_piece->can_attack(r, c, this->gamestate, input_mode, *this) == MoveResult::VALID;
 				if (can_move || can_attack){
 					possible_actions.emplace_back(get_button(r, c));
 				}

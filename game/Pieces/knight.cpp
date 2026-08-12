@@ -16,14 +16,14 @@ Knight::Knight(bool is_white, int row, int column) {
 }
 
 //returns true if it can move to the second square
-MoveResult Knight::can_move_to(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Knight::can_move_to(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
 	//mustang
-	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 1) 
-		|| (std::abs(curr_row - dest_row) == 1 && curr_column == dest_column)) {//can move one on column or row, not diagonally
+	if ((row == dest_row && std::abs(column - dest_column) == 1) 
+		|| (std::abs(row - dest_row) == 1 && column == dest_column)) {//can move one on column or row, not diagonally
 		return MoveResult::VALID;
 	}
 
@@ -32,7 +32,7 @@ MoveResult Knight::can_move_to(int curr_row, int curr_column, int dest_row, int 
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Knight::can_attack(int curr_row, int curr_column, int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Knight::can_attack(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
@@ -40,13 +40,13 @@ MoveResult Knight::can_attack(int curr_row, int curr_column, int dest_row, int d
 		return MoveResult::REALOADING;
 	}
 	
-	if ((curr_row == dest_row && std::abs(curr_column - dest_column) == 2)
-		|| (std::abs(curr_row - dest_row) == 2 && curr_column == dest_column)) {//can move one on column or row, not diagonally
+	if ((row == dest_row && std::abs(column - dest_column) == 2)
+		|| (std::abs(row - dest_row) == 2 && column == dest_column)) {//can move one on column or row, not diagonally
 		stun_lenght = 1; //when knight moves two squares forward, then it stuns for one move
 		return MoveResult::VALID;
 	}
-	if (((curr_row == dest_row && std::abs(curr_column - dest_column) == 3)
-		|| (std::abs(curr_row - dest_row) == 3 && curr_column == dest_column))
+	if (((row == dest_row && std::abs(column - dest_column) == 3)
+		|| (std::abs(row - dest_row) == 3 && column == dest_column))
 		&& game.get_king_on_board(is_white)) {
 		stun_lenght = 2; //when knight moves two squares forward, then it stuns for one move
 		return MoveResult::VALID;
@@ -59,7 +59,7 @@ MoveResult Knight::can_attack(int curr_row, int curr_column, int dest_row, int d
 void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack_type) {
 
 	int id = 8 * this->get_row() + this->get_column(); /*remember id of the piece, so I can move it later, because when you remove a piece, the vector changes*/
-	std::vector<std::vector<int>> attacked_squares = this->get_attacked_squares(this->get_row(), this->get_column(), dest_row, dest_column, game);
+	std::vector<std::pair<int, int>> attacked_squares = this->get_attacked_squares(dest_row, dest_column, game);
 
 	//First find squares the knight stuns by the move
 	std::vector<std::pair<int, int>> squares_to_stun = {};
@@ -88,8 +88,8 @@ void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack
 		}
 	}
 
-	for (std::vector<int> square_coordinates : attacked_squares) {
-		game.eliminate_pieces_from(square_coordinates.front(), square_coordinates.back(), attack_type);
+	for (std::pair<int, int> square_coordinates : attacked_squares) {
+		game.eliminate_pieces_from(square_coordinates.first, square_coordinates.second, attack_type);
 	}
 	
 	for (auto& piece : game.get_pieces()) {
@@ -99,7 +99,7 @@ void Knight::attack(int dest_row, int dest_column, Game& game, attackType attack
 	}	
 }
 
-std::vector<std::vector<int>> Knight::get_attacked_squares(int curr_row, int curr_column, int dest_row, int dest_column, Game& game) {
+std::vector<std::pair<int, int>> Knight::get_attacked_squares(int dest_row, int dest_column, Game& game) {
 	
 	return { {dest_row, dest_column} };
 }
