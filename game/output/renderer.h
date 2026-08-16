@@ -48,9 +48,10 @@ private:
     sf::Font font;
     sf::Text action_description;
     sf::Text who_is_on_move;
+    bool black_perspective = false;
 
 public:
-    explicit Renderer(sf::RenderWindow& window);
+    explicit Renderer(sf::RenderWindow& window, bool black_perspective);
 
     void render_background();
     void render_game(const Game& game, const GameEventContext& context);

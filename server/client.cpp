@@ -3,7 +3,7 @@
 #include "server.h"
 
 Client::Client(Server& server, bool is_white):window(sf::VideoMode({ 800, 550 }), "Genialky"),
- _renderer(window), _inputer(window), server(server)
+ _renderer(window, !is_white), _inputer(window), server(server)
 {
 	this->is_white = is_white;
 }
@@ -26,8 +26,11 @@ void Client::set_message_for_user(std::string message) {
 void Client::make_buttons() {
 	for (int c = 0; c < 8; c++) {
 		for (int r = 0; r < 8; r++) {
+			const int displayed_row = is_white ? r : 7 - r;
+			const int displayed_column = is_white ? c : 7 - c;
 			this->buttons.emplace_back(std::make_unique<SquareButton>(
-				sf::Vector2f(50.f + 100.f * c, 750.f - 100.f * r), sf::Vector2f(100.f, 100.f),
+				sf::Vector2f(50.f + 100.f * displayed_column, 750.f - 100.f * displayed_row),
+				sf::Vector2f(100.f, 100.f),
 				r, c, 8 * r + c));
 		}
 	}
@@ -66,9 +69,11 @@ void Client::resize_buttons(sf::Vector2u window_size) {
 		sf::Vector2f size;
 
 		if (button->get_id() < 64) {
+			const int displayed_row = is_white ? button->get_row() : 7 - button->get_row();
+			const int displayed_column = is_white ? button->get_column() : 7 - button->get_column();
 			position = {
-				(50.f + 100.f * button->get_column()) * scale_x,
-				(750.f - 100.f * button->get_row()) * scale_y
+				(50.f + 100.f * displayed_column) * scale_x,
+				(750.f - 100.f * displayed_row) * scale_y
 			};
 			size = {100.f * scale_x, 100.f * scale_y};
 		} else if (button->get_id() == 65 || button->get_id() == 66) {

@@ -27,7 +27,7 @@ unsigned int scaled_text_size(unsigned int original_size, float scale) {
 }
 }
 
-Renderer::Renderer(sf::RenderWindow& window) : window(window), 
+Renderer::Renderer(sf::RenderWindow& window, bool black_perspective) : window(window), 
                                             action_description(this->font), who_is_on_move(this->font) {
     setup_textures();
     setup_texts();
@@ -38,6 +38,7 @@ void Renderer::render_background() {
 }
 
 void Renderer::render_game(const Game& game, const GameEventContext& context) {
+    black_perspective = !context.is_input_player_white;
     render_background();
     render_buttons(context.buttons, context.last_clicked, context.possible_actions);
     render(context.menu.get());
@@ -166,9 +167,11 @@ void Renderer::render(Piece& piece) {
 
     sf::Sprite sprite(texture->second);
     const sf::Vector2f scale = get_scale(window);
+    const int displayed_row = black_perspective ? 7 - piece.get_row() : piece.get_row();
+    const int displayed_column = black_perspective ? 7 - piece.get_column() : piece.get_column();
     sprite.setPosition({
-        (42.f + piece.get_column() * 100.f) * scale.x,
-        (740.f - piece.get_row() * 100.f) * scale.y
+        (42.f + displayed_column * 100.f) * scale.x,
+        (740.f - displayed_row * 100.f) * scale.y
     });
     sprite.setScale({0.9f * scale.x, 0.9f * scale.y});
     window.draw(sprite);
@@ -186,9 +189,11 @@ void Renderer::render(Queen& queen) {
     const sf::Vector2f scale = get_scale(window);
 
     if (phase == airStrikePhase::NOT_ACTIVE) {
+        const int displayed_row = black_perspective ? 7 - queen.get_row() : queen.get_row();
+        const int displayed_column = black_perspective ? 7 - queen.get_column() : queen.get_column();
         sprite.setPosition({
-            (42.f + queen.get_column() * 100.f) * scale.x,
-            (740.f - queen.get_row() * 100.f) * scale.y
+            (42.f + displayed_column * 100.f) * scale.x,
+            (740.f - displayed_row * 100.f) * scale.y
         });
     } else if (queen.is_piece_white()) {
         sprite.setPosition({893.f * scale.x, 490.f * scale.y});
