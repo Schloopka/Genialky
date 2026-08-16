@@ -2,7 +2,7 @@
 #include "game/game.h"
 #include "server.h"
 
-Client::Client(Server& server, bool is_white):window(sf::VideoMode({ 1200, 1000 }), "Genialky"),
+Client::Client(Server& server, bool is_white):window(sf::VideoMode({ 800, 550 }), "Genialky"),
  _renderer(window), _inputer(window), server(server)
 {
 	this->is_white = is_white;

@@ -59,11 +59,7 @@ void Game::handle_events(GameEventContext& context) {
 	context.possible_actions.clear();
 	//more than two squares never interact, so we remove the first one and try again
 	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)){
-
-	}
-	else if (last_clicked.size() > 2) {
-		last_clicked.erase(last_clicked.begin());
-		handle_events(context);
+		context.last_clicked.clear();
 	}
 	//if square with no piece is clicked, it cannot ever activate a move
 	else if (last_clicked.size() == 1 &&
@@ -105,7 +101,7 @@ void Game::handle_events(GameEventContext& context) {
 	//if nothing worked, we eliminate the first button clicked and try again
 	//this allows that user can click on a piece, change his mind, click another one and move it 
 	//and doesnt have to care about parity of number of clicks
-	else if (last_clicked.size() > 1 ) {
+	if (last_clicked.size() > 1 ) {
 		last_clicked.erase(last_clicked.begin());
 		handle_events(context);
 	}
@@ -304,7 +300,10 @@ void Game::handle_normal_moves(GameEventContext& context) {
 
 void Game::try_end_turn(GameEventContext& context) {
 	auto& last_clicked = context.last_clicked;
-	if (moves_left <= 0) {
+	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)){
+
+	}
+	else if (moves_left <= 0) {
 		update_stats();
 		switchGamestate(context);
 		last_clicked.clear();
