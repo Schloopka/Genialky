@@ -14,6 +14,7 @@
 
 class Button;
 class Game;
+struct GameEventContext;
 class Menu;
 class Piece;
 class Queen;
@@ -52,7 +53,7 @@ public:
     explicit Renderer(sf::RenderWindow& window);
 
     void render_background();
-    void render_game(const Game& game);
+    void render_game(const Game& game, const GameEventContext& context);
     void render_buttons(const std::vector<Button*>& buttons, 
         const std::vector<Button*>& last_clicked, const std::vector<Button*>& possible_actions);
     void render(const Button& button, bool is_clicked);
@@ -61,7 +62,7 @@ public:
     void render(Piece& piece);
     void render(Queen& queen);
     void setup_texts();
-    void render_texts(std::string action_description, Gamestate gamestate);
+    void render_texts(std::string action_description, ON_TURN gamestate);
 };
 
 #endif

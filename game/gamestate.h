@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class Gamestate {
+enum class ON_TURN {
 	WHITE_TURN,
 	BLACK_TURN,
 	END

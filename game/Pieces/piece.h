@@ -27,15 +27,15 @@ public:
 	virtual ~Piece() = default;
 
 	void move_piece_to(int dest_row, int des_column);
-	virtual MoveResult can_move_to(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) = 0;
+	virtual MoveResult can_move_to(int dest_row, int dest_column, ON_TURN gamestate, InputMode inputmode, Game& game) = 0;
 	virtual MoveResult can_be_eliminated(attackType attack_type, Game& game);
-	virtual MoveResult can_attack(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) = 0;
+	virtual MoveResult can_attack(int dest_row, int dest_column, ON_TURN gamestate, InputMode inputmode, Game& game) = 0;
 	virtual std::vector<std::pair<int, int>> get_attacked_squares(int dest_row, int dest_column, Game& game) = 0; //supposes that the piece can attack the square
 	virtual void attack(int dest_row, int dest_column, Game& game, attackType attack_type);
-	virtual void activate_ability(Gamestate gamestate, Game& game);
-	virtual MoveResult can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game);//returns true if the piece can activate special activity, which is not a move or a take
+	virtual void activate_ability(ON_TURN gamestate, Game& game);
+	virtual MoveResult can_activate_ability(ON_TURN gamestate, InputMode inputmode, Game& game);//returns true if the piece can activate special activity, which is not a move or a take
 
-	MoveResult can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game); //check if the piece is not stunned, player is on move, piece is in pieces that can move
+	MoveResult can_do_anything(ON_TURN gamestate, InputMode inputmode, Game& game); //check if the piece is not stunned, player is on move, piece is in pieces that can move
 	bool is_piece_in_can_move(std::vector<Piece*> pieces_can_move);
 	bool is_piece_white() const; //returns true if the piece is white
 

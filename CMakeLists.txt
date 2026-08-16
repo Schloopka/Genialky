@@ -10,9 +10,10 @@ find_library(SFML_WINDOW_LIBRARY NAMES sfml-window REQUIRED)
 find_library(SFML_SYSTEM_LIBRARY NAMES sfml-system REQUIRED)
 
 set(SOURCES
-    game/Genialky.cpp
+    Genialky.cpp
     game/game.cpp
     game/Input/buttons.cpp
+    game/Input/game_event_context.cpp
     game/Input/menu.cpp
     game/Input/inputer.cpp
     game/Pieces/bishop.cpp
@@ -23,6 +24,8 @@ set(SOURCES
     game/Pieces/queen.cpp
     game/Pieces/rook.cpp
     game/output/renderer.cpp
+    server/client.cpp
+    server/server.cpp
     
 )
 add_executable(Genialky ${SOURCES})
@@ -35,10 +38,12 @@ target_link_libraries(Genialky PRIVATE
 
 target_include_directories(Genialky PRIVATE
     ${SFML_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/game
     ${CMAKE_CURRENT_SOURCE_DIR}/game/Input
     ${CMAKE_CURRENT_SOURCE_DIR}/game/Pieces
     ${CMAKE_CURRENT_SOURCE_DIR}/game/output
+    ${CMAKE_CURRENT_SOURCE_DIR}/server
 )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Genialky)

@@ -63,11 +63,11 @@ void Piece::attack(int dest_row, int dest_column, Game& game, attackType attack_
 	}
 }
 
-MoveResult Piece::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Piece::can_activate_ability(ON_TURN gamestate, InputMode inputmode, Game& game) {
 	return MoveResult::NOT_VALID;
 }
 
-void Piece::activate_ability(Gamestate gamestate, Game& game){
+void Piece::activate_ability(ON_TURN gamestate, Game& game){
 	
 }
 
@@ -75,14 +75,14 @@ MoveResult Piece::can_be_eliminated(attackType attack_type, Game& game) {
 	return MoveResult::VALID;
 }
 
-MoveResult Piece::can_do_anything(Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Piece::can_do_anything(ON_TURN gamestate, InputMode inputmode, Game& game) {
 	if (game.get_moves_left() <= 0) {
 		return MoveResult::NO_MOVES_LEFT;
 	}
-	if (is_white == true && gamestate == Gamestate::BLACK_TURN) {
+	if (is_white == true && gamestate == ON_TURN::BLACK_TURN) {
 		return MoveResult::NOT_YOUR_TURN;
 	}
-	if (is_white == false && gamestate == Gamestate::WHITE_TURN) {
+	if (is_white == false && gamestate == ON_TURN::WHITE_TURN) {
 		return MoveResult::NOT_YOUR_TURN;
 	}
 	//check if the piece is in the pieces that can move this turn

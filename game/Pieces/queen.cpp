@@ -20,7 +20,7 @@ Queen::Queen(bool is_white, int row, int column) {
 
 
 //returns true if it can move to the second square
-MoveResult Queen::can_move_to(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Queen::can_move_to(int dest_row, int dest_column, ON_TURN gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -34,7 +34,7 @@ MoveResult Queen::can_move_to(int dest_row, int dest_column, Gamestate gamestate
 }
 
 //returns true if it can interact with the second square as attack
-MoveResult Queen::can_attack(int dest_row, int dest_column, Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Queen::can_attack(int dest_row, int dest_column, ON_TURN gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -66,7 +66,7 @@ std::vector<std::pair<int, int>> Queen::get_attacked_squares(int dest_row, int d
 	return { {dest_row, dest_column} };
 }
 
-MoveResult Queen::can_activate_ability(Gamestate gamestate, InputMode inputmode, Game& game) {
+MoveResult Queen::can_activate_ability(ON_TURN gamestate, InputMode inputmode, Game& game) {
 
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -77,7 +77,7 @@ MoveResult Queen::can_activate_ability(Gamestate gamestate, InputMode inputmode,
 	return MoveResult::VALID;
 }
 
-void Queen::activate_ability(Gamestate gamestate, Game& game) {
+void Queen::activate_ability(ON_TURN gamestate, Game& game) {
 	air_strike_data.original_column = this->column;
 	air_strike_data.original_row = this->row;
 

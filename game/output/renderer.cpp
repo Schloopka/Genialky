@@ -3,6 +3,7 @@
 #include "../game.h"
 #include "../Input/buttons.h"
 #include "../Input/menu.h"
+#include "../Input/game_event_context.h"
 #include "../Pieces/piece.h"
 #include "../Pieces/queen.h"
 
@@ -36,12 +37,12 @@ void Renderer::render_background() {
     window.clear(background);
 }
 
-void Renderer::render_game(const Game& game) {
+void Renderer::render_game(const Game& game, const GameEventContext& context) {
     render_background();
-    render_buttons(game.get_buttons(), game.get_last_clicked_buttons(), game.get_possible_actions());
-    render(game.get_menu());
+    render_buttons(context.buttons, context.last_clicked, context.possible_actions);
+    render(context.menu.get());
     render_pieces(game.get_pieces());
-    render_texts(game.get_action_descrtiption(), game.get_gamestate());
+    render_texts(context.action_description, game.get_gamestate());
     window.display();
 }
 
@@ -242,10 +243,10 @@ void Renderer::setup_texts(){
 	who_is_on_move.setPosition({ 800.f,900.f });
 	who_is_on_move.setFillColor(sf::Color::Black);
 }
-void Renderer::render_texts(std::string s_action_description, Gamestate gamestate){
+void Renderer::render_texts(std::string s_action_description, ON_TURN gamestate){
     const sf::Vector2f scale = get_scale(window);
     this->action_description.setString(s_action_description);
-    this->who_is_on_move.setString(gamestate == Gamestate::WHITE_TURN ? "White on move" : "Black on move");
+    this->who_is_on_move.setString(gamestate == ON_TURN::WHITE_TURN ? "White on move" : "Black on move");
     action_description.setPosition({200.f * scale.x, 900.f * scale.y});
     who_is_on_move.setPosition({800.f * scale.x, 900.f * scale.y});
     const unsigned int character_size = scaled_text_size(30, std::min(scale.x, scale.y));

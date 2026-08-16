@@ -81,5 +81,4 @@ void PieceMenu::handle_events(MenuButton& button, Game& game) {
 		break;
 			
 	}
-	game.set_to_delete_menu(true);
 }

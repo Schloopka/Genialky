@@ -14,7 +14,7 @@ Pawn::Pawn(bool is_white, int row, int column) {
 
 //returns true if it can move to the second square
 MoveResult Pawn::can_move_to(int dest_row, int dest_column, 
-	Gamestate gamestate, InputMode inputmode, Game& game) {
+	ON_TURN gamestate, InputMode inputmode, Game& game) {
 	// check if the piece that should be moved is owned by the player that is on the move
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
@@ -52,7 +52,7 @@ MoveResult Pawn::can_move_to(int dest_row, int dest_column,
 
 //returns true if it can interact with the second square as attack
 MoveResult Pawn::can_attack(int dest_row, int dest_column, 
-	Gamestate gamestate, InputMode inputmode, Game& game) {
+	ON_TURN gamestate, InputMode inputmode, Game& game) {
 	if (can_do_anything(gamestate, inputmode, game) != MoveResult::VALID) {
 		return can_do_anything(gamestate, inputmode, game);
 	}
