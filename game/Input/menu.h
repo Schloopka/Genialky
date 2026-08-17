@@ -4,23 +4,32 @@
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <memory>
+#include <optional>
+#include <vector>
+
 
 class MenuButton;
+class Button;
 class Piece;
 class Game;
 enum class MenuOption;
 
+enum class GameMode {
+    Singleplayer,
+    Multiplayer
+};
+
 class Menu {
 protected:
-    std::vector<std::unique_ptr<MenuButton>> buttons;
+    std::vector<std::unique_ptr<Button>> buttons;
 public:
     Menu();
-    virtual void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) = 0;
-    virtual void handle_events(MenuButton& button, Game& game) = 0;
     virtual ~Menu() = default;
 
-    std::vector<MenuButton*> get_buttons() const;
+    std::vector<Button*> get_buttons() const;
 	void resize_buttons(sf::Vector2u window_size);
+	virtual void handle_events(MenuButton& button, Game& game);
 
 };
 
@@ -31,6 +40,12 @@ private:
 public:
     PieceMenu(Piece& piece, Game& game);
 
-    void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) override;
+    void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game);
     void handle_events(MenuButton& button, Game& game) override;
+};
+
+class MainMenu : public Menu {
+public:
+    MainMenu();
+    std::optional<GameMode> show();
 };

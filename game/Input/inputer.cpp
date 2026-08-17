@@ -38,7 +38,8 @@ InputAction Inputer::poll(const std::vector<Button*>& buttons, const Menu* activ
 }
 
 MenuButton* Inputer::find_clicked_menu_button(sf::Vector2f position, const Menu* menu, const sf::Event& event){
-    for (MenuButton* button : menu->get_buttons()) {
+	for (Button* base_button : menu->get_buttons()) {
+		MenuButton* button = static_cast<MenuButton*>(base_button);
 		if (event.is<sf::Event::MouseButtonPressed>()) {
 			if (button->contains(position)) {
 				return button;

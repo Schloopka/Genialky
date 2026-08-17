@@ -12,7 +12,8 @@ class Server;
 
 class Client {
 public:
-	Client(Server& server, bool is_white);
+	Client(Server& server, bool is_singleplayer, bool is_white);
+	Client(Server& server, bool is_singleplayer);
 
 	void setup(); //calls functions to set up game, pieces and render background with fields for texts
 	void render();
@@ -56,7 +57,8 @@ private:
 	
 	bool to_delete_menu = false; //bool to remember if I want to delete a menu after the process of the menu is done
 	
-	bool is_white;
+	bool is_white = true; //default view from white side
+	bool is_singleplayer;
 	bool open = true;
 };
 

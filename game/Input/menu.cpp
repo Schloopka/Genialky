@@ -3,10 +3,14 @@
 #include "game.h"
 #include "../Pieces/piece.h"
 
+#include <stdexcept>
+
 Menu::Menu(){}
 
-std::vector<MenuButton*> Menu::get_buttons() const{
-	std::vector<MenuButton*> result;
+void Menu::handle_events(MenuButton&, Game&) {}
+
+std::vector<Button*> Menu::get_buttons() const{
+	std::vector<Button*> result;
 	result.reserve(buttons.size());
 	for (auto& button : buttons){
 		result.push_back(button.get());
@@ -40,7 +44,8 @@ PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
 }
 
 void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game) {
-	for (MenuButton* button : get_buttons()) {
+	for (Button* base_button : get_buttons()) {
+		MenuButton* button = static_cast<MenuButton*>(base_button);
 		if (event.is<sf::Event::MouseButtonPressed>()) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 			sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
@@ -50,6 +55,53 @@ void PieceMenu::process_clicks(const sf::RenderWindow& window, const sf::Event& 
 			}
 		}
 	}
+}
+
+MainMenu::MainMenu() {
+	buttons.emplace_back(std::make_unique<Button>(
+		sf::Vector2f{250.f, 210.f}, sf::Vector2f{300.f, 65.f}, 0, "Singleplayer"));
+	buttons.emplace_back(std::make_unique<Button>(
+		sf::Vector2f{250.f, 300.f}, sf::Vector2f{300.f, 65.f}, 1, "Multiplayer"));
+}
+
+std::optional<GameMode> MainMenu::show() {
+	sf::RenderWindow window(sf::VideoMode({800, 550}), "Genialky");
+	sf::Font font;
+	if (!font.openFromFile("Textures and fonts/arial1.ttf")) {
+		throw std::runtime_error("Failed to load menu font");
+	}
+
+	while (window.isOpen()) {
+		while (const std::optional event = window.pollEvent()) {
+			if (event->is<sf::Event::Closed>()) {
+				window.close();
+			}
+			if (event->is<sf::Event::MouseButtonPressed>()) {
+				const sf::Vector2i mouse = sf::Mouse::getPosition(window);
+				for (Button* button : get_buttons()) {
+					if (button->contains({static_cast<float>(mouse.x), static_cast<float>(mouse.y)})) {
+						return button->get_id() == 0
+							? GameMode::Singleplayer : GameMode::Multiplayer;
+					}
+				}
+			}
+		}
+
+		window.clear(sf::Color(35, 39, 47));
+		for (Button* menu_button : get_buttons()) {
+			sf::RectangleShape shape(menu_button->get_size());
+			shape.setPosition(menu_button->get_position());
+			shape.setFillColor(sf::Color(55, 105, 185));
+			window.draw(shape);
+
+			sf::Text text(font, menu_button->get_text(), 28);
+			text.setPosition(menu_button->get_position() + sf::Vector2f{55.f, 14.f});
+			window.draw(text);
+		}
+		window.display();
+	}
+
+	return std::nullopt;
 }
 
 void PieceMenu::handle_events(MenuButton& button, Game& game) {

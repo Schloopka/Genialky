@@ -11,6 +11,7 @@ class Menu;
 
 struct GameEventContext {
     bool is_input_player_white;
+    bool is_singleplayer;
     std::vector<Button*>& last_clicked;
     std::string& action_description;
     std::unique_ptr<Menu>& menu;

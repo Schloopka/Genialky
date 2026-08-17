@@ -2,9 +2,16 @@
 #include "game/game.h"
 #include "server.h"
 
-Client::Client(Server& server, bool is_white):window(sf::VideoMode({ 800, 550 }), "Genialky"),
+Client::Client(Server& server, bool is_singleplayer):window(sf::VideoMode({ 800, 550 }), "Genialky"),
+ _renderer(window, true), _inputer(window), server(server)
+{
+	this->is_singleplayer = is_singleplayer;
+}
+
+Client::Client(Server& server, bool is_singleplayer, bool is_white):window(sf::VideoMode({ 800, 550 }), "Genialky"),
  _renderer(window, !is_white), _inputer(window), server(server)
 {
+	this->is_singleplayer = is_singleplayer;
 	this->is_white = is_white;
 }
 
@@ -134,7 +141,7 @@ void Client::process_input() {
 }
 
 GameEventContext Client::make_event_context() {
-	return {is_white, last_clicked, action_description, activeMenu,
+	return {is_white, is_singleplayer, last_clicked, action_description, activeMenu,
 		possible_actions, get_buttons(), window.getSize()};
 }
 

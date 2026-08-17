@@ -95,7 +95,7 @@ void Renderer::render(const Menu* menu) {
         return;
     }
 
-    for (const MenuButton* button : menu->get_buttons()) {
+    for (const Button* button : menu->get_buttons()) {
         render(*button, false);
     }
 }

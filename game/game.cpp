@@ -57,8 +57,9 @@ void Game::handle_events(GameEventContext& context) {
 	auto& last_clicked = context.last_clicked;
 	InputMode on_move_input_mode = (gamestate == ON_TURN::WHITE_TURN ? white_input_mode : black_input_mode);
 	context.possible_actions.clear();
-	//more than two squares never interact, so we remove the first one and try again
-	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)){
+	//in multiplayer mode when player is not on move, they cant do anything
+	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)
+		&& !context.is_singleplayer){
 		context.last_clicked.clear();
 	}
 	//if square with no piece is clicked, it cannot ever activate a move
@@ -300,7 +301,10 @@ void Game::handle_normal_moves(GameEventContext& context) {
 
 void Game::try_end_turn(GameEventContext& context) {
 	auto& last_clicked = context.last_clicked;
-	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)){
+
+	// player not on move cannot click endturn
+	if (context.is_input_player_white != (gamestate == ON_TURN::WHITE_TURN)
+		&& !context.is_singleplayer){
 
 	}
 	else if (moves_left <= 0) {
