@@ -1,6 +1,5 @@
 #include "renderer.h"
 
-#include "../game.h"
 #include "../Input/buttons.h"
 #include "../Input/menu.h"
 #include "../Input/game_event_context.h"
@@ -37,13 +36,13 @@ void Renderer::render_background() {
     window.clear(background);
 }
 
-void Renderer::render_game(const Game& game, const GameEventContext& context) {
-    black_perspective = !context.is_input_player_white;
+void Renderer::render_game(const RenderContext& render_context, const GameEventContext& event_context) {
+    black_perspective = !event_context.is_input_player_white;
     render_background();
-    render_buttons(context.buttons, context.last_clicked, context.possible_actions);
-    render(context.menu.get());
-    render_pieces(game.get_pieces());
-    render_texts(context.action_description, game.get_gamestate());
+    render_buttons(event_context.buttons, event_context.last_clicked, event_context.possible_actions);
+    render(event_context.menu.get());
+    render_pieces(render_context.pieces);
+    render_texts(event_context.action_description, render_context.gamestate);
     window.display();
 }
 

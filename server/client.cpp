@@ -171,12 +171,12 @@ void SinglePlayerClient::setup() {
 	make_buttons();
 	_renderer.setup_texts();
 	auto context = make_event_context();
-	_renderer.render_game(server.get_game(), context);
+	_renderer.render_game(server.get_render_context(), context);
 }
 
 void SinglePlayerClient::render(){
 	auto context = make_event_context();
-	_renderer.render_game(server.get_game(), context);
+	_renderer.render_game(server.get_render_context(), context);
 }
 
 void SinglePlayerClient::process_input() {

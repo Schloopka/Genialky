@@ -13,6 +13,10 @@ void Server::handle_events(GameEventContext& context){
     }
     
 }
-Game& Server::get_game(){
+RenderContext Server::get_render_context() const {
+    return {game.get_pieces(), game.get_gamestate()};
+}
+
+Game& Server::get_game() {
     return game;
 }

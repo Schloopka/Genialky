@@ -6,8 +6,11 @@
 #include <string>
 #include <vector>
 
+#include "../gamestate.h"
+
 class Button;
 class Menu;
+class Piece;
 
 enum class GameActionType {
     NO_ACTION,
@@ -27,4 +30,12 @@ struct GameEventContext {
     sf::Vector2u window_size;
 
     Button* get_button(int row, int column) const;
+};
+
+// Server-owned state exposed to the client for drawing the current game.
+// Keeping this separate from GameEventContext prevents the renderer from
+// depending on the mutable Game object.
+struct RenderContext {
+    std::vector<Piece*> pieces;
+    ON_TURN gamestate;
 };

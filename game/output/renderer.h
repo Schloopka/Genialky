@@ -13,8 +13,8 @@
 #include "../gamestate.h"
 
 class Button;
-class Game;
 struct GameEventContext;
+struct RenderContext;
 class Menu;
 class Piece;
 class Queen;
@@ -54,7 +54,7 @@ public:
     explicit Renderer(sf::RenderWindow& window, bool black_perspective);
 
     void render_background();
-    void render_game(const Game& game, const GameEventContext& context);
+    void render_game(const RenderContext& render_context, const GameEventContext& event_context);
     void render_buttons(const std::vector<Button*>& buttons, 
         const std::vector<Button*>& last_clicked, const std::vector<Button*>& possible_actions);
     void render(const Button& button, bool is_clicked);
