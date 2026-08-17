@@ -15,18 +15,16 @@ int main()
     Server server;
 
     if (*selectedMode == GameMode::Singleplayer) {
-        Client playerOne(server, true);
+        SinglePlayerClient playerOne(server);
         playerOne.setup();
         while (playerOne.is_open()) {
             playerOne.process_input();
             playerOne.render();
         }
-
-        return 0;
     }
     else {
-        Client playerOne(server, false, true);
-        Client playerTwo(server, false, false);
+        MultiPlayerClient playerOne(server, true);
+        MultiPlayerClient playerTwo(server, false);
         playerOne.setup();
         playerTwo.setup();
 
@@ -36,7 +34,7 @@ int main()
 
             playerOne.render();
             playerTwo.render();
-    }
+        }
     }
     
 

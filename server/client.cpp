@@ -15,17 +15,6 @@ Client::Client(Server& server, bool is_singleplayer, bool is_white):window(sf::V
 	this->is_white = is_white;
 }
 
-void Client::setup() {
-	_renderer.render_background();
-	make_buttons();
-	_renderer.setup_texts();
-	auto context = make_event_context();
-	_renderer.render_game(server.get_game(), context);
-}
-void Client::render(){
-	auto context = make_event_context();
-	_renderer.render_game(server.get_game(), context);
-}
 void Client::set_message_for_user(std::string message) {
 	this->action_description = message;
 }
@@ -48,11 +37,7 @@ void Client::make_buttons() {
 													 8, 1, 66));
 	std::string text = "End turn";
 	this->buttons.emplace_back(std::make_unique<Button>(sf::Vector2(900.f, 425.f), sf::Vector2f(150.f, 50.f),
-													 67, text,
-												 [this](Game& game) {
-											 auto context = make_event_context();
-											 game.try_end_turn(context);
-												 }));
+													 67, text, GameActionType::END_TURN_MOVE));
 }
 
 void Client::resize_buttons(sf::Vector2u window_size) {
@@ -110,41 +95,15 @@ void Client::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
 
-void Client::process_input() {
-	const InputAction action = _inputer.poll(get_buttons(), activeMenu.get());
-	switch (action.type) {
-		case InputActionType::CloseWindow:
-			open = false;
-			window.close();
-			break;
-		case InputActionType::WindowResized:
-			resize_buttons(action.window_size);
-			break;
-		case InputActionType::ButtonClicked:
-			if (action.button->has_onlclick()) {
-				action.button->click(server.get_game());
-			} else {
-				last_clicked.emplace_back(action.button);
-				auto context = make_event_context();
-				server.get_game().handle_events(context);
-			}
-			break;
-		case InputActionType::MenuButtonClicked:
-			activeMenu->handle_events(*action.menu_button, server.get_game());
-			activeMenu = nullptr;
-			break;
-		case InputActionType::None:
-			break;
-		default:
-			break;
-	}
-}
-
-GameEventContext Client::make_event_context() {
-	return {is_white, is_singleplayer, last_clicked, action_description, activeMenu,
+GameEventContext Client::make_event_context(GameActionType action_type) {
+	return {action_type, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
 		possible_actions, get_buttons(), window.getSize()};
 }
 
+GameEventContext Client::make_event_context() {
+	return {GameActionType::NO_ACTION, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
+		possible_actions, get_buttons(), window.getSize()};
+}
 
 std::vector<Piece*> Client::get_pieces() const {
 	return pieces;
@@ -199,4 +158,59 @@ void Client::set_to_delete_menu(bool val) {
 
 bool Client::is_open(){
 	return this->open;
+}
+
+
+SinglePlayerClient::SinglePlayerClient(Server& server): Client(server, true)
+{
+	
+}
+
+void SinglePlayerClient::setup() {
+	_renderer.render_background();
+	make_buttons();
+	_renderer.setup_texts();
+	auto context = make_event_context();
+	_renderer.render_game(server.get_game(), context);
+}
+
+void SinglePlayerClient::render(){
+	auto context = make_event_context();
+	_renderer.render_game(server.get_game(), context);
+}
+
+void SinglePlayerClient::process_input() {
+	const InputAction action = _inputer.poll(get_buttons(), activeMenu.get());
+	switch (action.type) {
+		case InputActionType::CloseWindow:
+			open = false;
+			window.close();
+			break;
+		case InputActionType::WindowResized:
+			resize_buttons(action.window_size);
+			break;
+		case InputActionType::ButtonClicked:
+			if (action.button->has_onclick()) {
+				auto context = make_event_context(GameActionType::END_TURN_MOVE);
+				server.handle_events(context);
+			} else {
+				last_clicked.emplace_back(action.button);
+				auto context = make_event_context(GameActionType::SQUARE_MOVE);
+				server.handle_events(context);
+			}
+			break;
+		case InputActionType::MenuButtonClicked:
+			activeMenu->handle_events(*action.menu_button, server.get_game());
+			activeMenu = nullptr;
+			break;
+		case InputActionType::None:
+			break;
+		default:
+			break;
+	}
+}
+
+MultiPlayerClient::MultiPlayerClient(Server& server, bool is_white): Client(server, false, is_white)
+{
+	
 }

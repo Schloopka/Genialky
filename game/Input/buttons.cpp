@@ -1,8 +1,6 @@
 #include "buttons.h"
 
 
-#include <utility>
-
 class Game;
 
 Button::Button(
@@ -10,18 +8,19 @@ Button::Button(
 	sf::Vector2f size,
 	int id,
 	std::string text,
-	ClickHandler on_click
+	GameActionType action_type
 ) : position(position), size(size), button_text(std::move(text)), 
-	id(id), on_click(std::move(on_click)) {}
+	id(id), action_type(action_type) {}
 
-void Button::click(Game& game) const {
-	if (on_click) {
-		on_click(game);
-	}
+GameActionType Button::get_action_type() const{
+	return action_type;
 }
 
-bool Button::has_onlclick() const {
-	return static_cast<bool>(on_click);
+bool Button::has_onclick() const{
+	if (action_type == GameActionType::END_TURN_MOVE){
+		return true;
+	}
+	return false;
 }
 int Button::get_id() const {
 	return id;

@@ -7,6 +7,7 @@
 
 #include "output/renderer.h"
 #include "Input/inputer.h"
+#include "Input/game_event_context.h"
 
 class Server;
 
@@ -15,13 +16,14 @@ public:
 	Client(Server& server, bool is_singleplayer, bool is_white);
 	Client(Server& server, bool is_singleplayer);
 
-	void setup(); //calls functions to set up game, pieces and render background with fields for texts
-	void render();
+	virtual void setup() = 0; //calls functions to set up game, pieces and render background with fields for texts
+	virtual void render() = 0;
 	void make_buttons(); //make buttons which are permament (squares buttons, end turn button), put them into vector
 	void resize_buttons(sf::Vector2u window_size); //resizes and repositions buttons to match the window
 	void set_message_for_user(std::string message); //changes the text of message_for_user text field
 	
-	void process_input();
+	virtual void process_input() = 0;
+	GameEventContext make_event_context(GameActionType action_type);
 	GameEventContext make_event_context();
 
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
@@ -38,7 +40,7 @@ public:
 	const std::string& get_action_descrtiption() const;
 
 	bool is_open();
-private:
+protected:
 	Server& server;
 	sf::RenderWindow window;
 	Renderer _renderer;
@@ -61,5 +63,24 @@ private:
 	bool is_singleplayer;
 	bool open = true;
 };
+
+class SinglePlayerClient : public Client {
+public:
+	SinglePlayerClient(Server& server);
+
+	void setup() override; //calls functions to set up game, pieces and render background with fields for texts
+	void render() override;
+	void process_input() override;
+};
+
+class MultiPlayerClient : public Client {
+public:
+	MultiPlayerClient(Server& server, bool is_white);
+
+	void setup() override; //calls functions to set up game, pieces and render background with fields for texts
+	void render() override;
+	void process_input() override;
+};
+
 
 #endif

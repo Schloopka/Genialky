@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../gamestate.h"
+#include "game_event_context.h"
 
 #include <SFML/System/Vector2.hpp>
 
@@ -10,10 +11,10 @@ class Game;
 
 class Button {
 public:
-	using ClickHandler = std::function<void(Game&)>;
+	
 
 	Button(sf::Vector2f position, sf::Vector2f size, int id, std::string text = "",
-		ClickHandler on_click = {});
+		GameActionType action_type = GameActionType::NO_ACTION);
 	virtual ~Button() = default;
 
 	int get_id() const;
@@ -25,15 +26,17 @@ public:
 	bool contains(sf::Vector2f point) const;
 	void set_geometry(sf::Vector2f position, sf::Vector2f size);
 
-	bool has_onlclick() const;
-	void click(Game& game) const;
+	GameActionType get_action_type() const;
+
+	bool has_onclick() const;
+
 
 protected:
+	GameActionType action_type;	
 	sf::Vector2f position;
 	sf::Vector2f size;
 	std::string button_text;
 	int id = 0;
-	ClickHandler on_click;
 };
 
 class SquareButton : public Button {
