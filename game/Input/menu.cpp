@@ -32,9 +32,9 @@ void Menu::resize_buttons(sf::Vector2u window_size) {
 }
 
 
-PieceMenu::PieceMenu(Piece& piece, Game& game):piece(piece){
+PieceMenu::PieceMenu(Piece& piece, std::vector<MenuOption> options):piece(piece){
 	this->piece = piece;
-	this->options = this->piece.get_menu_options(game);
+	this->options = options;
 	int i = 0;
 	for (auto& option : options) {
 		buttons.push_back(std::make_unique<MenuButton>(sf::Vector2f({ 1000.f, 100.f + (i)*100.f}), 
@@ -51,7 +51,7 @@ MainMenu::MainMenu() {
 		sf::Vector2f{250.f, 300.f}, sf::Vector2f{300.f, 65.f}, 1, "Multiplayer"));
 }
 
-std::optional<GameMode> MainMenu::show() {
+std::optional<GameMode> MainMenu::loop() {
 	sf::RenderWindow window(sf::VideoMode({800, 550}), "Genialky");
 	Renderer renderer(window, false);
 	Inputer inputer(window);

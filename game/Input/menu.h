@@ -37,13 +37,11 @@ private:
     Piece& piece;
     std::vector<MenuOption> options;
 public:
-    PieceMenu(Piece& piece, Game& game);
-
-    void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game);
+    PieceMenu(Piece& piece, std::vector<MenuOption> options);
 };
 
 class MainMenu : public Menu {
 public:
     MainMenu();
-    std::optional<GameMode> show();
+    std::optional<GameMode> loop();
 };

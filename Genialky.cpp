@@ -6,7 +6,7 @@
 
 int main()
 {
-    const std::optional<GameMode> selectedMode = MainMenu().show();
+    const std::optional<GameMode> selectedMode = MainMenu().loop();
 
     if (!selectedMode.has_value()) {
         return 0;

@@ -236,7 +236,7 @@ void Game::handle_normal_moves(GameEventContext& context) {
 				&& is_there_a_piece(dest_row, dest_column) == false) /*if there is no piece on the square it wants to go to*/ {
 				//if pawn promotes or not
 				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
-					context.menu = std::make_unique<PieceMenu>(*piece, *this);
+					context.menu = std::make_unique<PieceMenu>(*piece, piece->get_menu_options(*this));
 					context.menu->resize_buttons(context.window_size);
 					menu_resolving_piece = piece.get();
 					after_menu_dest_coordinates = { dest_row, dest_column };
@@ -256,7 +256,7 @@ void Game::handle_normal_moves(GameEventContext& context) {
 					piece->attack(dest_row, dest_column, *this, piece->get_attack_type());
 				}
 				else {
-					context.menu = std::make_unique<PieceMenu>(*piece, *this);
+					context.menu = std::make_unique<PieceMenu>(*piece, piece->get_menu_options(*this));
 					context.menu->resize_buttons(context.window_size);
 					menu_resolving_piece = piece.get();
 					after_menu_dest_coordinates = { dest_row, dest_column };
