@@ -9,16 +9,11 @@
 #include <vector>
 
 
+
 class MenuButton;
 class Button;
-class Piece;
-class Game;
 enum class MenuOption;
-
-enum class GameMode {
-    Singleplayer,
-    Multiplayer
-};
+enum class GameMode;
 
 class Menu {
 protected:

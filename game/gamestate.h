@@ -2,6 +2,11 @@
 
 #include <string>
 
+enum class GameMode {
+    Singleplayer,
+    Multiplayer
+};
+
 enum class ON_TURN {
 	WHITE_TURN,
 	BLACK_TURN,

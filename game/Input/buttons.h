@@ -6,8 +6,6 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <string>
-#include <functional>
-class Game;
 
 class Button {
 public:
