@@ -25,11 +25,10 @@ protected:
     std::vector<std::unique_ptr<Button>> buttons;
 public:
     Menu();
-    virtual ~Menu() = default;
+    virtual ~Menu();
 
     std::vector<Button*> get_buttons() const;
 	void resize_buttons(sf::Vector2u window_size);
-	virtual void handle_events(MenuButton& button, Game& game);
 
 };
 
@@ -41,7 +40,6 @@ public:
     PieceMenu(Piece& piece, Game& game);
 
     void process_clicks(const sf::RenderWindow& window, const sf::Event& event, Game& game);
-    void handle_events(MenuButton& button, Game& game) override;
 };
 
 class MainMenu : public Menu {

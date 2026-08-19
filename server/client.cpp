@@ -94,16 +94,19 @@ void Client::append_buttons_clicked(Button* button) {
 void Client::clear_buttons_clicked() {
 	this->last_clicked.clear();
 }
-
-GameEventContext Client::make_event_context(GameActionType action_type) {
-	return {action_type, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
-		possible_actions, get_buttons(), window.getSize()};
-}
-
 GameEventContext Client::make_event_context() {
-	return {GameActionType::NO_ACTION, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
+	return {GameActionType::NO_ACTION, MenuOption::NULL_OPTION, is_white, is_singleplayer, last_clicked, 
+		action_description, activeMenu, possible_actions, get_buttons(), window.getSize()};
+}
+GameEventContext Client::make_event_context(GameActionType action_type) {
+	return {action_type, MenuOption::NULL_OPTION, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
 		possible_actions, get_buttons(), window.getSize()};
 }
+GameEventContext Client::make_event_context(GameActionType action_type, MenuOption menu_option) {
+	return {action_type, menu_option, is_white, is_singleplayer, last_clicked, action_description, activeMenu,
+		possible_actions, get_buttons(), window.getSize()};
+}
+
 
 std::vector<Piece*> Client::get_pieces() const {
 	return pieces;
@@ -170,13 +173,13 @@ void SinglePlayerClient::setup() {
 	_renderer.render_background();
 	make_buttons();
 	_renderer.setup_texts();
-	auto context = make_event_context();
-	_renderer.render_game(server.get_render_context(), context);
+	auto event_context = make_event_context();
+	_renderer.render_game(server.get_render_context(), event_context);
 }
 
 void SinglePlayerClient::render(){
-	auto context = make_event_context();
-	_renderer.render_game(server.get_render_context(), context);
+	auto event_context = make_event_context();
+	_renderer.render_game(server.get_render_context(), event_context);
 }
 
 void SinglePlayerClient::process_input() {
@@ -191,17 +194,17 @@ void SinglePlayerClient::process_input() {
 			break;
 		case InputActionType::ButtonClicked:
 			if (action.button->has_onclick()) {
-				auto context = make_event_context(GameActionType::END_TURN_MOVE);
-				server.handle_events(context);
+				auto event_context = make_event_context(GameActionType::END_TURN_MOVE);
+				server.handle_events(event_context);
 			} else {
 				last_clicked.emplace_back(action.button);
-				auto context = make_event_context(GameActionType::SQUARE_MOVE);
-				server.handle_events(context);
+				auto event_context = make_event_context(GameActionType::SQUARE_MOVE);
+				server.handle_events(event_context);
 			}
 			break;
-		case InputActionType::MenuButtonClicked:
-			activeMenu->handle_events(*action.menu_button, server.get_game());
-			activeMenu = nullptr;
+		case InputActionType::MenuButtonClicked:{
+			auto event_context = make_event_context(GameActionType::MENU_CLICK, action.menu_button->get_menu_option());
+			server.handle_events(event_context);}
 			break;
 		case InputActionType::None:
 			break;
@@ -210,7 +213,8 @@ void SinglePlayerClient::process_input() {
 	}
 }
 
-MultiPlayerClient::MultiPlayerClient(Server& server, bool is_white): Client(server, false, is_white)
+/* MultiPlayerClient::MultiPlayerClient(Server& server, bool is_white): Client(server, false, is_white)
 {
 	
 }
+ */

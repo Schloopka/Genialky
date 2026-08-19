@@ -22,7 +22,7 @@ int main()
             playerOne.render();
         }
     }
-    else {
+    /*else {
         MultiPlayerClient playerOne(server, true);
         MultiPlayerClient playerTwo(server, false);
         playerOne.setup();
@@ -35,7 +35,7 @@ int main()
             playerOne.render();
             playerTwo.render();
         }
-    }
+    }*/
     
 
     return 0;

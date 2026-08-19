@@ -15,6 +15,7 @@ class Client {
 public:
 	Client(Server& server, bool is_singleplayer, bool is_white);
 	Client(Server& server, bool is_singleplayer);
+	
 
 	virtual void setup() = 0; //calls functions to set up game, pieces and render background with fields for texts
 	virtual void render() = 0;
@@ -25,6 +26,7 @@ public:
 	virtual void process_input() = 0;
 	GameEventContext make_event_context(GameActionType action_type);
 	GameEventContext make_event_context();
+	GameEventContext make_event_context(GameActionType action_type, MenuOption menu_option); 
 
 	void clear_buttons_clicked(); //clears the vector of last clicked buttons after action with them is made
 	void append_buttons_clicked(Button* button);
@@ -73,7 +75,7 @@ public:
 	void process_input() override;
 };
 
-class MultiPlayerClient : public Client {
+/* class MultiPlayerClient : public Client {
 public:
 	MultiPlayerClient(Server& server, bool is_white);
 
@@ -81,6 +83,6 @@ public:
 	void render() override;
 	void process_input() override;
 };
-
+ */
 
 #endif

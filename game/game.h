@@ -56,7 +56,8 @@ public:
 	void move_queen_back_to_board(bool white_on_move); //move the queen from ability square to board based on queen airstrike data
 	void handle_queen_after_landing(GameEventContext& context); /*handles moves after the queen landed, if user makes move with a queen, it is done and user has one more move
 	else makes move with other piece but the user doesnt get other free move*/
-	void promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type);
+	void promote_piece(PieceType piece_type);
+	void piece_after_menu_attack(MenuOption menu_option);
 	
 	void set_pieces_can_move(std::vector<Piece*> pieces);
 	void set_all_pieces_can_move();
@@ -88,6 +89,7 @@ private:
 	InputMode black_input_mode = InputMode::NORMAL;
 
 	std::pair<int, int> after_menu_dest_coordinates = { 0, 0 }; //pair to remember which square is attacked by a piece when menu is needed after attack
+	Piece* menu_resolving_piece = nullptr; //piece which the current menu is displayed about, ie piece which will be promoted
 	
 	bool white_king_on_board = true;
 	bool black_king_on_board = true;

@@ -43,7 +43,8 @@ enum class MenuOption {
 	ROOK,
 	BISHOP,
 	QUEEN,
-	KNIGHT
+	KNIGHT,
+	NULL_OPTION
 };
 
 enum class PieceType {

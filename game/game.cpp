@@ -238,6 +238,7 @@ void Game::handle_normal_moves(GameEventContext& context) {
 				if (piece->get_promotes() && (dest_row == 0 || dest_row == 7)) {//we dont have to check the colour of the piece, pawn will never go to its own first row
 					context.menu = std::make_unique<PieceMenu>(*piece, *this);
 					context.menu->resize_buttons(context.window_size);
+					menu_resolving_piece = piece.get();
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				else {
@@ -257,6 +258,7 @@ void Game::handle_normal_moves(GameEventContext& context) {
 				else {
 					context.menu = std::make_unique<PieceMenu>(*piece, *this);
 					context.menu->resize_buttons(context.window_size);
+					menu_resolving_piece = piece.get();
 					after_menu_dest_coordinates = { dest_row, dest_column };
 				}
 				context.action_description = "A piece was attacked";
@@ -471,24 +473,39 @@ InputMode Game::get_input_mode(bool is_white) {
 	return (is_white ? white_input_mode : black_input_mode);
 }
 
-void Game::promote_piece(Piece& promoting_piece, std::pair<int, int> dest_coordinates, PieceType piece_type) {
+void Game::promote_piece(PieceType piece_type) {
 	//add new piece
+	int row = after_menu_dest_coordinates.first;
+	int column = after_menu_dest_coordinates.second;
+	Piece& promoting_piece = *menu_resolving_piece;
 	switch (piece_type) {
 	case PieceType::BISHOP:
-		pieces.emplace_back(std::make_unique<Bishop>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Bishop>(promoting_piece.is_piece_white(), row, column));
 		break;
 	case PieceType::KNIGHT:
-		pieces.emplace_back(std::make_unique<Knight>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Knight>(promoting_piece.is_piece_white(), row, column));
 		break;
 	case PieceType::ROOK:
-		pieces.emplace_back(std::make_unique<Rook>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Rook>(promoting_piece.is_piece_white(), row, column));
 		break;
 	case PieceType::QUEEN:
-		pieces.emplace_back(std::make_unique<Queen>(promoting_piece.is_piece_white(), dest_coordinates.first, dest_coordinates.second));
+		pieces.emplace_back(std::make_unique<Queen>(promoting_piece.is_piece_white(), row, column));
 		break;
 	};
 	//delete the pawn
 	eliminate_pieces_from(promoting_piece.get_row(), promoting_piece.get_column(), attackType::ELIMINATION);
+}
+
+void Game::piece_after_menu_attack(MenuOption menu_option){
+	if (menu_option == MenuOption::DONT_MOVE){
+		menu_resolving_piece->set_moves_when_attack(false);
+	}
+	else if (menu_option == MenuOption::MOVE_TO_ATTACKED_SQUARE){
+		menu_resolving_piece->set_moves_when_attack(true);
+		
+	}
+	menu_resolving_piece->attack(after_menu_dest_coordinates.first, after_menu_dest_coordinates.second,
+			*this, menu_resolving_piece->get_attack_type());
 }
 
 void Game::update_stats() {

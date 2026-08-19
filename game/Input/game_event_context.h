@@ -15,11 +15,13 @@ class Piece;
 enum class GameActionType {
     NO_ACTION,
     SQUARE_MOVE,
-    END_TURN_MOVE
+    END_TURN_MOVE,
+    MENU_CLICK
 };
 
 struct GameEventContext {
     GameActionType action_type;
+    MenuOption menu_option;
     bool is_input_player_white;
     bool is_singleplayer;
     std::vector<Button*>& last_clicked;
