@@ -32,16 +32,16 @@ public:
 
 };
 
-class PieceMenu : public Menu {
+class IngameMenu : public Menu {
 private:
-    Piece& piece;
     std::vector<MenuOption> options;
 public:
-    PieceMenu(Piece& piece, std::vector<MenuOption> options);
+    IngameMenu(std::vector<MenuOption> options, sf::Vector2u window_size);
 };
 
 class MainMenu : public Menu {
 public:
     MainMenu();
+    void resize_buttons(sf::Vector2u window_size);
     std::optional<GameMode> loop();
 };
